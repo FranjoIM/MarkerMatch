@@ -57,7 +57,7 @@ for(i in FACTORS){
   for(j in MAXDS){
     Name <- quo_name(paste0(i, "_", j))
     
-    DF_MAT <- read_delim(paste0("DATA/", i, "_", j, "_MatSelect.csv"),
+    DF_MAT <- read_delim(paste0("DATA/OEE_", i, "_", j, "_RefSelect.csv"),
                          delim="\t", col_names=F) %>%
       distinct(.) %>%
       mutate(X2=1) %>%
@@ -87,7 +87,7 @@ for(i in FACTORS){
   for(j in MAXDS){
     Name <- quo_name(paste0(i, "_", j))
     
-    DF_MAT <- read_delim(paste0("DATA/", i, "_", j, "_MatSelect.csv"),
+    DF_MAT <- read_delim(paste0("DATA/OEE_", i, "_", j, "_MatSelect.csv"),
                          delim="\t", col_names=F) %>%
       distinct(.) %>%
       mutate(X2=1) %>%
