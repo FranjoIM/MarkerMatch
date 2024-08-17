@@ -188,3 +188,27 @@ MarkerMatch(Reference=GSA_MAN, Matching=OEE_MAN, MaxD=10000, Factor="BAF.delta",
 MarkerMatch(Reference=GSA_MAN, Matching=OEE_MAN, MaxD=10000, Factor="LRR_sd.delta", OutPath="DATA/OEE_LRRsd_10000")
 MarkerMatch(Reference=GSA_MAN, Matching=OEE_MAN, MaxD=10000, Factor="LRR_mean.delta", OutPath="DATA/OEE_LRRmean_10000")
 ```
+
+### Graph Runtimes
+In R, ran locally. Code for creating runtime graphs for MarkerMatch algorithms, manuscript **Figure 2**.
+```R
+# Set working directory
+W_DIR <- "..."
+setwd(W_DIR)
+
+# Load packages
+library(tidyverse)
+library(ggplot)
+
+# Import array manifests
+OMNI_MAN <- read_delim("DATA/OMNI_MAN.txt", delim="\t")
+GSA_MAN <- read_delim("DATA/GSA_MAN.txt", delim="\t")
+OEE_MAN <- read_delim("DATA/OEE_MAN.txt", delim="\t")
+```
+
+### Graph Marker Density Plots
+In R, ran locally. Code for creating marker density plots, manuscript **Figure 3**.
+
+```R
+
+```
