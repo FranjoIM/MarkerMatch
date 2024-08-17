@@ -1,6 +1,8 @@
 #### Environments
 ###### Local
 Local analyses were ran on a Windows machine. Specifications:
+|Component| Value|
+|---|---|
 |Processor|	12th Gen Intel(R) Core(TM) i9-12900KS   3.40 GHz|
 |Installed RAM|	128 GB (128 GB usable)|
 |System type|	64-bit operating system, x64-based processor|
