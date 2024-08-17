@@ -1,5 +1,5 @@
 ### Environments
-##### Local
+#### Local
 Local analyses were ran on a Windows machine. Specifications:
 |Component| Value|
 |---|---|
@@ -10,9 +10,7 @@ Local analyses were ran on a Windows machine. Specifications:
 |Version|	23H2|
 |OS build|	22631.4037|
 
-
-
-##### Cloud
+#### Cloud
 Cloud analyses were ran oh HiPerGator, a Linux cloud computing service, using SLURM scheduler to schedule/run jobs.
 
 ### Prepare Data
