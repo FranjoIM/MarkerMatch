@@ -207,8 +207,7 @@ OEE_MAN <- read_delim("DATA/OEE_MAN.txt", delim="\t")
 ```
 
 ### Graph Marker Density Plots
-In R, ran locally. Code for creating marker density plots, manuscript **Figure 3**.
+In R, ran locally. Code for creating marker density plots, manuscript **Figure 3**. First, the data cen be prepared using [UsedSNPs.R](UsedSNPs.R) script, and then plotted using [Figure3.R](Figure3.R).
 
-```R
-
-```
+### Graph Gaps Plots
+In R, ran locally. Code for creating marker gaps plots, manuscript **Figure 4**. 
