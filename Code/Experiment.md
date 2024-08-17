@@ -15,7 +15,7 @@ Cloud analyses were ran oh HiPerGator, a Linux cloud computing service, using SL
 
 ### Prepare Data
 
-Using Illumina GenomeStudio, prepare data by clustering microarray genotyping samples _de novo_. Once done, exclude non-autosomes using the filter 
+Ran locally. Using Illumina GenomeStudio, prepare data by clustering microarray genotyping samples _de novo_. Once done, exclude non-autosomes using the filter 
 function, and export following files:
 1. Illumina Final Report (Columns: `SNP Name`, `Sample ID`, `Chr`, `Position`, `B Allele Freq`, `Log R Ratio`),
 2. PLINK Input Report (Leaving default options, except `UseForwardStrand` should be set to `True`),
@@ -24,4 +24,4 @@ function, and export following files:
 
 ### Complete the Manifest Files
 
-In R, run on a local machine
+In R, run on a local machine, use thr [ManifSum.R](ManifSum.R) function to suummarize the copy-number metrics (CNM) export into copu-number summary (CNS) file.
