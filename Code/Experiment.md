@@ -1,5 +1,5 @@
-#### Environments
-###### Local
+### Environments
+##### Local
 Local analyses were ran on a Windows machine. Specifications:
 |Component| Value|
 |---|---|
@@ -12,10 +12,10 @@ Local analyses were ran on a Windows machine. Specifications:
 
 
 
-###### Cloud
+##### Cloud
 Cloud analyses were ran oh HiPerGator, a Linux cloud computing service, using SLURM scheduler to schedule/run jobs.
 
-#### Prepare Data
+### Prepare Data
 
 Using Illumina GenomeStudio, prepare data by clustering microarray genotyping samples _de novo_. Once done, exclude non-autosomes using the filter 
 function, and export following files:
@@ -24,6 +24,6 @@ function, and export following files:
 3. Copy-numer metrics (CNM file, export `Name`, `Chr`, `Position` and `Log R Ratio` for all samples columns from the `Full Data Table` tab as tab-delimeted file),
 4. Manifest file (MAN file, export `Name`, `Chr`, `Position` and `Minor Freq` columns from the `SNP Table` tab as a tab-delimeted file).
 
-#### Complete the Manifest Files
+### Complete the Manifest Files
 
 In R, run on a local machine
