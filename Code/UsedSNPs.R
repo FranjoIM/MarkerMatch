@@ -4,7 +4,6 @@ setwd(W_DIR)
 
 # Load packages
 library(tidyverse)
-library(ggplot)
 
 # Import array manifests
 OMNI_MAN <- read_delim("DATA/OMNI_MAN.txt", delim="\t")
