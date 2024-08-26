@@ -363,4 +363,39 @@ sbatch $WKD/Scripts/PFB_OMNI.sh
 sbatch $WKD/Scripts/PFB_OEE.sh
 ```
 
+### Adjust Intensities for Genomic Wave
+On the cloud, GC-adjust intensity files, used for CNV calling. Scripts for [GCA_GSA1.sh](Scripts/GCA_GSA1.sh), [GCA_OMNI.sh](Scripts/GCA_OMNI.sh), and [GCA_OEE.sh](Scripts/GCA_OEE.sh) are provided.
+
+```bash
+# ASSIGN PATHS TO VARIABLE NAMES
+WKD="..."
+PCN="/apps/penncnv/1.0.5"
+
+# CREATE HOLDING DIRECTORIES
+mkdir -p $WKD/Adjusted/TS $WKD/Adjusted/ASD $WKD/Adjusted/OEE
+
+# RUN GENOMIC WAVE ADJUSTMENT
+sbatch $WKD/Scripts/GCA_GSA1.sh
+sbatch $WKD/Scripts/GCA_OMNI.sh
+sbatch $WKD/Scripts/GCA_OEE.sh
+
+# GENERATE A LIST OMNI SAMPLES
+ls -d \
+    "$WKD"/Adjusted/ASD/* > \
+    $WKD/SupportingFiles/OMNI_Samples.List
+
+# GENERATE A LIST OF GSA SAMPLES
+ls -d \
+    "$WKD"/Adjusted/TS/* > \
+    $WKD/SupportingFiles/GSA1_Samples.List
+
+# GENERATE A LIST OF OEE SAMPLES
+ls -d \
+    "$WKD"/Adjusted/OEE/* > \
+    $WKD/SupportingFiles/OEE_Samples.List
+```
+
+### Generate Marker Match Specific Supporting Files
+On the cloud, use [MarkerMatch_Extract_SSC.r](Scripts/MarkerMatch_Extract_SSC.r) and [MarkerMatch_Extract_OEE.r](Scripts/MarkerMatch_Extract_OEE.r) to generate supporting files for each MarkerMatch configuration used in this validation study.
+
 
