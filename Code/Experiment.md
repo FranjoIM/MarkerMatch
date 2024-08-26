@@ -312,7 +312,7 @@ Rscript --vanilla $WKD/Scripts/gc_wrangle.r $OEESNPs $WKD/SupportingFiles/OEE.hg
 ```
 
 ### Generate PFB Files for All Datasets
-On the cloud, generate PFB files for datasets, used for CNV calling. 
+On the cloud, generate PFB files for datasets, used for CNV calling. Scripts for [PFB_GSA1.sh](Scripts/PFB_GSA1.sh), [PFB_OMNI.sh](Scripts/PFB_OMNI.sh), and [PFB_OEE.sh](Scripts/PFB_OEE.sh) are provided.
 
 ```bash
 # ASSIGN PATHS TO VARIABLE NAMES
