@@ -21,6 +21,7 @@ function, and export following files:
 2. PLINK Input Report (Leaving default options, except `UseForwardStrand` should be set to `True`),
 3. Copy-numer metrics (CNM file, export `Name`, `Chr`, `Position` and `Log R Ratio` for all samples columns from the `Full Data Table` tab as tab-delimeted file),
 4. Manifest file (MAN file, export `Name`, `Chr`, `Position` and `Minor Freq` columns from the `SNP Table` tab as a tab-delimeted file).
+5. SNP Pos file (export `Name`, `Chr`, and `Position` columns from the `SNP Table` tab as a tab-delimeted file)
 
 ### Complete the Manifest Files
 
@@ -210,4 +211,102 @@ OEE_MAN <- read_delim("DATA/OEE_MAN.txt", delim="\t")
 In R, ran locally. Code for creating marker density plots, manuscript **Figure 3**. First, the data cen be prepared using [UsedSNPs.R](UsedSNPs.R) script, and then plotted using [Figure3.R](Figure3.R).
 
 ### Graph Gaps Plots
-In R, ran locally. Code for creating marker gaps plots, manuscript **Figure 4**. 
+In R, ran locally. Code for creating marker gaps plots, manuscript **Figure 4**.
+
+### Graph BAF Plots
+
+### Graph LRR-SD Plots
+
+### Graph LRR-Mean Plots
+
+### Split Final Reports
+On the cloud, after Illumina final reports have been uploaded, split the final reports.
+
+```bash
+# ASSIGN PATHS TO VARIABLE NAMES
+WKD="..."
+PCN="/apps/penncnv/1.0.5"
+
+# CREATE NEW DIRECTORIES
+mkdir -p ${WKD}/Intensities/TS ${WKD}/Intensities/ASD ${WKD}/Intensities/OEE
+
+# SPLIT FINAL REPORTS
+$PCN/split_illumina_report.pl \
+    -p $WKD/Intensities/TS/ \
+    $OLD/MarkerMatch/Experiment1/ChipData/TS_Wave1_FR.txt
+
+$PCN/split_illumina_report.pl \
+    -p $WKD/Intensities/TS/ \
+    $OLD/MarkerMatch/Experiment1/ChipData/TS_Wave2_FR.txt
+
+$PCN/split_illumina_report.pl \
+    -p $WKD/Intensities/TS/ \
+    $OLD/MarkerMatch/Experiment1/ChipData/TS_Wave3_FR.txt
+
+$PCN/split_illumina_report.pl \
+    -p $WKD/Intensities/ASD/ \
+    $OLD/MarkerMatch/SSC_Full_Autosomes.txt
+
+$PCN/split_illumina_report.pl \
+    -p $WKD/Intensities/OEE/ \
+    $NEW/Intensities/OEE/OEE_033s.txt
+
+$PCN/split_illumina_report.pl \
+    -p $WKD/Intensities/OEE/ \
+    $NEW/Intensities/OEE/OEE_328s1.txt
+
+$PCN/split_illumina_report.pl \
+    -p $WKD/Intensities/OEE/ \
+    $NEW/Intensities/OEE/OEE_328s2.txt
+
+$PCN/split_illumina_report.pl \
+    -p $WKD/Intensities/OEE/ \
+    $NEW/Intensities/OEE/OEE_328s3.txt
+
+$PCN/split_illumina_report.pl \
+    -p $WKD/Intensities/OEE/ \
+    $NEW/Intensities/OEE/OEE_328s4.txt
+```
+
+### Make GC Model Files for Datasets
+On the cloud, create GC model files for the datasets. Also upload SNP Pos files for this purpose.
+
+```bash
+# ASSIGN PATHS TO VARIABLE NAMES
+WKD="..."
+PCN="/apps/penncnv/1.0.5"
+
+# SPECIFY SNP POS FILE LOCATIONS
+GSA1SNPs="$WKD/SupportingFiles/GSA1_SNPPOS.txt"
+OMNISNPs="$WKD/SupportingFiles/ASD_SNPPOS.txt"
+OEESNPs="$WKD/SupportingFiles/OEE_SNPPOS.txt"
+
+# SORT GC MODEL FILE
+zcat $PCN/gc_file/hg19.gc5Base.txt.gz |\
+  sort -k2,2 -k3,3n \
+  > $WKD/SupportingFiles/hg19.gc5Base_sorted.txt
+
+# MAKE GC MODEL FILES FOR DATASETS
+# cal_gc_snp.pl was adjusted slightly to resolve a bug that affects
+# delimation of the GC percetage and column positioning
+$WKD/Scripts/cal_gc_snp.pl \
+    $WKD/SupportingFiles/hg19.gc5Base_sorted.txt \
+    $GSA1SNPs > \
+    $WKD/SupportingFiles/GSA1.hg19.gcmodel
+
+$WKD/Scripts/cal_gc_snp.pl \
+    $WKD/SupportingFiles/hg19.gc5Base_sorted.txt \
+    $OMNISNPs > \
+    $WKD/SupportingFiles/OMNI.hg19.gcmodel
+
+$WKD/Scripts/cal_gc_snp.pl \
+    $WKD/SupportingFiles/hg19.gc5Base_sorted.txt \
+    $OEESNPs > \
+    $WKD/SupportingFiles/OEE.hg19.gcmodel
+
+# FIX GC MODEL FILE OUTPUT FOR THE PIPELINE
+module load R
+Rscript --vanilla $WKD/Scripts/gc_wrangle.r $GSA1SNPs $WKD/SupportingFiles/GSA1.hg19.gcmodel $WKD/SupportingFiles/GSA1.gc
+Rscript --vanilla $WKD/Scripts/gc_wrangle.r $OMNISNPs $WKD/SupportingFiles/OMNI.hg19.gcmodel $WKD/SupportingFiles/OMNI.gc
+Rscript --vanilla $WKD/Scripts/gc_wrangle.r $OEESNPs $WKD/SupportingFiles/OEE.hg19.gcmodel $WKD/SupportingFiles/OEE.gc
+```
