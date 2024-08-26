@@ -486,3 +486,39 @@ CNV_merger OEE OEE_LRRmean_10000
 CNV_merger OEE OEE_LRRsd_10000    
 CNV_merger OEE OEE_Pos_10000
 ```
+
+### Clean Validation CNVs
+On the cloud, run scripts to clean up CNV callsets. Scripts for [MarkerMatch_Clean.sh](Scripts/MarkerMatch_Clean.sh), [MarkerMatch_Clean2.sh](Scripts/MarkerMatch_Clean2.sh), and [MarkerMatch_Clean3.sh](Scripts/MarkerMatch_Clean3.sh) are provided.
+
+```bash
+# ASSIGN PATHS TO VARIABLE NAMES
+WKD="..."
+PCN="/apps/penncnv/1.0.5"
+
+# RUN FULL SET AND PERFECT MATCH
+bash Scripts/MarkerMatch_Clean.sh FullSet
+bash Scripts/MarkerMatch_Clean.sh PerfectMatch
+bash Scripts/MarkerMatch_Clean2.sh OEE_FullSet
+bash Scripts/MarkerMatch_Clean2.sh OEE_PerfectMatch_0
+bash Scripts/MarkerMatch_Clean3.sh GSA_FullSet
+bash Scripts/MarkerMatch_Clean3.sh GSA_PerfectMatch_0
+
+# RUN THE MARKER MATCHED SAMPLES
+for i in 10 50 100 500 1000 5000 10000 50000 100000 500000 1000000 5000000; do bash Scripts/MarkerMatch_Clean.sh BAF_$i; done;
+for i in 10 50 100 500 1000 5000 10000 50000 100000 500000 1000000 5000000; do bash Scripts/MarkerMatch_Clean.sh LRRmean_$i; done;
+for i in 10 50 100 500 1000 5000 10000 50000 100000 500000 1000000 5000000; do bash Scripts/MarkerMatch_Clean.sh LRRsd_$i; done;
+for i in 10 50 100 500 1000 5000 10000 50000 100000 500000 1000000 5000000; do bash Scripts/MarkerMatch_Clean.sh Pos_$i; done;
+
+bash Scripts/MarkerMatch_Clean2.sh OEE_BAF_10000
+bash Scripts/MarkerMatch_Clean2.sh OEE_LRRmean_10000
+bash Scripts/MarkerMatch_Clean2.sh OEE_LRRsd_10000
+bash Scripts/MarkerMatch_Clean2.sh OEE_Pos_10000
+
+bash Scripts/MarkerMatch_Clean3.sh GSA_BAF_10000
+bash Scripts/MarkerMatch_Clean3.sh GSA_LRRmean_10000
+bash Scripts/MarkerMatch_Clean3.sh GSA_LRRsd_10000
+bash Scripts/MarkerMatch_Clean3.sh GSA_Pos_10000
+```
+
+### Prepare Callsets for Analysis
+
