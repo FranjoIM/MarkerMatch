@@ -379,17 +379,17 @@ sbatch $WKD/Scripts/GCA_GSA1.sh
 sbatch $WKD/Scripts/GCA_OMNI.sh
 sbatch $WKD/Scripts/GCA_OEE.sh
 
-# GENERATE A LIST OMNI SAMPLES
+# GENERATE ADJUSTED LIST OMNI SAMPLES
 ls -d \
     "$WKD"/Adjusted/ASD/* > \
     $WKD/SupportingFiles/OMNI_Samples.List
 
-# GENERATE A LIST OF GSA SAMPLES
+# GENERATE ADJUSTED LIST OF GSA SAMPLES
 ls -d \
     "$WKD"/Adjusted/TS/* > \
     $WKD/SupportingFiles/GSA1_Samples.List
 
-# GENERATE A LIST OF OEE SAMPLES
+# GENERATE ADJUSTED LIST OF OEE SAMPLES
 ls -d \
     "$WKD"/Adjusted/OEE/* > \
     $WKD/SupportingFiles/OEE_Samples.List
@@ -398,4 +398,53 @@ ls -d \
 ### Generate Marker Match Specific Supporting Files
 On the cloud, use [MarkerMatch_Extract_SSC.r](Scripts/MarkerMatch_Extract_SSC.r) and [MarkerMatch_Extract_OEE.r](Scripts/MarkerMatch_Extract_OEE.r) to generate supporting files for each MarkerMatch configuration used in this validation study.
 
+```bash
+# ASSIGN PATHS TO VARIABLE NAMES
+WKD="..."
+PCN="/apps/penncnv/1.0.5"
 
+# RUN R SCRIPT TO EXTRACT MARKERMATCHED DATA
+module load R
+Rscript --vanilla $WKD/Scripts/MarkerMatch_Extract_SSC.r
+Rscript --vanilla $WKD/Scripts/MarkerMatch_Extract_OEE.r
+```
+
+### Call Validation CNVs
+On the cloud, run jobs to create MarkerMatch CNV callsets. Scripts for [MarkerMatch_Caller5.sh](Scripts/MarkerMatch_Caller3.sh), [MarkerMatch_Caller5.sh](Scripts/MarkerMatch_Caller4.sh), and [MarkerMatch_Caller5.sh](Scripts/MarkerMatch_Caller5.sh) are provided.
+
+```bash
+# ASSIGN PATHS TO VARIABLE NAMES
+WKD="..."
+PCN="/apps/penncnv/1.0.5"
+
+# FRAGMENT THE SAMPLE FILES
+split -l 710 --numeric-suffixes $WKD/SupportingFiles/OMNI_Samples.List $WKD/SupportingFiles/OMNI_Samples.List
+split -l 654 --numeric-suffixes $WKD/SupportingFiles/OEE_Samples.List $WKD/SupportingFiles/OEE_Samples.List
+split -l 732 --numeric-suffixes $WKD/SupportingFiles/GSA1_Samples.List $WKD/SupportingFiles/GSA1_Samples.List
+
+# RUN FULL SET AND PERFECT MATCH
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller3.sh FullSet 0$j; done;
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller3.sh PerfectMatch 0$j; done;
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller4.sh OEE_FullSet 0$j; done;
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller4.sh OEE_PerfectMatch_0 0$j; done;
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller5.sh GSA_FullSet 0$j; done;
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller5.sh GSA_PerfectMatch_0 0$j; done;
+
+# RUN THE MARKER MATCHED SAMPLES
+for i in 10 50 100 500 1000 5000 10000 50000 100000 500000 1000000 5000000; do for j in {0..5}; do bash Scripts/MarkerMatch_Caller3.sh BAF_$i 0$j; done; done;
+for i in 10 50 100 500 1000 5000 10000 50000 100000 500000 1000000 5000000; do for j in {0..5}; do bash Scripts/MarkerMatch_Caller3.sh LRRmean_$i 0$j; done; done;
+for i in 10 50 100 500 1000 5000 10000 50000 100000 500000 1000000 5000000; do for j in {0..5}; do bash Scripts/MarkerMatch_Caller3.sh LRRsd_$i 0$j; done; done;
+for i in 10 50 100 500 1000 5000 10000 50000 100000 500000 1000000 5000000; do for j in {0..5}; do bash Scripts/MarkerMatch_Caller3.sh Pos_$i 0$j; done; done;
+
+# RUN THE MARKER MATCHED VALIDATION 2 SAMPLES OEE
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller4.sh OEE_Pos_10000 0$j; done;
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller4.sh OEE_BAF_10000 0$j; done;
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller4.sh OEE_LRRsd_10000 0$j; done;
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller4.sh OEE_LRRmean_10000 0$j; done;
+
+# RUN THE MARKER MATCHED VALIDATION 2 SAMPLES GSA
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller5.sh GSA_Pos_10000 0$j; done;
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller5.sh GSA_BAF_10000 0$j; done;
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller5.sh GSA_LRRsd_10000 0$j; done;
+for j in {0..5}; do bash Scripts/MarkerMatch_Caller5.sh GSA_LRRmean_10000 0$j; done;
+```
