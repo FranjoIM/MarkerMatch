@@ -473,12 +473,14 @@ CNV_merger SSC LRRsd_10     # repeat for all LRRsd configurations
 CNV_merger SSC Pos_10       # repeat for all Pos configurations
 
 CNV_merger GSA GSA_FullSet
+CNV_merger GSA GSA_PerfectMatch_0
 CNV_merger GSA GSA_BAF_10000       
 CNV_merger GSA GSA_LRRmean_10000   
 CNV_merger GSA GSA_LRRsd_10000    
 CNV_merger GSA GSA_Pos_10000
 
 CNV_merger OEE OEE_FullSet
+CNV_merger OEE OEE_PerfectMatch_0
 CNV_merger OEE OEE_BAF_10000       
 CNV_merger OEE OEE_LRRmean_10000   
 CNV_merger OEE OEE_LRRsd_10000    
