@@ -25,7 +25,7 @@ function, and export following files:
 
 ### Complete the Manifest Files
 
-In R, run on a local machine, use thr [ManifSum.R](ManifSum.R) function to suummarize the copy-number metrics (CNM) export into copu-number summary (CNS) file.
+In R, run on a local machine, use thr [ManifSum.R](Scripts/ManifSum.R) function to suummarize the copy-number metrics (CNM) export into copu-number summary (CNS) file.
 
 ```R
 # Set working directory
@@ -208,7 +208,7 @@ OEE_MAN <- read_delim("DATA/OEE_MAN.txt", delim="\t")
 ```
 
 ### Graph Marker Density Plots
-In R, ran locally. Code for creating marker density plots, manuscript **Figure 3**. First, the data cen be prepared using [UsedSNPs.R](UsedSNPs.R) script, and then plotted using [Figure3.R](Figure3.R).
+In R, ran locally. Code for creating marker density plots, manuscript **Figure 3**. First, the data cen be prepared using [UsedSNPs.R](Scripts/UsedSNPs.R) script, and then plotted using [Figure3.R](Scripts/Figure3.R).
 
 ### Graph Gaps Plots
 In R, ran locally. Code for creating marker gaps plots, manuscript **Figure 4**.
@@ -220,7 +220,7 @@ In R, ran locally. Code for creating marker gaps plots, manuscript **Figure 4**.
 ### Graph LRR-Mean Plots
 
 ### Split Final Reports
-On the cloud, after Illumina final reports have been uploaded, split the final reports.
+On the cloud, after Illumina final reports have been uploaded, split the final reports. `split_illumina_report.pl` is a part of PennCNV software.
 
 ```bash
 # ASSIGN PATHS TO VARIABLE NAMES
@@ -269,7 +269,7 @@ $PCN/split_illumina_report.pl \
 ```
 
 ### Make GC Model Files for Datasets
-On the cloud, create GC model files for the datasets. Also upload SNP Pos files for this purpose.
+On the cloud, create GC model files for the datasets. Also upload SNP Pos files for this purpose. Scripts for [cal_gc_snp.pl](Scripts/cal_gc_snp.pl) and [gc_wrangle.r](Scripts/gc_wrangle.r) are provided.
 
 ```bash
 # ASSIGN PATHS TO VARIABLE NAMES
@@ -312,7 +312,7 @@ Rscript --vanilla $WKD/Scripts/gc_wrangle.r $OEESNPs $WKD/SupportingFiles/OEE.hg
 ```
 
 ### Generate PFB Files for All Datasets
-On the cloud, generate PFB files for datasets, used for CNV calling.
+On the cloud, generate PFB files for datasets, used for CNV calling. 
 
 ```bash
 # ASSIGN PATHS TO VARIABLE NAMES
@@ -362,3 +362,5 @@ sbatch $WKD/Scripts/PFB_GSA1.sh
 sbatch $WKD/Scripts/PFB_OMNI.sh
 sbatch $WKD/Scripts/PFB_OEE.sh
 ```
+
+
