@@ -448,3 +448,39 @@ for j in {0..5}; do bash Scripts/MarkerMatch_Caller5.sh GSA_BAF_10000 0$j; done;
 for j in {0..5}; do bash Scripts/MarkerMatch_Caller5.sh GSA_LRRsd_10000 0$j; done;
 for j in {0..5}; do bash Scripts/MarkerMatch_Caller5.sh GSA_LRRmean_10000 0$j; done;
 ```
+
+### Preprocess Validation CNVs
+On the cloud, merge fragmented CNV callsets.
+
+```bash
+# ASSIGN PATHS TO VARIABLE NAMES
+WKD="..."
+PCN="/apps/penncnv/1.0.5"
+
+# DEFINE FUNCTION
+CNV_merger () {
+	cat Validation/$1/Log/$2.Log_0* > Validation/$1/Log/$2.Log
+    cat Validation/$1/Raw/$2.Raw_0* > Validation/$1/Raw/$2.Raw
+}
+
+# RUN FUNCTIONS
+CNV_merger SSC FullSet
+CNV_merger SSC PerfectMatch
+
+CNV_merger SSC BAF_10       # repeat for all BAF configurations
+CNV_merger SSC LRRmean_10   # repeat for all LRRmean configurations
+CNV_merger SSC LRRsd_10     # repeat for all LRRsd configurations
+CNV_merger SSC Pos_10       # repeat for all Pos configurations
+
+CNV_merger GSA GSA_FullSet
+CNV_merger GSA GSA_BAF_10000       
+CNV_merger GSA GSA_LRRmean_10000   
+CNV_merger GSA GSA_LRRsd_10000    
+CNV_merger GSA GSA_Pos_10000
+
+CNV_merger OEE OEE_FullSet
+CNV_merger OEE OEE_BAF_10000       
+CNV_merger OEE OEE_LRRmean_10000   
+CNV_merger OEE OEE_LRRsd_10000    
+CNV_merger OEE OEE_Pos_10000
+```
