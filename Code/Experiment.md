@@ -532,7 +532,7 @@ R
 ```
 ```R
 # SET UP WORKING DIRECTORIES
-WORK_DIR="/blue/carolmathews/njofrica/Validation"
+WORK_DIR="/Validation"
 dir.create(paste0(WORK_DIR,"/Analysis"))
 setwd(WORK_DIR)
 
@@ -584,7 +584,7 @@ save(DATA, file=paste0(WORK_DIR,"/Analysis/Validation_Import_082624.RData"))
 load(paste0(WORK_DIR,"/Analysis/Validation_Import_082624.RData"))
 
 # PROCESS IMPORTED DATA
-QC_Curate <- "NOTICE: quality summary for /blue/carolmathews/njofrica/Intensities/ASD/|NOTICE: quality summary for /blue/carolmathews/njofrica/Intensities/OEE/|NOTICE: quality summary for /blue/carolmathews/njofrica/Intensities/TS/|_Omni2.5_FinalReport.txt:|LRR_mean=|LRR_median=|LRR_SD=|BAF_mean=|BAF_median=|BAF_SD=|BAF_DRIFT=|WF=|GCWF=|blue/carolmathews/njofrica/Intensities/ASD/|_Omni2.5_FinalReport.txt|/|numsnp=|length=|state|cn=|startsnp=|endsnp=|conf="
+QC_Curate <- "NOTICE: quality summary for /Intensities/ASD/|NOTICE: quality summary for /Intensities/OEE/|NOTICE: quality summary for /Intensities/TS/|_Omni2.5_FinalReport.txt:|LRR_mean=|LRR_median=|LRR_SD=|BAF_mean=|BAF_median=|BAF_SD=|BAF_DRIFT=|WF=|GCWF=|/Intensities/ASD/|_Omni2.5_FinalReport.txt|/|numsnp=|length=|state|cn=|startsnp=|endsnp=|conf="
 QC_ColNames <- c("ID", "LRR_mean", "LRR_median", "LRR_SD", "BAF_mean", "BAF_median", "BAF_SD", "BAF_drift", "WF", "GCWF")
 CNV_ColNames <- c("Position", "N_SNP", "LEN", "State", "CN", "ID", "start_snp", "end_snp", "CONF")
 
