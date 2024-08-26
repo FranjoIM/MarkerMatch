@@ -310,3 +310,55 @@ Rscript --vanilla $WKD/Scripts/gc_wrangle.r $GSA1SNPs $WKD/SupportingFiles/GSA1.
 Rscript --vanilla $WKD/Scripts/gc_wrangle.r $OMNISNPs $WKD/SupportingFiles/OMNI.hg19.gcmodel $WKD/SupportingFiles/OMNI.gc
 Rscript --vanilla $WKD/Scripts/gc_wrangle.r $OEESNPs $WKD/SupportingFiles/OEE.hg19.gcmodel $WKD/SupportingFiles/OEE.gc
 ```
+
+### Generate PFB Files for All Datasets
+On the cloud, generate PFB files for datasets, used for CNV calling.
+
+```bash
+# ASSIGN PATHS TO VARIABLE NAMES
+WKD="..."
+PCN="/apps/penncnv/1.0.5"
+
+# GENERATE A LIST OF 1000 PARENTS FROM OMNI DATA
+ls -d \
+    "$WKD"/Intensities/ASD/* > \
+    $WKD/SupportingFiles/OMNI_Samples.List
+
+printf ".fa_\n.mo_" > \
+    $WKD/SupportingFiles/Parent.Pattern
+
+grep -Ff \
+    $WKD/SupportingFiles/Parent.Pattern \
+    $WKD/SupportingFiles/OMNI_Samples.List > \
+    $WKD/SupportingFiles/OMNI_ParentsList.txt
+
+shuf -n 1000 \
+    $WKD/SupportingFiles/OMNI_ParentsList.txt > \
+    $WKD/SupportingFiles/OMNI_1000_ParentsList.txt
+
+# GENERATE A LIST OF 1000 PARENTS FROM GSA DATA (PARENTS LIST GENERATED FROM EXCEL SAMPLE SHEET)
+ls -d \
+    "$WKD"/Intensities/TS/* > \
+    $WKD/SupportingFiles/GSA1_Samples.List
+
+sort $WKD/SupportingFiles/GSA1_ParentsList.txt | \
+    uniq -u | \
+    shuf -n 1000 > \
+    $WKD/SupportingFiles/GSA1_1000_ParentsList.txt
+
+sed -i -e 's/^/\/Intensities\/TS\//' $WKD/SupportingFiles/GSA1_1000_ParentsList.txt
+
+# GENERATE A LIST OF 1000 SAMPLES FROM OEE DATA
+ls -d \
+    "$WKD"/Intensities/OEE/* > \
+    $WKD/SupportingFiles/OEE_Samples.List
+
+shuf -n 1000 \
+    $WKD/SupportingFiles/OEE_Samples.List > \
+    $WKD/SupportingFiles/OEE_1000_SamplesList.txt
+
+# CREATE A FULL SET PFB FILE (MARKER MATCH WILL SUBSET IT)
+sbatch $WKD/Scripts/PFB_GSA1.sh
+sbatch $WKD/Scripts/PFB_OMNI.sh
+sbatch $WKD/Scripts/PFB_OEE.sh
+```
