@@ -933,14 +933,103 @@ cd $WKDIR
 ./plink --bfile GSA_KEEP --exclude GSAOEE_TRIAL-merge.missnp --make-bed --out GSA_EXCL
 ./plink --bfile OEE_KEEP --exclude GSAOEE_TRIAL-merge.missnp --make-bed --out OEE_EXCL
 
+# CROSS-CONTAMINATION AND TWIN CHECK IN INDIVIDUAL DATASETS
+./plink --bfile GSA_EXCL  --genome --min 0.15 --out GSA_TWINS
+./plink --bfile OEE_EXCL  --genome --min 0.15 --out OEE_TWINS
+```
+
+Back in R, use the output of Plink `--genom` option to identify samples in GSA and OEE that need to be excluded from the analysis due to cross-contamination and/or twin status.
+
+```R
+# SET WORKING DIRECTORY, PREPARE THE ENVIRONMENT
+setwd("...")
+library(tidyverse)
+
+# IMPORT DATASET
+GENO_GSA <- read.csv("GSA_TWINS.genome", sep="", header=TRUE)
+GENO_OEE <- read.csv("OEE_TWINS.genome", sep="", header=TRUE)
+  
+## GENO STRUCTURE
+# FID1	Family ID for first sample
+# IID1	Individual ID for first sample
+# FID2	Family ID for second sample
+# IID2	Individual ID for second sample
+# RT	Relationship type inferred from .fam/.ped file
+# EZ	IBD sharing expected value, based on just .fam/.ped relationship
+# Z0	P(IBD=0)
+# Z1	P(IBD=1)
+# Z2	P(IBD=2)
+# PI_HAT	Proportion IBD, i.e. P(IBD=2) + 0.5*P(IBD=1)
+# PHE	Pairwise phenotypic code (1, 0, -1 = AA, AU, and UU pairs, respectively)
+# DST	IBS distance, i.e. (IBS2 + 0.5*IBS1) / (IBS0 + IBS1 + IBS2)
+# PPC	IBS binomial test
+# RATIO	HETHET : IBS0 SNP ratio (expected value 2)
+
+# CHECK FOR CROSS-CONTAMINATION
+COUNTS_GSA <- as.data.frame.table(table(c(GENO_GSA$IID1, GENO_GSA$IID2))) %>% arrange(desc(Freq))
+COUNTS_OEE <- as.data.frame.table(table(c(GENO_OEE$IID1, GENO_OEE$IID2))) %>% arrange(desc(Freq))
+
+# REMOVE ANYONE WITH 30+ matches
+REMOVE_GSA <- COUNTS_GSA %>%
+  filter(Freq >= 30) %>%
+  pull(Var1) %>%
+  as.character(.)
+
+REMOVE_OEE <- COUNTS_OEE %>%
+  filter(Freq >= 30) %>%
+  pull(Var1) %>%
+  as.character(.)
+
+# IDENTIFY TWINS
+TWINS_GSA <- GENO_GSA %>%
+  filter(Z2 > 0.9) %>%
+  unique() %>%
+  filter(!IID1 %in% REMOVE_GSA | !IID2 %in% REMOVE_GSA)
+
+TWINS_GSA <- c(TWINS_GSA$IID1, TWINS_GSA$IID2) %>%
+  unique()
+
+TWINS_OEE <- GENO_OEE %>%
+  filter(Z2 > 0.9) %>%
+  unique() %>%
+  filter(!IID1 %in% REMOVE_OEE | !IID2 %in% REMOVE_OEE)
+
+TWINS_OEE <- c(TWINS_OEE$IID1, TWINS_OEE$IID2) %>%
+  unique()
+
+# SAVE THE FILE FOR FILTERING
+bind_rows(GENO_GSA %>% select(c(FID1, IID1)),
+          GENO_GSA %>% select(c(FID2, IID2)) %>% rename(FID1=FID2, IID1=IID2)) %>%
+  filter(IID1 %in% c(REMOVE_GSA, TWINS_GSA)) %>%
+  distinct() %>%
+  write_tsv("REMOVE_SAMPLE_GSA.txt", col_names=FALSE)
+
+bind_rows(GENO_OEE %>% select(c(FID1, IID1)),
+          GENO_OEE %>% select(c(FID2, IID2)) %>% rename(FID1=FID2, IID1=IID2)) %>%
+  filter(IID1 %in% c(REMOVE_OEE, TWINS_OEE)) %>%
+  distinct() %>%
+  write_tsv("REMOVE_SAMPLE_OEE.txt", col_names=FALSE)
+```
+
+Back in terminal, use Plink to remove twins and potential cross-contaminations, and identify duplicate samples across GSA and OEE.
+
+```bash
+# SET UP WORKING DIRECTORY
+WKDIR="..."
+cd $WKDIR
+
+# REMOVE CROSS-CONTAMINATED SAMPLES AND TWINS
+./plink --bfile GSA_EXCL  --remove REMOVE_SAMPLE_GSA.txt --make-bed --out GSA_CLN
+./plink --bfile OEE_EXCL  --remove REMOVE_SAMPLE_OEE.txt --make-bed --out OEE_CLN
+
 # MERGE GSA AND OEE
-./plink --bfile OEE_EXCL --bmerge GSA_EXCL.bed GSA_EXCL.bim GSA_EXCL.fam --make-bed --out GSAOEE
+./plink --bfile OEE_CLN --bmerge GSA_CLN.bed GSA_CLN.bim GSA_CLN.fam --make-bed --out GSAOEE
 
 # PERFORM BASIC QC ON GSAOEE
 ./plink --bfile GSAOEE --geno 0.02 --maf 0.01 --hwe 0.000001 --make-bed --out GSAOEE_QC
 
-# LD PRUNE GSAOEE
-./plink --bfile GSAOEE_QC --genome --out GSAOEE_RELATEDNESS
+# IDENTIFY GENETIC RELATIONSHIPS
+./plink --bfile GSAOEE_QC --genome --min 0.9 --out GSAOEE_RELATEDNESS
 ```
 
 Back in R, use the output of Plink `--genom` option to identify samples that have been genotyped at both GSA and OEE platforms.
@@ -949,5 +1038,4 @@ Back in R, use the output of Plink `--genom` option to identify samples that hav
 # SET WORKING DIRECTORY, PREPARE THE ENVIRONMENT
 setwd("...")
 library(tidyverse)
-
 ```
