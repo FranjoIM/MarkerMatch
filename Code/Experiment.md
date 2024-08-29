@@ -1087,3 +1087,7 @@ DUPLICATES %>%
   select(c(ID_GSA, ID_OEE)) %>%
   write_tsv("TS_DUPLICATES.tsv", col_names=TRUE)
 ```
+
+### Analyze Step 1 Data
+Download the `Validation_Final_082624.RData` from the Cloud and import it into local R session, analyzing the outputs.
+
