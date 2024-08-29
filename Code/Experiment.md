@@ -766,3 +766,188 @@ for(h in 1:nrow(DataFileNames)){
 save(DATA, file=paste0(WORK_DIR,"/Analysis/Validation_Final_082624.RData"))
 load(paste0(WORK_DIR,"/Analysis/Validation_Final_082624.RData"))
 ```
+### Prepare Samples for Analysis
+Locally, run the following code to prepare samples for the analysis.
+
+```bash
+# SET UP WORKING DIRECTORY
+WKDIR="..."
+cd $WKDIR
+
+# CONVERT PLINK FILES INTO BFILES
+cd $WKDIR/ASD_SSC_OMNI_1
+./plink --file ASD_SSC_Omni2.5v1 --make-bed --out ASD_S01
+
+cd $WKDIR/TS_TAAICG_GSA_1
+./plink --file TS_TAAICG_GSA-MDv1_Wave1_C --make-bed --out GSA_S01
+
+cd $WKDIR/TS_TAAICG_GSA_2
+./plink --file TS_TAAICG_GSA-MDv1_Wave2_C --make-bed --out GSA_S02
+
+cd $WKDIR/TS_TAAICG_GSA_3
+./plink --file TS_TAAICG_GSA-MDv1_Wave3_C --make-bed --out GSA_S03
+
+cd $WKDIR/TS_TAAICG_OEE_1
+./plink --file 2024_OEE_033s --make-bed --out OEE_S01
+
+cd $WKDIR/TS_TAAICG_OEE_2
+./plink --file 2024_OEE_328s --make-bed --out OEE_S02
+
+# MOVE ALL CONVERTED FILES INTO A SINGLE PROCESSING FOLDER
+mkdir $WKDIR/PROCESSING
+mv $WKDIR/ASD_SSC_OMNI_1/ASD_S01*  $WKDIR/PROCESSING
+mv $WKDIR/TS_TAAICG_GSA_1/GSA_S01*  $WKDIR/PROCESSING
+mv $WKDIR/TS_TAAICG_GSA_2/GSA_S02*  $WKDIR/PROCESSING
+mv $WKDIR/TS_TAAICG_GSA_3/GSA_S03*  $WKDIR/PROCESSING
+mv $WKDIR/TS_TAAICG_OEE_1/OEE_S01*  $WKDIR/PROCESSING
+mv $WKDIR/TS_TAAICG_OEE_2/OEE_S02*  $WKDIR/PROCESSING
+
+# COMBINE GSA FILES THEN OEE FILES
+cd $WKDIR/PROCESSING
+./plink --merge-list GSA_LIST.txt --make-bed --out GSA
+./plink --merge-list OEE_LIST.txt --make-bed --out OEE
+
+# PERFORM BASIC QC ON THE PLINK DATASETS
+./plink --bfile ASD_S01 --geno 0.02 --maf 0.01 --hwe 0.000001 --make-bed --out ASD_QC
+./plink --bfile GSA --geno 0.02 --maf 0.01 --hwe 0.000001 --make-bed --out GSA_QC
+./plink --bfile OEE --geno 0.02 --maf 0.01 --hwe 0.000001 --make-bed --out OEE_QC
+
+# WRITE OUT MAF INFO FOR GSA AND OEE
+./plink --bfile GSA --freqx --out GSA_MAF
+./plink --bfile OEE --freqx --out OEE_MAF
+```
+
+Open R, and use following code to determine which alleles to keep from both OEE and GSA sets for further analysis.
+```R
+# SET WORKING DIRECTORY, PREPARE THE ENVIRONMENT
+setwd("...")
+library(tidyverse)
+
+# IMPORT AND PREPARE DATA
+GSA_SNP <- read_tsv("GSA.bim", col_names=FALSE) %>%
+  rename(Chr=X1, SNP=X2, Start=X3, End=X4, A1=X5, A2=X6)
+
+OEE_SNP <- read_tsv("OEE.bim", col_names=FALSE) %>%
+  rename(Chr=X1, SNP=X2, Start=X3, End=X4, A1=X5, A2=X6)
+
+GSA_MAF <- read_tsv("GSA_MAF.frqx", col_names=TRUE) %>%
+  mutate(C_ALL = 2 * (`C(HOM A1)` + `C(HET)` + `C(HOM A2)` + `C(HAP A1)` + `C(HAP A2)` + `C(MISSING)`)) %>%
+  mutate(A1_F = (2 * `C(HOM A1)` + `C(HET)`)/C_ALL,
+         A2_F = (2 * `C(HOM A2)` + `C(HET)`)/C_ALL) %>%
+  select(c(CHR, SNP, A1, A2, A1_F, A2_F))
+
+OEE_MAF <- read_tsv("OEE_MAF.frqx", col_names=TRUE) %>%
+  mutate(C_ALL = 2 * (`C(HOM A1)` + `C(HET)` + `C(HOM A2)` + `C(HAP A1)` + `C(HAP A2)` + `C(MISSING)`)) %>%
+  mutate(A1_F = (2 * `C(HOM A1)` + `C(HET)`)/C_ALL,
+         A2_F = (2 * `C(HOM A2)` + `C(HET)`)/C_ALL) %>%
+  select(c(CHR, SNP, A1, A2, A1_F, A2_F))
+
+GSA <- full_join(GSA_SNP, GSA_MAF, by=c("Chr"="CHR", "SNP"="SNP", "A1"="A1", "A2"="A2"))
+OEE <- full_join(OEE_SNP, OEE_MAF, by=c("Chr"="CHR", "SNP"="SNP", "A1"="A1", "A2"="A2"))
+
+rm(GSA_MAF, GSA_SNP, OEE_MAF, OEE_SNP)
+
+# GET A LIST OF SNPS WITH SAME POSITIONS AND SAME IDS AND SAME ALLELES
+SNP_IID_IP_NF <- OEE %>%
+  inner_join(GSA, by=c("Chr", "SNP", "A1", "A2", "Start", "End"), keep=TRUE, suffix=c(".OEE", ".GSA"))
+
+TOSS_SNP <- SNP_IID_IP_NF$SNP.OEE
+
+# GET A LIST OF SNPS WITH SAME POSITIONS AND SAME IDS AND FLPPED ALLELES
+SNP_IID_IP_YF <- OEE %>%
+  inner_join(GSA, by=c("Chr", "SNP", "A1"="A2", "A2"="A1", "Start", "End"), keep=TRUE, suffix=c(".OEE", ".GSA"))
+
+TOSS_SNP <- c(TOSS_SNP, SNP_IID_IP_YF$SNP.OEE)
+
+# GET A LIST OF SNPs WITH SAME ID BUT NOT FLIPPED ALLELES
+SNP_IID_NF <- OEE %>%
+  inner_join(GSA, by=c("Chr", "SNP", "A1", "A2"), keep=TRUE, suffix=c(".OEE", ".GSA")) %>%
+  filter(!SNP.OEE %in% TOSS_SNP)
+
+TOSS_SNP <- c(TOSS_SNP, SNP_IID_NF$SNP.OEE)
+
+# GET A LIST OF SNPs WITH SAME ID BUT FLIPPED ALLELES
+SNP_IID_YF <- OEE %>%
+  inner_join(GSA, by=c("Chr", "SNP", "A1"="A2", "A2"="A1"), keep=TRUE, suffix=c(".OEE", ".GSA")) %>%
+  filter(!SNP.OEE %in% TOSS_SNP)
+
+TOSS_SNP <- c(TOSS_SNP, SNP_IID_YF$SNP.OEE)
+
+# GET A LIST OF SNPS WITH DIFFERNT IDs SAME POSITIONS AND SAME ALLELES
+SNP_DID_IP_NF <- OEE %>%
+  inner_join(GSA, by=c("Chr", "Start", "End", "A1", "A2"), keep=TRUE, suffix=c(".OEE", ".GSA")) %>%
+  filter(!SNP.OEE %in% TOSS_SNP) %>%
+  mutate(SNP.GSA.V2=gsub("GSA-", "", SNP.GSA)) %>%
+  filter(SNP.OEE == SNP.GSA.V2)
+
+# GET A LIST OF SNPS WITH DIFFERNT IDs SAME POSITIONS AND FLIPPED ALLELES
+SNP_DID_IP_YF <- OEE %>%
+  inner_join(GSA, by=c("Chr", "Start", "End", "A1"="A2", "A2"="A1"), keep=TRUE, suffix=c(".OEE", ".GSA")) %>%
+  filter(!SNP.OEE %in% TOSS_SNP) %>%
+  mutate(SNP.GSA.V2=gsub("GSA-", "", SNP.GSA)) %>%
+  filter(SNP.OEE == SNP.GSA.V2)
+
+# USE THE 160,487 SNPs WITH SAME ID AND SAME POSITION AND SAME (BUT PERHPAS FLIPPED) ALLELES
+# WRITE NECESSARY FILES (TO FILTER, UPDATE ID, OR FLIP ALLELES)
+bind_rows(SNP_IID_IP_NF, SNP_IID_IP_YF, SNP_DID_IP_NF, SNP_DID_IP_YF) %>%
+  select(SNP.OEE) %>%
+  distinct() %>%
+  write_delim("KEEP_SNP_OEE.txt", col_names=FALSE)
+
+bind_rows(bind_rows(SNP_IID_IP_NF, SNP_IID_IP_YF) %>% select(SNP.GSA),
+  bind_rows(SNP_DID_IP_NF, SNP_DID_IP_YF) %>% select(SNP.GSA.V2) %>% rename(SNP.GSA=SNP.GSA.V2)) %>%
+  distinct() %>%
+  write_delim("KEEP_SNP_GSA.txt", col_names=FALSE)
+
+bind_rows(SNP_DID_IP_NF, SNP_DID_IP_YF) %>% 
+  select(c(SNP.GSA, SNP.GSA.V2)) %>% 
+  write_delim("UPDATE_SNPID_GSA.txt", col_names=FALSE)
+
+bind_rows(SNP_IID_IP_YF %>% select(SNP.GSA),
+          SNP_DID_IP_YF %>% select(SNP.GSA.V2) %>% rename(SNP.GSA=SNP.GSA.V2)) %>%
+  distinct() %>%
+  write_delim("FLIP_SNP_GSA.txt", col_names=FALSE)
+```
+
+Back in terminal, use Plink to create a merged OEE/GSA dataset.
+
+```bash
+# SET UP WORKING DIRECTORY
+WKDIR="..."
+cd $WKDIR
+
+# UPDATE IDS FOR GSA
+./plink --bfile GSA --update-name UPDATE_SNPID_GSA.txt --make-bed --out GSA_UID
+
+# FLIP STRANDS FOR GSA
+./plink --bfile GSA_UID --flip FLIP_SNP_GSA.txt --make-bed --out GSA_FLIP
+
+# FILTER SNPS FROM BOTH GSA AND OEE
+./plink --bfile GSA_FLIP --extract KEEP_SNP_GSA.txt --make-bed --out GSA_KEEP
+./plink --bfile OEE --extract KEEP_SNP_OEE.txt --make-bed --out OEE_KEEP
+
+# TRIAL MERGE GSA AND OEE
+./plink --bfile OEE_KEEP --bmerge GSA_KEEP.bed GSA_KEEP.bim GSA_KEEP.fam --make-bed --out GSAOEE_TRIAL
+
+# EXCLUDE PROBLEMATIC SNPS
+./plink --bfile GSA_KEEP --exclude GSAOEE_TRIAL-merge.missnp --make-bed --out GSA_EXCL
+./plink --bfile OEE_KEEP --exclude GSAOEE_TRIAL-merge.missnp --make-bed --out OEE_EXCL
+
+# MERGE GSA AND OEE
+./plink --bfile OEE_EXCL --bmerge GSA_EXCL.bed GSA_EXCL.bim GSA_EXCL.fam --make-bed --out GSAOEE
+
+# PERFORM BASIC QC ON GSAOEE
+./plink --bfile GSAOEE --geno 0.02 --maf 0.01 --hwe 0.000001 --make-bed --out GSAOEE_QC
+
+# LD PRUNE GSAOEE
+./plink --bfile GSAOEE_QC --genome --out GSAOEE_RELATEDNESS
+```
+
+Back in R, use the output of Plink `--genom` option to identify samples that have been genotyped at both GSA and OEE platforms.
+
+```R
+# SET WORKING DIRECTORY, PREPARE THE ENVIRONMENT
+setwd("...")
+library(tidyverse)
+
+```
