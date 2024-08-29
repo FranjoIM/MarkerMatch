@@ -24,29 +24,25 @@ for(j in SETS_OMNI){
     filter(!is.na(.[[2]])) %>%
     pull(Name)
   
-  for(k in seq(1:22)){
-    BAF <- OMNI_MAN %>%
-      filter(Chr==k) %>% 
-      filter(Name %in% FNAME) %>%
-      pull(BAF)
-    
-    a <- str_split(j, pattern="_")[[1]][1]
-    b <- str_split(j, pattern="_")[[1]][2]
-    
-    ROW <- data.frame(Factor=a,
-                      MaxD=b,
-                      Chr=k,
-                      BAF=BAF)
-    
-    BAFS_OMNI <- rbind(BAFS_OMNI, ROW)
-  }
+  BAF <- OMNI_MAN %>%
+    filter(Name %in% FNAME) %>%
+    pull(BAF)
+  
+  a <- str_split(j, pattern="_")[[1]][1]
+  b <- str_split(j, pattern="_")[[1]][2]
+  
+  ROW <- data.frame(Factor=a,
+                    MaxD=b,
+                    BAF=BAF)
+  
+  BAFS_OMNI <- rbind(BAFS_OMNI, ROW)
 }
 
 BAFS_OMNI$MaxDF <- factor(BAFS_OMNI$MaxD, 
-                     levels=c("0", "10", "50", "100", "500", "1000", "5000", "10000", 
-                              "50000", "100000", "500000", "1000000", "5000000"),
-                     labels=c("0", "10", "50", "100", "500", "1,000", "5,000", "10,000", 
-                              "50,000", "100,000", "500,000", "1,000,000", "5,000,000"))
+                          levels=c("0", "10", "50", "100", "500", "1000", "5000", "10000", 
+                                   "50000", "100000", "500000", "1000000", "5000000"),
+                          labels=c("0", "10", "50", "100", "500", "1,000", "5,000", "10,000", 
+                                   "50,000", "100,000", "500,000", "1,000,000", "5,000,000"))
 
 BAFS_OMNI <- BAFS_OMNI %>%
   mutate(FactorN=case_when(
@@ -56,13 +52,14 @@ BAFS_OMNI <- BAFS_OMNI %>%
     Factor=="LRRmean" ~ "LRR mean",
     Factor=="LRRsd" ~ "LRR sd",
     Factor=="Pos" ~ "Distance",
-    TRUE ~ NA_character_))
+    TRUE ~ NA_character_))  %>%
+  drop_na(BAF)
 
 BAFS_OMNI$FactorF <- factor(BAFS_OMNI$FactorN,
-                       levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                "LRR sd", "Distance"),
-                       labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                "LRR sd", "Distance"))
+                            levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                                     "LRR sd", "Distance"),
+                            labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                                     "LRR sd", "Distance"))
 
 H1_OMNI <- BAFS_OMNI %>%
   filter(Factor=="PerfectMatch") %>%
@@ -122,9 +119,7 @@ for(j in SETS_OEE){
     filter(!is.na(.[[2]])) %>%
     pull(Name)
   
-  for(k in seq(1:22)){
     BAF <- OEE_MAN %>%
-      filter(Chr==k) %>% 
       filter(Name %in% FNAME) %>%
       pull(BAF)
     
@@ -133,16 +128,14 @@ for(j in SETS_OEE){
     
     ROW <- data.frame(Factor=a,
                       MaxD=b,
-                      Chr=k,
                       BAF=BAF)
     
     BAFS_OEE <- rbind(BAFS_OEE, ROW)
-  }
 }
 
 BAFS_OEE$MaxDF <- factor(BAFS_OEE$MaxD, 
-                     levels=c("0", "10000"),
-                     labels=c("0", "10,000"))
+                         levels=c("0", "10000"),
+                         labels=c("0", "10,000"))
 
 BAFS_OEE <- BAFS_OEE %>%
   mutate(FactorN=case_when(
@@ -152,13 +145,14 @@ BAFS_OEE <- BAFS_OEE %>%
     Factor=="LRRmean" ~ "LRR mean",
     Factor=="LRRsd" ~ "LRR sd",
     Factor=="Pos" ~ "Distance",
-    TRUE ~ NA_character_))
+    TRUE ~ NA_character_))  %>%
+  drop_na(BAF)
 
 BAFS_OEE$FactorF <- factor(BAFS_OEE$FactorN,
-                       levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                "LRR sd", "Distance"),
-                       labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                "LRR sd", "Distance"))
+                           levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                                    "LRR sd", "Distance"),
+                           labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                                    "LRR sd", "Distance"))
 
 H1_OEE <- BAFS_OEE %>%
   filter(Factor=="PerfectMatch") %>%
@@ -218,9 +212,7 @@ for(j in SETS_GSA){
     filter(!is.na(.[[2]])) %>%
     pull(Name)
   
-  for(k in seq(1:22)){
     BAF <- GSA_MAN %>%
-      filter(Chr==k) %>% 
       filter(Name %in% FNAME) %>%
       pull(BAF)
     
@@ -229,16 +221,14 @@ for(j in SETS_GSA){
     
     ROW <- data.frame(Factor=a,
                       MaxD=b,
-                      Chr=k,
                       BAF=BAF)
     
     BAFS_GSA <- rbind(BAFS_GSA, ROW)
-  }
 }
 
 BAFS_GSA$MaxDF <- factor(BAFS_GSA$MaxD, 
-                     levels=c("0", "10000"),
-                     labels=c("0", "10,000"))
+                         levels=c("0", "10000"),
+                         labels=c("0", "10,000"))
 
 BAFS_GSA <- BAFS_GSA %>%
   mutate(FactorN=case_when(
@@ -248,13 +238,14 @@ BAFS_GSA <- BAFS_GSA %>%
     Factor=="LRRmean" ~ "LRR mean",
     Factor=="LRRsd" ~ "LRR sd",
     Factor=="Pos" ~ "Distance",
-    TRUE ~ NA_character_))
+    TRUE ~ NA_character_))  %>%
+  drop_na(BAF)
 
 BAFS_GSA$FactorF <- factor(BAFS_GSA$FactorN,
-                       levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                "LRR sd", "Distance"),
-                       labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                "LRR sd", "Distance"))
+                           levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                                    "LRR sd", "Distance"),
+                           labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                                    "LRR sd", "Distance"))
 
 H1_GSA <- BAFS_GSA %>%
   filter(Factor=="PerfectMatch") %>%
