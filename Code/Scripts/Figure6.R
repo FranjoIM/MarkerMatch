@@ -322,4 +322,4 @@ LRRSDS_ALL %>%
             StDev = sd(LRRSD),
             IQR = IQR(LRRSD),
             .groups="keep") %>%
-  write_tsv("TABLES/Table6.tsv", col_names=TRUE)
+  write_tsv("TABLES/Table7.tsv", col_names=TRUE)
