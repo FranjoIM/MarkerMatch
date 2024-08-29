@@ -211,13 +211,16 @@ OEE_MAN <- read_delim("DATA/OEE_MAN.txt", delim="\t")
 In R, ran locally. Code for creating marker density plots, manuscript **Figure 3**. First, the data cen be prepared using [UsedSNPs.R](Scripts/UsedSNPs.R) script, and then plotted using [Figure3.R](Scripts/Figure3.R).
 
 ### Graph Gaps Plots
-In R, ran locally. Code for creating marker gaps plots, manuscript **Figure 4**.
+In R, ran locally. Code for creating marker gaps plots, manuscript **Figure 4**. First, the data cen be plotted using [Figure4.R](Scripts/Figure4.R).
 
 ### Graph BAF Plots
+In R, ran locally. Code for creating BAF plots, manuscript **Figure 5**. First, the data cen be plotted using [Figure5.R](Scripts/Figure5.R).
 
 ### Graph LRR-SD Plots
+In R, ran locally. Code for creating LRR-sd plots, manuscript **Figure 6**. First, the data cen be plotted using [Figure6.R](Scripts/Figure6.R).
 
 ### Graph LRR-Mean Plots
+In R, ran locally. Code for creating LRR-mean plots, manuscript **Figure 7**. First, the data cen be plotted using [Figure7.R](Scripts/Figure7.R).
 
 ### Split Final Reports
 On the cloud, after Illumina final reports have been uploaded, split the final reports. `split_illumina_report.pl` is a part of PennCNV software.
