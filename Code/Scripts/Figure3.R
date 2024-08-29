@@ -51,10 +51,10 @@ NUMBERSNPS <- NUMBERSNPS %>%
     TRUE ~ NA_character_))
 
 NUMBERSNPS$FactorF <- factor(NUMBERSNPS$FactorN,
-  levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-          "LRR sd", "Distance"),
-  labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-          "LRR sd", "Distance"))
+                             levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                                      "LRR sd", "Distance"),
+                             labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                                      "LRR sd", "Distance"))
 
 PLOT_V1_OMNI_COVERAGE <- NUMBERSNPS %>%
   filter(!FactorF %in% c("Full Set", "Perfect Match")) %>%
@@ -103,6 +103,8 @@ PLOT_V1_GSA_COVERAGE <- NUMBERSNPS %>%
         legend.title=element_text(size=12, face="bold"),
         plot.subtitle=element_text(face="bold.italic", size=12)) +
   guides(color=guide_legend(title.position="top", nrow=1))
+
+NUMBERSNPS_OMNI <- NUMBERSNPS
 
 # Plot GSA Data
 NUMBERSNPS <- read_delim("DATA/UsedSNPs_GSA.txt", delim="\t", col_names=T) %>%
@@ -166,6 +168,8 @@ PLOT_V2_GSA_COVERAGE <- NUMBERSNPS %>%
         plot.subtitle=element_text(face="bold.italic", size=12)) +
   guides(color=guide_legend(title.position="top", nrow=1))
 
+NUMBERSNPS_GSA <- NUMBERSNPS
+
 # Plot OEE Data
 NUMBERSNPS <- read_delim("DATA/UsedSNPs_OEE.txt", delim="\t", col_names=T) %>%
   select(-c(Name)) %>%
@@ -228,12 +232,51 @@ PLOT_V3_OEE_COVERAGE <- NUMBERSNPS %>%
         plot.subtitle=element_text(face="bold.italic", size=12)) +
   guides(color=guide_legend(title.position="top", nrow=1))
 
+NUMBERSNPS_OEE <- NUMBERSNPS
+
+# Save Plots
+ggsave(plot=PLOT_V1_OMNI_COVERAGE,
+       filename="FIGURES/Plot3_A1.png",
+       device="png",
+       width=10,
+       height=7,
+       units="in",
+       dpi=350,
+       bg="white")
+
+ggsave(plot=PLOT_V1_GSA_COVERAGE,
+       filename="FIGURES/Plot3_A2.png",
+       device="png",
+       width=10,
+       height=7,
+       units="in",
+       dpi=350,
+       bg="white")
+
+ggsave(plot=PLOT_V3_OEE_COVERAGE,
+       filename="FIGURES/Plot3_B1.png",
+       device="png",
+       width=6,
+       height=7,
+       units="in",
+       dpi=350,
+       bg="white")
+
+ggsave(plot=PLOT_V2_GSA_COVERAGE,
+       filename="FIGURES/Plot3_B2.png",
+       device="png",
+       width=6,
+       height=7,
+       units="in",
+       dpi=350,
+       bg="white")
+
 # Arrange and save plots
-Plot3 <- ggarrange(PLOT_V1_OMNI_COVERAGE + theme(legend.position="none") + rremove("xlab"), 
-          PLOT_V3_OEE_COVERAGE + theme(legend.position="none") + rremove("xlab") + rremove("ylab"),
+Plot3 <- ggarrange(PLOT_V1_OMNI_COVERAGE + theme(legend.position="none"), 
+          PLOT_V3_OEE_COVERAGE + theme(legend.position="none"),
           PLOT_V1_GSA_COVERAGE + theme(legend.position="none"),
-          PLOT_V2_GSA_COVERAGE + theme(legend.position="none") + rremove("ylab"),
-          align="hv", labels=c("A", "B", " ", " "), nrow=2, ncol=2, widths=c(2.5, 1),
+          PLOT_V2_GSA_COVERAGE + theme(legend.position="none"),
+          align="hv", labels=c("A1", "B1", "A2", "B2"), nrow=2, ncol=2, widths=c(2.5, 1),
           legend="top", common.legend=T)  
 
 ggsave(plot=Plot3,
@@ -244,3 +287,9 @@ ggsave(plot=Plot3,
        units="in",
        dpi=350,
        bg="white")
+
+# OUTPUT TABLE WITH COVERAGE DATA
+bind_rows(NUMBERSNPS_OMNI,
+          NUMBERSNPS_GSA,
+          NUMBERSNPS_OEE) %>%
+  write_tsv("TABLES/Table4.tsv", col_names=TRUE)
