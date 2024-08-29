@@ -14,7 +14,6 @@ OMNI_SNPS <- read_delim("DATA/UsedSNPs_OMNI.txt", delim="\t", col_names=T)
 GSA_SNPS <- read_delim("DATA/UsedSNPs_GSA.txt", delim="\t", col_names=T)
 OEE_SNPS <- read_delim("DATA/UsedSNPs_OEE.txt", delim="\t", col_names=T)
 
-
 ### GAPS PLOTS FOR OMNI-GSA
 GAPS_OMNI <- data.frame()
 SETS_OMNI <- colnames(OMNI_SNPS[2:51])
