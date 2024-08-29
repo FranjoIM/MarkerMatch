@@ -775,9 +775,6 @@ WKDIR="..."
 cd $WKDIR
 
 # CONVERT PLINK FILES INTO BFILES
-cd $WKDIR/ASD_SSC_OMNI_1
-./plink --file ASD_SSC_Omni2.5v1 --make-bed --out ASD_S01
-
 cd $WKDIR/TS_TAAICG_GSA_1
 ./plink --file TS_TAAICG_GSA-MDv1_Wave1_C --make-bed --out GSA_S01
 
@@ -795,7 +792,6 @@ cd $WKDIR/TS_TAAICG_OEE_2
 
 # MOVE ALL CONVERTED FILES INTO A SINGLE PROCESSING FOLDER
 mkdir $WKDIR/PROCESSING
-mv $WKDIR/ASD_SSC_OMNI_1/ASD_S01*  $WKDIR/PROCESSING
 mv $WKDIR/TS_TAAICG_GSA_1/GSA_S01*  $WKDIR/PROCESSING
 mv $WKDIR/TS_TAAICG_GSA_2/GSA_S02*  $WKDIR/PROCESSING
 mv $WKDIR/TS_TAAICG_GSA_3/GSA_S03*  $WKDIR/PROCESSING
@@ -808,7 +804,6 @@ cd $WKDIR/PROCESSING
 ./plink --merge-list OEE_LIST.txt --make-bed --out OEE
 
 # PERFORM BASIC QC ON THE PLINK DATASETS
-./plink --bfile ASD_S01 --geno 0.02 --maf 0.01 --hwe 0.000001 --make-bed --out ASD_QC
 ./plink --bfile GSA --geno 0.02 --maf 0.01 --hwe 0.000001 --make-bed --out GSA_QC
 ./plink --bfile OEE --geno 0.02 --maf 0.01 --hwe 0.000001 --make-bed --out OEE_QC
 
@@ -1038,4 +1033,57 @@ Back in R, use the output of Plink `--genom` option to identify samples that hav
 # SET WORKING DIRECTORY, PREPARE THE ENVIRONMENT
 setwd("...")
 library(tidyverse)
+
+# IMPORT DATASET
+
+GENO <- read.csv("GSAOEE_RELATEDNESS.genome", sep="", header=TRUE) %>%
+  filter(Z2 > 0.99)
+
+FAM_GSA <- read.csv("GSA_CLN.fam", sep="", header=FALSE) %>%
+  select(V2)
+
+FAM_OEE <- read.csv("OEE_CLN.fam", sep="", header=FALSE) %>%
+  select(V2)
+
+## GENO STRUCTURE
+# FID1	Family ID for first sample
+# IID1	Individual ID for first sample
+# FID2	Family ID for second sample
+# IID2	Individual ID for second sample
+# RT	Relationship type inferred from .fam/.ped file
+# EZ	IBD sharing expected value, based on just .fam/.ped relationship
+# Z0	P(IBD=0)
+# Z1	P(IBD=1)
+# Z2	P(IBD=2)
+# PI_HAT	Proportion IBD, i.e. P(IBD=2) + 0.5*P(IBD=1)
+# PHE	Pairwise phenotypic code (1, 0, -1 = AA, AU, and UU pairs, respectively)
+# DST	IBS distance, i.e. (IBS2 + 0.5*IBS1) / (IBS0 + IBS1 + IBS2)
+# PPC	IBS binomial test
+# RATIO	HETHET : IBS0 SNP ratio (expected value 2)
+
+# CREATE ANNOTATION TABLE
+ANNOT <- bind_rows(
+  FAM_GSA %>%
+    rename(ID=V2) %>%
+    mutate(ARRAY="GSA"),
+  FAM_OEE %>%
+    rename(ID=V2) %>%
+    mutate(ARRAY="OEE")) %>%
+  filter(ID %in% c(GENO$IID1, GENO$IID2)) %>%
+  select(c(ID, ARRAY))
+
+# ANNOTATE GENO WITH ARRAY INFORMATION
+DUPLICATES <- GENO %>%
+  select(c(IID1, IID2)) %>%
+  left_join(ANNOT, by=c("IID1"="ID")) %>%
+  rename(ARR1=ARRAY) %>%
+  left_join(ANNOT, by=c("IID2"="ID")) %>%
+  rename(ARR2=ARRAY) %>%
+  mutate(ID_GSA=ifelse(ARR1=="GSA", IID1, IID2),
+         ID_OEE=ifelse(ARR1=="OEE", IID1, IID2))
+
+# WRITE TABLE FOR FUTURE USE
+DUPLICATES %>%
+  select(c(ID_GSA, ID_OEE)) %>%
+  write_tsv("TS_DUPLICATES.tsv", col_names=TRUE)
 ```
