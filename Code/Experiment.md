@@ -537,7 +537,7 @@ R
 # SET UP WORKING DIRECTORIES
 WORK_DIR="/Validation"
 dir.create(paste0(WORK_DIR,"/Analysis"))
-setwd(WORK_DIR)
+setwd("Validation")
 
 # LOAD LIBRARIES
 library(tidyverse)
@@ -564,6 +564,7 @@ DataFileNames <- data.frame(
 DATA <- list()
 
 # IMPORT DATA
+WORK_DIR <- getwd()
 for(i in 1:nrow(DataFileNames)){
     FIL_NAME <- ifelse(is.na(DataFileNames$MaxD[i]), DataFileNames$Factor[i], paste0(DataFileNames$Factor[i], "_", DataFileNames$MaxD[i]))
 
@@ -583,191 +584,8 @@ for(i in 1:nrow(DataFileNames)){
 }
 
 # CHECKPOINT SAVE
-save(DATA, file=paste0(WORK_DIR,"/Analysis/Validation_Import_082624.RData"))
-load(paste0(WORK_DIR,"/Analysis/Validation_Import_082624.RData"))
-
-# PROCESS IMPORTED DATA
-QC_Curate <- "NOTICE: quality summary for /Intensities/ASD/|NOTICE: quality summary for /Intensities/OEE/|NOTICE: quality summary for /Intensities/TS/|_Omni2.5_FinalReport.txt:|LRR_mean=|LRR_median=|LRR_SD=|BAF_mean=|BAF_median=|BAF_SD=|BAF_DRIFT=|WF=|GCWF=|/Intensities/ASD/|_Omni2.5_FinalReport.txt|/|numsnp=|length=|state|cn=|startsnp=|endsnp=|conf="
-QC_ColNames <- c("ID", "LRR_mean", "LRR_median", "LRR_SD", "BAF_mean", "BAF_median", "BAF_SD", "BAF_drift", "WF", "GCWF")
-CNV_ColNames <- c("Position", "N_SNP", "LEN", "State", "CN", "ID", "start_snp", "end_snp", "CONF")
-
-Process_QC <- function(DF) {
-    DF %>%
-        filter(grepl("quality summary", lines)) %>%
-        mutate(lines=gsub(QC_Curate, "", lines)) %>%
-        separate(lines, sep="\\s", into=QC_ColNames) %>%
-        mutate(ID=substr(ID, 1,8)) %>%
-        mutate_at(vars(LRR_mean:GCWF), as.numeric)
-}
-
-Process_CNV <- function(DF) {
-    DF %>%
-        mutate_at(.vars=1:8, .fun=gsub, pattern=QC_Curate, replacement="") %>%
-        rowwise() %>%
-        mutate(ID=substr(ID, 1,8),
-            CHR=gsub("chr","",str_split(Position, ":|-")[[1]][1]),
-            START=str_split(Position, ":|-")[[1]][2],
-            END=str_split(Position, ":|-")[[1]][3],
-            STATE=str_split(StateCopyNumber, ",")[[1]][1],
-            CN=str_split(StateCopyNumber, ",")[[1]][2],
-            .keep="unused") %>%
-        ungroup() %>%
-        mutate(CNV_ID=paste0(ID, "-", CHR, "-", START, "-", END, "-", STATE, "-", CN))
-}
-
-for(h in 1:nrow(DataFileNames)){
-    k <- DataFileNames$Subdirectory[h]
-    i <- DataFileNames$FactorLab[h]
-    j <- DataFileNames$MaxDLab[h]
-
-    message(k, "\t", i, "\t", j)
-
-    DATA[["Raw"]][[k]][[i]][[j]][["QC"]] <- DATA[["Raw"]][[k]][[i]][[j]][["QC"]] %>% Process_QC(.)
-    DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] <- DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] %>% Process_CNV(.)
-}
-
-for(h in 1:nrow(DataFileNames)){
-    k <- DataFileNames$Subdirectory[h]
-    i <- DataFileNames$FactorLab[h]
-    j <- DataFileNames$MaxDLab[h]
-
-    message(k, "\t", i, "\t", j)
-
-    if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Cen"]]) > 0) {
-        DATA[["Raw"]][[k]][[i]][[j]][["Cen"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Cen"]] %>% Process_CNV(.) %>% pull(CNV_ID)
-    } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with centromeres.\n")}
-
-    if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Tel"]]) > 0) {
-            DATA[["Raw"]][[k]][[i]][[j]][["Tel"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Tel"]] %>% Process_CNV(.) %>% pull(CNV_ID)
-    } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with telomeres.\n")}
-
-    if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Imu"]]) > 0) {
-            DATA[["Raw"]][[k]][[i]][[j]][["Imu"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Imu"]] %>% Process_CNV(.) %>% pull(CNV_ID)
-    } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with immune regions.\n")}
-
-    if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]]) > 0) {
-        DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]] <- DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]] %>% Process_CNV(.) %>% pull(CNV_ID)
-    } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with segmental duplications.\n")}
-}
-
-# CHECKPOINT SAVE
-save(DATA, file=paste0(WORK_DIR,"/Analysis/Validation_Chekpoint1_082624.RData"))
-load(paste0(WORK_DIR,"/Analysis/Validation_Chekpoint1_082624.RData"))
-
-# CONFIDENCE SCORES
-CONF_SCORE <- as.numeric(NULL)
-
-for(h in 1:nrow(DataFileNames)){
-  k <- DataFileNames$Subdirectory[h]
-  i <- DataFileNames$FactorLab[h]
-  j <- DataFileNames$MaxDLab[h]
-
-  # Annotate overlaps
-  CONF_SCORE <- c(CONF_SCORE, DATA[["Raw"]][[k]][[i]][[j]][["CNV"]]$Confidence)
-}
-
-quantile(as.numeric(CONF_SCORE), probs=seq(0.1,1, by=0.1))
-
-# STRATIFIERS
-for(h in 1:nrow(DataFileNames)){
-  k <- DataFileNames$Subdirectory[h]
-  i <- DataFileNames$FactorLab[h]
-  j <- DataFileNames$MaxDLab[h] 
-
-  # Annotate overlaps
-  DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] <- DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] %>%
-    mutate(Confidence=as.numeric(Confidence)) %>%
-    mutate(Tel=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["Tel"]], 1, 0),
-        Cen=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["Cen"]], 1, 0),
-        Imu=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["Imu"]], 1, 0),
-        SegDup=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]], 1, 0),
-        CONF_DECILE=case_when(
-            Confidence < 11.016 ~ 0,
-            Confidence >= 11.016 & Confidence < 13.302 ~ 10,
-            Confidence >= 13.302 & Confidence < 14.797 ~ 20,
-            Confidence >= 14.797 & Confidence < 16.291 ~ 30,
-            Confidence >= 16.291 & Confidence < 18.452 ~ 40,
-            Confidence >= 18.452 & Confidence < 21.317 ~ 50,
-            Confidence >= 21.317 & Confidence < 25.883 ~ 60,
-            Confidence >= 25.883 & Confidence < 33.956 ~ 70,
-            Confidence >= 33.956 & Confidence < 54.361 ~ 80,
-            Confidence >= 54.361 ~ 90,
-            TRUE ~ NA_integer_))
-}
-
-# MEDIAN ABSOLUTE DEVIATION
-MAD <- function(X=X, direction=direction, scale=1){
-  if(direction=="+") {
-    return(median(X)+mad(X, constant=scale*1.4826))
-  } else if (direction=="-") {
-    return(median(X)-mad(X, constant=scale*1.4826))
-  } else {
-    message("Direction has to be + or -.")
-  }
-}
-
-# QUALITY CONTROL
-for(h in 1:nrow(DataFileNames)){
-  k <- DataFileNames$Subdirectory[h]
-  i <- DataFileNames$FactorLab[h]
-  j <- DataFileNames$MaxDLab[h] 
-
-  # Initialize data frames
-  DATA[["QCd"]][[k]][[i]][[j]][["CNV"]] <- data.frame(NULL)
-  DATA[["QCd"]][[k]][[i]][[j]][["QC"]] <- data.frame(NULL)
-  
-  # Calculate stats
-  LRR_MEAN_UP <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$LRR_mean, direction="+", scale=4)
-  LRR_MEAN_DO <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$LRR_mean, direction="-", scale=4)
-  LRR_SDEV_UP <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$LRR_SD, direction="+", scale=4)
-  BAF_MEAN_UP <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$BAF_mean, direction="+", scale=4)
-  BAF_MEAN_DO <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$BAF_mean, direction="-", scale=4)
-  BAF_SDEV_UP <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$BAF_SD, direction="+", scale=4)
-  BAF_DRIF_UP <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$BAF_drift, direction="+", scale=4)
-  GCWF_UP <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$GCWF, direction="+", scale=4)
-  GCWF_DO <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$GCWF, direction="-", scale=4)
-  
-  # Get a list of IDs to remove from the dataset from sample QC in Logs
-  KEEP_LOG_SAM <- DATA[["Raw"]][[k]][[i]][[j]][["QC"]] %>%
-    filter(LRR_mean >= LRR_MEAN_DO & LRR_mean <= LRR_MEAN_UP) %>%
-    filter(LRR_SD <= LRR_SDEV_UP) %>%
-    filter(BAF_mean >= BAF_MEAN_DO &  BAF_mean <= BAF_MEAN_UP) %>%
-    filter(BAF_SD <= BAF_SDEV_UP) %>%
-    filter(BAF_drift <= BAF_DRIF_UP) %>%
-    filter(GCWF >= GCWF_DO &  GCWF <= GCWF_UP) %>%
-    pull(ID)
-  
-  REMOVE_LOG_SAM <- setdiff(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$ID, KEEP_LOG_SAM)
-  
-  # Calculate CNV Counts
-  CNV_COUNT <- data.frame(table(ID=pull(DATA[["Raw"]][[k]][[i]][[j]][["CNV"]], ID))) %>% 
-    arrange(desc(Freq))
-  
-  CNV_COUNT_LIM <- MAD(CNV_COUNT$Freq, direction="+", scale=4)
-  
-  # Get a list of IDs to remove from the dataset from sample QC in Raw CNV calls
-  REMOVE_CNV_SAM <- CNV_COUNT %>%
-    filter(Freq > CNV_COUNT_LIM) %>%
-    pull(ID) %>%
-    as.character(.)
-  
-  # Form a list of samples to remove
-  REMOVE_SAM <- union(REMOVE_CNV_SAM, REMOVE_LOG_SAM)
-  
-  # Filter CNVs and QCs to only include the samples passing QC above, additionally, 
-  # filter out CNVs spanning less than 10 SNPs and less than 20kb
-  DATA[["QCd"]][[k]][[i]][[j]][["CNV"]] <- DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] %>%
-    filter(!ID %in% REMOVE_SAM) %>%
-    filter(NumSNP >= 10) %>%
-    filter(Length >= 20000)
-  
-  DATA[["QCd"]][[k]][[i]][[j]][["QC"]] <- DATA[["Raw"]][[k]][[i]][[j]][["QC"]] %>%
-    filter(!ID %in% REMOVE_SAM)
-}
-
-# CHECKPOINT SAVE
-save(DATA, file=paste0(WORK_DIR,"/Analysis/Validation_Final_082624.RData"))
-load(paste0(WORK_DIR,"/Analysis/Validation_Final_082624.RData"))
+save(DATA, file=paste0(WORK_DIR,"/Analysis/Validation_Import_082924.RData"))
+load(paste0(WORK_DIR,"/Analysis/Validation_Import_082924.RData"))
 ```
 ### Prepare Samples for Analysis
 Locally, run the following code to prepare samples for the analysis.
@@ -1102,5 +920,197 @@ library(ggpubr)
 
 # LOAD DATA
 load("Validation_Final_082624.RData")
+
+
+# PROCESS IMPORTED DATA
+QC_Curate <- "NOTICE: quality summary for /blue/carolmathews/njofrica/Adjusted/ASD/|NOTICE: quality summary for /blue/carolmathews/njofrica/Intensities/OEE/|NOTICE: quality summary for /blue/carolmathews/njofrica/Intensities/TS/|_Omni2.5_FinalReport.txt:|LRR_mean=|LRR_median=|LRR_SD=|BAF_mean=|BAF_median=|BAF_SD=|BAF_DRIFT=|WF=|GCWF=|_Omni2.5_FinalReport.txt|/|numsnp=|length=|state|cn=|startsnp=|endsnp=|conf=|/blue/carolmathews/njofrica/Adjusted/ASD/|/blue/carolmathews/njofrica/Intensities/OEE/|/blue/carolmathews/njofrica/Intensities/TS/|.adjusted|:"
+QC_ColNames <- c("ID", "LRR_mean", "LRR_median", "LRR_SD", "BAF_mean", "BAF_median", "BAF_SD", "BAF_drift", "WF", "GCWF")
+CNV_ColNames <- c("Position", "N_SNP", "LEN", "State", "CN", "ID", "start_snp", "end_snp", "CONF")
+
+Process_QC <- function(DF) {
+    DF %>%
+        filter(grepl("quality summary", lines)) %>%
+        mutate(lines=gsub(QC_Curate, "", lines)) %>%
+        separate(lines, sep="\\s", into=QC_ColNames) %>%
+        mutate_at(vars(LRR_mean:GCWF), as.numeric)
+}
+
+Process_CNV <- function(DF) {
+    DF %>%
+        mutate_at(.vars=1:8, .fun=gsub, pattern=QC_Curate, replacement="") %>%
+        rowwise() %>%
+        mutate(ID=ID,
+            CHR=gsub("chr","",str_split(Position, ":|-")[[1]][1]),
+            START=str_split(Position, ":|-")[[1]][2],
+            END=str_split(Position, ":|-")[[1]][3],
+            STATE=str_split(StateCopyNumber, ",")[[1]][1],
+            CN=str_split(StateCopyNumber, ",")[[1]][2],
+            .keep="unused") %>%
+        ungroup() %>%
+        mutate(CNV_ID=paste0(ID, "-", CHR, "-", START, "-", END, "-", STATE, "-", CN))
+}
+
+for(h in 1:nrow(DataFileNames)){
+    k <- DataFileNames$Subdirectory[h]
+    i <- DataFileNames$FactorLab[h]
+    j <- DataFileNames$MaxDLab[h]
+
+    message(k, "\t", i, "\t", j)
+
+    DATA[["Raw"]][[k]][[i]][[j]][["QC"]] <- DATA[["Raw"]][[k]][[i]][[j]][["QC"]] %>% Process_QC(.)
+}
+
+for(h in 1:nrow(DataFileNames)){
+    k <- DataFileNames$Subdirectory[h]
+    i <- DataFileNames$FactorLab[h]
+    j <- DataFileNames$MaxDLab[h]
+
+    message(k, "\t", i, "\t", j)
+
+    DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] <- DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] %>% Process_CNV(.)
+}
+
+for(h in 1:nrow(DataFileNames)){
+    k <- DataFileNames$Subdirectory[h]
+    i <- DataFileNames$FactorLab[h]
+    j <- DataFileNames$MaxDLab[h]
+
+    message(k, "\t", i, "\t", j)
+
+    if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Cen"]]) > 0) {
+        DATA[["Raw"]][[k]][[i]][[j]][["Cen"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Cen"]] %>% Process_CNV(.) %>% pull(CNV_ID)
+    } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with centromeres.\n")}
+
+    if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Tel"]]) > 0) {
+            DATA[["Raw"]][[k]][[i]][[j]][["Tel"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Tel"]] %>% Process_CNV(.) %>% pull(CNV_ID)
+    } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with telomeres.\n")}
+
+    if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Imu"]]) > 0) {
+            DATA[["Raw"]][[k]][[i]][[j]][["Imu"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Imu"]] %>% Process_CNV(.) %>% pull(CNV_ID)
+    } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with immune regions.\n")}
+
+    if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]]) > 0) {
+        DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]] <- DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]] %>% Process_CNV(.) %>% pull(CNV_ID)
+    } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with segmental duplications.\n")}
+}
+
+# CHECKPOINT SAVE
+save(DATA, file=paste0(WORK_DIR,"/Analysis/Validation_Chekpoint1_082924.RData"))
+load(paste0(WORK_DIR,"/Analysis/Validation_Chekpoint1_082924.RData"))
+
+# CONFIDENCE SCORES
+CONF_SCORE <- as.numeric(NULL)
+
+for(h in 1:nrow(DataFileNames)){
+  k <- DataFileNames$Subdirectory[h]
+  i <- DataFileNames$FactorLab[h]
+  j <- DataFileNames$MaxDLab[h]
+
+  # Annotate overlaps
+  CONF_SCORE <- c(CONF_SCORE, DATA[["Raw"]][[k]][[i]][[j]][["CNV"]]$Confidence)
+}
+
+quantile(as.numeric(CONF_SCORE), probs=seq(0.1,1, by=0.1))
+
+# STRATIFIERS
+for(h in 1:nrow(DataFileNames)){
+  k <- DataFileNames$Subdirectory[h]
+  i <- DataFileNames$FactorLab[h]
+  j <- DataFileNames$MaxDLab[h] 
+
+  # Annotate overlaps
+  DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] <- DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] %>%
+    mutate(Confidence=as.numeric(Confidence)) %>%
+    mutate(Tel=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["Tel"]], 1, 0),
+        Cen=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["Cen"]], 1, 0),
+        Imu=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["Imu"]], 1, 0),
+        SegDup=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]], 1, 0),
+        CONF_DECILE=case_when(
+            Confidence < 11.016 ~ 0,
+            Confidence >= 11.016 & Confidence < 13.302 ~ 10,
+            Confidence >= 13.302 & Confidence < 14.797 ~ 20,
+            Confidence >= 14.797 & Confidence < 16.291 ~ 30,
+            Confidence >= 16.291 & Confidence < 18.452 ~ 40,
+            Confidence >= 18.452 & Confidence < 21.317 ~ 50,
+            Confidence >= 21.317 & Confidence < 25.883 ~ 60,
+            Confidence >= 25.883 & Confidence < 33.956 ~ 70,
+            Confidence >= 33.956 & Confidence < 54.361 ~ 80,
+            Confidence >= 54.361 ~ 90,
+            TRUE ~ NA_integer_))
+}
+
+# MEDIAN ABSOLUTE DEVIATION
+MAD <- function(X=X, direction=direction, scale=1){
+  if(direction=="+") {
+    return(median(X)+mad(X, constant=scale*1.4826))
+  } else if (direction=="-") {
+    return(median(X)-mad(X, constant=scale*1.4826))
+  } else {
+    message("Direction has to be + or -.")
+  }
+}
+
+# QUALITY CONTROL
+for(h in 1:nrow(DataFileNames)){
+  k <- DataFileNames$Subdirectory[h]
+  i <- DataFileNames$FactorLab[h]
+  j <- DataFileNames$MaxDLab[h] 
+
+  # Initialize data frames
+  DATA[["QCd"]][[k]][[i]][[j]][["CNV"]] <- data.frame(NULL)
+  DATA[["QCd"]][[k]][[i]][[j]][["QC"]] <- data.frame(NULL)
+  
+  # Calculate stats
+  LRR_MEAN_UP <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$LRR_mean, direction="+", scale=4)
+  LRR_MEAN_DO <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$LRR_mean, direction="-", scale=4)
+  LRR_SDEV_UP <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$LRR_SD, direction="+", scale=4)
+  BAF_MEAN_UP <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$BAF_mean, direction="+", scale=4)
+  BAF_MEAN_DO <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$BAF_mean, direction="-", scale=4)
+  BAF_SDEV_UP <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$BAF_SD, direction="+", scale=4)
+  BAF_DRIF_UP <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$BAF_drift, direction="+", scale=4)
+  GCWF_UP <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$GCWF, direction="+", scale=4)
+  GCWF_DO <- MAD(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$GCWF, direction="-", scale=4)
+  
+  # Get a list of IDs to remove from the dataset from sample QC in Logs
+  KEEP_LOG_SAM <- DATA[["Raw"]][[k]][[i]][[j]][["QC"]] %>%
+    filter(LRR_mean >= LRR_MEAN_DO & LRR_mean <= LRR_MEAN_UP) %>%
+    filter(LRR_SD <= LRR_SDEV_UP) %>%
+    filter(BAF_mean >= BAF_MEAN_DO &  BAF_mean <= BAF_MEAN_UP) %>%
+    filter(BAF_SD <= BAF_SDEV_UP) %>%
+    filter(BAF_drift <= BAF_DRIF_UP) %>%
+    filter(GCWF >= GCWF_DO &  GCWF <= GCWF_UP) %>%
+    pull(ID)
+  
+  REMOVE_LOG_SAM <- setdiff(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$ID, KEEP_LOG_SAM)
+  
+  # Calculate CNV Counts
+  CNV_COUNT <- data.frame(table(ID=pull(DATA[["Raw"]][[k]][[i]][[j]][["CNV"]], ID))) %>% 
+    arrange(desc(Freq))
+  
+  CNV_COUNT_LIM <- MAD(CNV_COUNT$Freq, direction="+", scale=4)
+  
+  # Get a list of IDs to remove from the dataset from sample QC in Raw CNV calls
+  REMOVE_CNV_SAM <- CNV_COUNT %>%
+    filter(Freq > CNV_COUNT_LIM) %>%
+    pull(ID) %>%
+    as.character(.)
+  
+  # Form a list of samples to remove
+  REMOVE_SAM <- union(REMOVE_CNV_SAM, REMOVE_LOG_SAM)
+  
+  # Filter CNVs and QCs to only include the samples passing QC above, additionally, 
+  # filter out CNVs spanning less than 10 SNPs and less than 20kb
+  DATA[["QCd"]][[k]][[i]][[j]][["CNV"]] <- DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] %>%
+    filter(!ID %in% REMOVE_SAM) %>%
+    filter(NumSNP >= 10) %>%
+    filter(Length >= 20000)
+  
+  DATA[["QCd"]][[k]][[i]][[j]][["QC"]] <- DATA[["Raw"]][[k]][[i]][[j]][["QC"]] %>%
+    filter(!ID %in% REMOVE_SAM)
+}
+
+# CHECKPOINT SAVE
+save(DATA, file=paste0(WORK_DIR,"/Analysis/Validation_Final_082624.RData"))
+load(paste0(WORK_DIR,"/Analysis/Validation_Final_082624.RData"))
 
 ```
