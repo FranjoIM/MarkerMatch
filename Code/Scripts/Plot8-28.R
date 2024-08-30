@@ -595,3 +595,11 @@ ggarrange(PLOTS$Duplications$All$CSI + rremove("xlab"),
          units="in",
          dpi=350,
          bg="white") 
+
+# WRITE TABLE DATA
+ANALYSIS_SSC %>%
+  rename(Method=Matching_Method,
+    MaxD=Matching_Distance,
+    QC=Matching_Type) %>%
+  select(-MaxD_LOG) %>%
+  write_tsv("TABLES/Table9.tsv", col_names=TRUE)
