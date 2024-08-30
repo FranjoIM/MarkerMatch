@@ -41,6 +41,13 @@ for(h in 1:nrow(DataFileNames)){
              CN = as.numeric(CN)) %>%
       select(-c(StartSNP, EndSNP, NumSNP, Length))
 
+    # Keep only same for the analysis
+    KEEP_IDs <- intersect(unique(REF$ID), unique(MAT$ID))
+    REF <- REF %>%
+      filter(ID %in% KEEP_IDs)
+    MAT <- MAT %>%
+      filter(ID %in% KEEP_IDs)
+
     # Remove telomeric, centromeric, and immunoglobulin regions from the QCd callset
     if (o=="QCd") {
       MAT <- MAT %>%
