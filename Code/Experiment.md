@@ -909,8 +909,8 @@ DUPLICATES %>%
   write_tsv("TS_DUPLICATES.tsv", col_names=TRUE)
 ```
 
-### Analyze Step 1 Data
-Download the `Validation_Final_082624.RData` from the Cloud and import it into local R session, analyzing the outputs.
+### Prepare CNV Data for Final Analyses
+Download the `Validation_Import_082924.RData` from the Cloud and import it into local R session, analyzing the outputs.
 
 ```R
 # SET WORKING DIRECTORY, PREPARE THE ENVIRONMENT
@@ -919,84 +919,83 @@ library(tidyverse)
 library(ggpubr)
 
 # LOAD DATA
-load("Validation_Final_082624.RData")
-
+load("Validation_Import_082924.RData")
 
 # PROCESS IMPORTED DATA
-QC_Curate <- "NOTICE: quality summary for /blue/carolmathews/njofrica/Adjusted/ASD/|NOTICE: quality summary for /blue/carolmathews/njofrica/Intensities/OEE/|NOTICE: quality summary for /blue/carolmathews/njofrica/Intensities/TS/|_Omni2.5_FinalReport.txt:|LRR_mean=|LRR_median=|LRR_SD=|BAF_mean=|BAF_median=|BAF_SD=|BAF_DRIFT=|WF=|GCWF=|_Omni2.5_FinalReport.txt|/|numsnp=|length=|state|cn=|startsnp=|endsnp=|conf=|/blue/carolmathews/njofrica/Adjusted/ASD/|/blue/carolmathews/njofrica/Intensities/OEE/|/blue/carolmathews/njofrica/Intensities/TS/|.adjusted|:"
+QC_Curate <- "NOTICE: quality summary for /blue/carolmathews/njofrica/Adjusted/ASD/|NOTICE: quality summary for /blue/carolmathews/njofrica/Adjusted/OEE/|NOTICE: quality summary for /blue/carolmathews/njofrica/Adjusted/TS|_Omni2.5_FinalReport.txt:|LRR_mean=|LRR_median=|LRR_SD=|BAF_mean=|BAF_median=|BAF_SD=|BAF_DRIFT=|WF=|GCWF=|_Omni2.5_FinalReport.txt|/|numsnp=|length=|state|cn=|startsnp=|endsnp=|conf=|/blue/carolmathews/njofrica/Adjusted/ASD/|/blue/carolmathews/njofrica/Adjusted/OEE/|/blue/carolmathews/njofrica/Adjusted/TS/|.adjusted|:"
 QC_ColNames <- c("ID", "LRR_mean", "LRR_median", "LRR_SD", "BAF_mean", "BAF_median", "BAF_SD", "BAF_drift", "WF", "GCWF")
 CNV_ColNames <- c("Position", "N_SNP", "LEN", "State", "CN", "ID", "start_snp", "end_snp", "CONF")
 
+# CREATE DATAFRAME OF INPUT LISTS
+DataFileNames <- data.frame(
+  Subdirectory=c(rep("SSC", 50), rep("GSA", 6), rep("OEE", 6)),
+  Factor=c("FullSet", "PerfectMatch", rep("BAF", 12), rep("LRRmean", 12), rep("LRRsd", 12), rep("Pos", 12), "GSA_FullSet", "GSA_PerfectMatch", "GSA_BAF", "GSA_LRRmean", "GSA_LRRsd", "GSA_Pos", "OEE_FullSet", "OEE_PerfectMatch", "OEE_BAF", "OEE_LRRmean", "OEE_LRRsd", "OEE_Pos"),
+  MaxD=c(NA, NA, rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4), NA, "0", rep("10000", 4),  NA, "0", rep("10000", 4)),
+  FactorLab=c("FullSet", "PerfectMatch", rep("BAF", 12), rep("LRRmean", 12), rep("LRRsd", 12), rep("Pos", 12), rep(c("FullSet", "PerfectMatch", "BAF", "LRRmean", "LRRsd", "Pos"), 2)),
+  MaxDLab=c("0", "0", rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4), "0", "0", rep("10000", 4),  "0", "0", rep("10000", 4)),
+  stringsAsFactors=FALSE)
+
 Process_QC <- function(DF) {
-    DF %>%
-        filter(grepl("quality summary", lines)) %>%
-        mutate(lines=gsub(QC_Curate, "", lines)) %>%
-        separate(lines, sep="\\s", into=QC_ColNames) %>%
-        mutate_at(vars(LRR_mean:GCWF), as.numeric)
+  DF %>%
+    filter(grepl("quality summary", lines)) %>%
+    mutate(lines=gsub(QC_Curate, "", lines)) %>%
+    separate(lines, sep="\\s", into=QC_ColNames) %>%
+    mutate_at(vars(LRR_mean:GCWF), as.numeric)
 }
 
 Process_CNV <- function(DF) {
-    DF %>%
-        mutate_at(.vars=1:8, .fun=gsub, pattern=QC_Curate, replacement="") %>%
-        rowwise() %>%
-        mutate(ID=ID,
-            CHR=gsub("chr","",str_split(Position, ":|-")[[1]][1]),
-            START=str_split(Position, ":|-")[[1]][2],
-            END=str_split(Position, ":|-")[[1]][3],
-            STATE=str_split(StateCopyNumber, ",")[[1]][1],
-            CN=str_split(StateCopyNumber, ",")[[1]][2],
-            .keep="unused") %>%
-        ungroup() %>%
-        mutate(CNV_ID=paste0(ID, "-", CHR, "-", START, "-", END, "-", STATE, "-", CN))
+  DF %>%
+    mutate_at(.vars=1:8, .fun=gsub, pattern=QC_Curate, replacement="") %>%
+    rowwise() %>%
+    mutate(ID=ID,
+           CHR=gsub("chr","",str_split(Position, ":|-")[[1]][1]),
+           START=str_split(Position, ":|-")[[1]][2],
+           END=str_split(Position, ":|-")[[1]][3],
+           STATE=str_split(StateCopyNumber, ",")[[1]][1],
+           CN=str_split(StateCopyNumber, ",")[[1]][2],
+           .keep="unused") %>%
+    ungroup() %>%
+    mutate(CNV_ID=paste0(ID, "-", CHR, "-", START, "-", END, "-", STATE, "-", CN))
 }
 
 for(h in 1:nrow(DataFileNames)){
-    k <- DataFileNames$Subdirectory[h]
-    i <- DataFileNames$FactorLab[h]
-    j <- DataFileNames$MaxDLab[h]
-
-    message(k, "\t", i, "\t", j)
-
-    DATA[["Raw"]][[k]][[i]][[j]][["QC"]] <- DATA[["Raw"]][[k]][[i]][[j]][["QC"]] %>% Process_QC(.)
+  k <- DataFileNames$Subdirectory[h]
+  i <- DataFileNames$FactorLab[h]
+  j <- DataFileNames$MaxDLab[h]
+  
+  message(k, "\t", i, "\t", j)
+  
+  DATA[["Raw"]][[k]][[i]][[j]][["QC"]] <- DATA[["Raw"]][[k]][[i]][[j]][["QC"]] %>% Process_QC(.)
+  DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] <- DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] %>% Process_CNV(.)
 }
 
 for(h in 1:nrow(DataFileNames)){
-    k <- DataFileNames$Subdirectory[h]
-    i <- DataFileNames$FactorLab[h]
-    j <- DataFileNames$MaxDLab[h]
-
-    message(k, "\t", i, "\t", j)
-
-    DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] <- DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] %>% Process_CNV(.)
-}
-
-for(h in 1:nrow(DataFileNames)){
-    k <- DataFileNames$Subdirectory[h]
-    i <- DataFileNames$FactorLab[h]
-    j <- DataFileNames$MaxDLab[h]
-
-    message(k, "\t", i, "\t", j)
-
-    if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Cen"]]) > 0) {
-        DATA[["Raw"]][[k]][[i]][[j]][["Cen"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Cen"]] %>% Process_CNV(.) %>% pull(CNV_ID)
-    } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with centromeres.\n")}
-
-    if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Tel"]]) > 0) {
-            DATA[["Raw"]][[k]][[i]][[j]][["Tel"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Tel"]] %>% Process_CNV(.) %>% pull(CNV_ID)
-    } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with telomeres.\n")}
-
-    if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Imu"]]) > 0) {
-            DATA[["Raw"]][[k]][[i]][[j]][["Imu"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Imu"]] %>% Process_CNV(.) %>% pull(CNV_ID)
-    } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with immune regions.\n")}
-
-    if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]]) > 0) {
-        DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]] <- DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]] %>% Process_CNV(.) %>% pull(CNV_ID)
-    } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with segmental duplications.\n")}
+  k <- DataFileNames$Subdirectory[h]
+  i <- DataFileNames$FactorLab[h]
+  j <- DataFileNames$MaxDLab[h]
+  
+  message(k, "\t", i, "\t", j)
+  
+  if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Cen"]]) > 0) {
+    DATA[["Raw"]][[k]][[i]][[j]][["Cen"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Cen"]] %>% Process_CNV(.) %>% pull(CNV_ID)
+  } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with centromeres.\n")}
+  
+  if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Tel"]]) > 0) {
+    DATA[["Raw"]][[k]][[i]][[j]][["Tel"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Tel"]] %>% Process_CNV(.) %>% pull(CNV_ID)
+  } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with telomeres.\n")}
+  
+  if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Imu"]]) > 0) {
+    DATA[["Raw"]][[k]][[i]][[j]][["Imu"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Imu"]] %>% Process_CNV(.) %>% pull(CNV_ID)
+  } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with immune regions.\n")}
+  
+  if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]]) > 0) {
+    DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]] <- DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]] %>% Process_CNV(.) %>% pull(CNV_ID)
+  } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with segmental duplications.\n")}
 }
 
 # CHECKPOINT SAVE
-save(DATA, file=paste0(WORK_DIR,"/Analysis/Validation_Chekpoint1_082924.RData"))
-load(paste0(WORK_DIR,"/Analysis/Validation_Chekpoint1_082924.RData"))
+save(DATA, file="Validation_Chekpoint1_082924.RData")
+load("Validation_Chekpoint1_082924.RData")
 
 # CONFIDENCE SCORES
 CONF_SCORE <- as.numeric(NULL)
@@ -1005,7 +1004,7 @@ for(h in 1:nrow(DataFileNames)){
   k <- DataFileNames$Subdirectory[h]
   i <- DataFileNames$FactorLab[h]
   j <- DataFileNames$MaxDLab[h]
-
+  
   # Annotate overlaps
   CONF_SCORE <- c(CONF_SCORE, DATA[["Raw"]][[k]][[i]][[j]][["CNV"]]$Confidence)
 }
@@ -1017,26 +1016,26 @@ for(h in 1:nrow(DataFileNames)){
   k <- DataFileNames$Subdirectory[h]
   i <- DataFileNames$FactorLab[h]
   j <- DataFileNames$MaxDLab[h] 
-
+  
   # Annotate overlaps
   DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] <- DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] %>%
     mutate(Confidence=as.numeric(Confidence)) %>%
     mutate(Tel=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["Tel"]], 1, 0),
-        Cen=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["Cen"]], 1, 0),
-        Imu=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["Imu"]], 1, 0),
-        SegDup=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]], 1, 0),
-        CONF_DECILE=case_when(
-            Confidence < 11.016 ~ 0,
-            Confidence >= 11.016 & Confidence < 13.302 ~ 10,
-            Confidence >= 13.302 & Confidence < 14.797 ~ 20,
-            Confidence >= 14.797 & Confidence < 16.291 ~ 30,
-            Confidence >= 16.291 & Confidence < 18.452 ~ 40,
-            Confidence >= 18.452 & Confidence < 21.317 ~ 50,
-            Confidence >= 21.317 & Confidence < 25.883 ~ 60,
-            Confidence >= 25.883 & Confidence < 33.956 ~ 70,
-            Confidence >= 33.956 & Confidence < 54.361 ~ 80,
-            Confidence >= 54.361 ~ 90,
-            TRUE ~ NA_integer_))
+           Cen=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["Cen"]], 1, 0),
+           Imu=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["Imu"]], 1, 0),
+           SegDup=ifelse(CNV_ID %in% DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]], 1, 0),
+           CONF_DECILE=case_when(
+             Confidence < 11.016 ~ 0,
+             Confidence >= 11.016 & Confidence < 13.302 ~ 10,
+             Confidence >= 13.302 & Confidence < 14.797 ~ 20,
+             Confidence >= 14.797 & Confidence < 16.291 ~ 30,
+             Confidence >= 16.291 & Confidence < 18.452 ~ 40,
+             Confidence >= 18.452 & Confidence < 21.317 ~ 50,
+             Confidence >= 21.317 & Confidence < 25.883 ~ 60,
+             Confidence >= 25.883 & Confidence < 33.956 ~ 70,
+             Confidence >= 33.956 & Confidence < 54.361 ~ 80,
+             Confidence >= 54.361 ~ 90,
+             TRUE ~ NA_integer_))
 }
 
 # MEDIAN ABSOLUTE DEVIATION
@@ -1055,7 +1054,7 @@ for(h in 1:nrow(DataFileNames)){
   k <- DataFileNames$Subdirectory[h]
   i <- DataFileNames$FactorLab[h]
   j <- DataFileNames$MaxDLab[h] 
-
+  
   # Initialize data frames
   DATA[["QCd"]][[k]][[i]][[j]][["CNV"]] <- data.frame(NULL)
   DATA[["QCd"]][[k]][[i]][[j]][["QC"]] <- data.frame(NULL)
@@ -1109,8 +1108,57 @@ for(h in 1:nrow(DataFileNames)){
     filter(!ID %in% REMOVE_SAM)
 }
 
-# CHECKPOINT SAVE
-save(DATA, file=paste0(WORK_DIR,"/Analysis/Validation_Final_082624.RData"))
-load(paste0(WORK_DIR,"/Analysis/Validation_Final_082624.RData"))
 
+# CHECKPOINT SAVE
+save(DATA, file="Validation_Checkpoint2_082924.RData")
+load("Validation_Checkpoint2_082924.RData")
+
+# IMPORT SAMPLES TO RENAME/KEEP IN GSA/OEE
+SAM_NAM <- read_tsv("TS_DUPLICATES.tsv", col_names=TRUE)
+
+# QUALITY CONTROL
+for(h in 1:nrow(DataFileNames)){
+  k <- DataFileNames$Subdirectory[h]
+  i <- DataFileNames$FactorLab[h]
+  j <- DataFileNames$MaxDLab[h]
+  
+  if(k=="SSC") {next}
+  if(k=="OEE") {
+    DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] <- DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] %>%
+      filter(ID %in% SAM_NAM$ID_OEE)
+    DATA[["Raw"]][[k]][[i]][[j]][["QC"]] <- DATA[["Raw"]][[k]][[i]][[j]][["QC"]] %>%
+      filter(ID %in% SAM_NAM$ID_OEE)
+    DATA[["QCd"]][[k]][[i]][[j]][["CNV"]] <- DATA[["QCd"]][[k]][[i]][[j]][["CNV"]] %>%
+      filter(ID %in% SAM_NAM$ID_OEE)
+    DATA[["QCd"]][[k]][[i]][[j]][["QC"]] <- DATA[["QCd"]][[k]][[i]][[j]][["QC"]] %>%
+      filter(ID %in% SAM_NAM$ID_OEE)
+  }
+  
+  if(k=="GSA") {
+    DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] <- DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] %>%
+      filter(ID %in% SAM_NAM$ID_GSA) %>%
+      left_join(SAM_NAM, by=c("ID"="ID_GSA")) %>%
+      select(-ID) %>%
+      rename(ID=ID_OEE)
+    DATA[["Raw"]][[k]][[i]][[j]][["QC"]] <- DATA[["Raw"]][[k]][[i]][[j]][["QC"]] %>%
+      filter(ID %in% SAM_NAM$ID_GSA) %>%
+      left_join(SAM_NAM, by=c("ID"="ID_GSA")) %>%
+      select(-ID) %>%
+      rename(ID=ID_OEE)
+    DATA[["QCd"]][[k]][[i]][[j]][["CNV"]] <- DATA[["QCd"]][[k]][[i]][[j]][["CNV"]] %>%
+      filter(ID %in% SAM_NAM$ID_GSA) %>%
+      left_join(SAM_NAM, by=c("ID"="ID_GSA")) %>%
+      select(-ID) %>%
+      rename(ID=ID_OEE)
+    DATA[["QCd"]][[k]][[i]][[j]][["QC"]] <- DATA[["QCd"]][[k]][[i]][[j]][["QC"]] %>%
+      filter(ID %in% SAM_NAM$ID_GSA) %>%
+      left_join(SAM_NAM, by=c("ID"="ID_GSA")) %>%
+      select(-ID) %>%
+      rename(ID=ID_OEE)
+  }
+}
+
+# CHECKPOINT SAVE
+save(DATA, file="Validation_Final_082924.RData")
+load("Validation_Final_082924.RData")
 ```
