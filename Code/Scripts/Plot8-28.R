@@ -41,6 +41,11 @@ for(h in 1:nrow(DataFileNames)){
              CN = as.numeric(CN)) %>%
       select(-c(StartSNP, EndSNP, NumSNP, Length))
 
+    # Remove telomeric, centromeric, and immunoglobulin regions from the QCd callset
+    if (o=="QCd") {
+      MAT <- MAT %>%
+        filter(Tel==0 & Cen==0 & Imu==0)}
+
     # Join the CNVs into ID, CHR, STATE, and CN matched DF
     # Classify CNVs by size and by FP/TP/FN/TN status
     COM <- full_join(REF, MAT, 
@@ -165,7 +170,7 @@ ANALYSIS_SSC <- ANALYSIS_SSC %>%
          FDR=round(FP/(FP+TP), digits=3),
          F1=round((2*TP)/(2*TP+FP+FN), digits=3),
          FMI=round(sqrt((TP/(FP+TP))*(TP/(TP+FN))), digits=3),
-         CSI=round(TP/(TP+FN+FP), digits=3)) %>%
+         JI=round(TP/(TP+FN+FP), digits=3)) %>%
   mutate(Matching_Distance=as.numeric(Matching_Distance)) %>%
   mutate(MaxD_LOG=log10(Matching_Distance))
 
@@ -233,7 +238,7 @@ A <- set_names(A)
 B <- c("All", "Small", "Medium", "Large", "Very Large", "Ultra Large")
 B <- set_names(B)
 
-C <- c("Sensitivity", "PPV", "FNR", "FDR", "F1", "FMI", "CSI")
+C <- c("Sensitivity", "PPV", "FNR", "FDR", "F1", "FMI", "JI")
 C <- set_names(C)
 
 # PLOT METRICS
@@ -545,13 +550,13 @@ ggarrange(PLOTS$Duplications$All$FMI + rremove("xlab"),
          dpi=350,
          bg="white") 
 
-# CSI, ALL (PLOT 26)
-ggarrange(PLOTS$All$All$CSI + rremove("xlab"), 
-          PLOTS$All$Small$CSI + rremove("xlab") + rremove("ylab"),
-          PLOTS$All$Medium$CSI + rremove("xlab") + rremove("ylab"), 
-          PLOTS$All$Large$CSI,
-          PLOTS$All$`Very Large`$CSI + rremove("ylab"),
-          PLOTS$All$`Ultra Large`$CSI + rremove("ylab"),
+# JI, ALL (PLOT 26)
+ggarrange(PLOTS$All$All$JI + rremove("xlab"), 
+          PLOTS$All$Small$JI + rremove("xlab") + rremove("ylab"),
+          PLOTS$All$Medium$JI + rremove("xlab") + rremove("ylab"), 
+          PLOTS$All$Large$JI,
+          PLOTS$All$`Very Large`$JI + rremove("ylab"),
+          PLOTS$All$`Ultra Large`$JI + rremove("ylab"),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot26.png",
@@ -562,13 +567,13 @@ ggarrange(PLOTS$All$All$CSI + rremove("xlab"),
          dpi=350,
          bg="white") 
 
-# CSI, DELETIONS (PLOT 27)
-ggarrange(PLOTS$Deletions$All$CSI + rremove("xlab"), 
-          PLOTS$Deletions$Small$CSI + rremove("xlab") + rremove("ylab"),
-          PLOTS$Deletions$Medium$CSI + rremove("xlab") + rremove("ylab"), 
-          PLOTS$Deletions$Large$CSI,
-          PLOTS$Deletions$`Very Large`$CSI + rremove("ylab"),
-          PLOTS$Deletions$`Ultra Large`$CSI + rremove("ylab"),
+# JI, DELETIONS (PLOT 27)
+ggarrange(PLOTS$Deletions$All$JI + rremove("xlab"), 
+          PLOTS$Deletions$Small$JI + rremove("xlab") + rremove("ylab"),
+          PLOTS$Deletions$Medium$JI + rremove("xlab") + rremove("ylab"), 
+          PLOTS$Deletions$Large$JI,
+          PLOTS$Deletions$`Very Large`$JI + rremove("ylab"),
+          PLOTS$Deletions$`Ultra Large`$JI + rremove("ylab"),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot27.png",
@@ -579,13 +584,13 @@ ggarrange(PLOTS$Deletions$All$CSI + rremove("xlab"),
          dpi=350,
          bg="white") 
 
-# CSI, DUPLICATIONS (PLOT 28)
-ggarrange(PLOTS$Duplications$All$CSI + rremove("xlab"), 
-          PLOTS$Duplications$Small$CSI + rremove("xlab") + rremove("ylab"),
-          PLOTS$Duplications$Medium$CSI + rremove("xlab") + rremove("ylab"), 
-          PLOTS$Duplications$Large$CSI,
-          PLOTS$Duplications$`Very Large`$CSI + rremove("ylab"),
-          PLOTS$Duplications$`Ultra Large`$CSI + rremove("ylab"),
+# JI, DUPLICATIONS (PLOT 28)
+ggarrange(PLOTS$Duplications$All$JI + rremove("xlab"), 
+          PLOTS$Duplications$Small$JI + rremove("xlab") + rremove("ylab"),
+          PLOTS$Duplications$Medium$JI + rremove("xlab") + rremove("ylab"), 
+          PLOTS$Duplications$Large$JI,
+          PLOTS$Duplications$`Very Large`$JI + rremove("ylab"),
+          PLOTS$Duplications$`Ultra Large`$JI + rremove("ylab"),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot28.png",
