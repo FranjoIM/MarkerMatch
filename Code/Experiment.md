@@ -1084,7 +1084,7 @@ for(h in 1:nrow(DataFileNames)){
     filter(BAF_mean >= BAF_MEAN_DO &  BAF_mean <= BAF_MEAN_UP) %>%
     filter(BAF_SD <= BAF_SDEV_UP) %>%
     filter(BAF_drift <= BAF_DRIF_UP) %>%
-    filter(GCWF >= GCWF_DO &  GCWF <= GCWF_UP) %>%
+    filter(GCWF >= GCWF_DO & GCWF <= GCWF_UP) %>%
     pull(ID)
   
   REMOVE_LOG_SAM <- setdiff(DATA[["Raw"]][[k]][[i]][[j]][["QC"]]$ID, KEEP_LOG_SAM)
@@ -1114,7 +1114,6 @@ for(h in 1:nrow(DataFileNames)){
   DATA[["QCd"]][[k]][[i]][[j]][["QC"]] <- DATA[["Raw"]][[k]][[i]][[j]][["QC"]] %>%
     filter(!ID %in% REMOVE_SAM)
 }
-
 
 # CHECKPOINT SAVE
 save(DATA, file="Validation_Checkpoint2_082924.RData")
@@ -1175,3 +1174,9 @@ Using the `Validation_Final_082924.RData` in local R session, validate CNV calls
 
 Code for step-one genome-wide performance metrics, manuscript **Figure 8-28** is available at [Plot8-28.R](Scripts/Plot8-28.R).
 Code for step-one regional performance metrics, manuscript **Figure 29-35** is available at [Plot29-35.R](Scripts/Plot29-35.R).
+
+### Step-Two Validation Analyses
+Using the `Validation_Final_082924.RData` in local R session, validate CNV calls in simulated MarkerMatch scenario.
+
+Code for step-one genome-wide performance metrics, manuscript **Figure 37-57** is available at [Plot37-57.R](Scripts/Plot37-57.R).
+Code for step-one regional performance metrics, manuscript **Figure 58-64** is available at [Plot58-64.R](Scripts/Plot58-64.R).
