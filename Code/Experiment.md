@@ -916,13 +916,20 @@ Download the `Validation_Import_082924.RData` from the Cloud and import it into 
 # SET WORKING DIRECTORY, PREPARE THE ENVIRONMENT
 setwd("...")
 library(tidyverse)
-library(ggpubr)
 
 # LOAD DATA
 load("Validation_Import_082924.RData")
 
 # PROCESS IMPORTED DATA
-QC_Curate <- "NOTICE: quality summary for /Adjusted/ASD/|NOTICE: quality summary for /Adjusted/OEE/|NOTICE: quality summary for /Adjusted/TS|_Omni2.5_FinalReport.txt:|LRR_mean=|LRR_median=|LRR_SD=|BAF_mean=|BAF_median=|BAF_SD=|BAF_DRIFT=|WF=|GCWF=|_Omni2.5_FinalReport.txt|/|numsnp=|length=|state|cn=|startsnp=|endsnp=|conf=|/Adjusted/ASD/|/Adjusted/OEE/|/Adjusted/TS/|.adjusted|:"
+QC_Curate <- "NOTICE: quality summary for /Adjusted/ASD/|NOTICE: quality summary for /Adjusted/OEE/|NOTICE: quality summary for /Adjusted/TS|_Omni2.5_FinalReport.txt:|LRR_mean=|LRR_median=|LRR_SD=|BAF_mean=|BAF_median=|BAF_SD=|BAF_DRIFT=|WF=|GCWF=|_Omni2.5_FinalReport.txt|/|numsnp=|length=|state|cn=|startsnp=|endsnp=|conf=|/Adjusted/ASD/|/Adjusted/OEE/|/Adjusted/TS/|.adjusted:|.adjusted"
+QC_ColNames <- c("ID", "LRR_mean", "LRR_median", "LRR_SD", "BAF_mean", "BAF_median", "BAF_SD", "BAF_drift", "WF", "GCWF")
+CNV_ColNames <- c("Position", "N_SNP", "LEN", "State", "CN", "ID", "start_snp", "end_snp", "CONF")
+
+# LOAD DATA
+load("Validation_Import_082924.RData")
+
+# PROCESS IMPORTED DATA
+QC_Curate <- "NOTICE: quality summary for /blue/carolmathews/njofrica/Adjusted/ASD/|NOTICE: quality summary for /blue/carolmathews/njofrica/Adjusted/OEE/|NOTICE: quality summary for /blue/carolmathews/njofrica/Adjusted/TS|_Omni2.5_FinalReport.txt:|LRR_mean=|LRR_median=|LRR_SD=|BAF_mean=|BAF_median=|BAF_SD=|BAF_DRIFT=|WF=|GCWF=|_Omni2.5_FinalReport.txt|/|numsnp=|length=|state|cn=|startsnp=|endsnp=|conf=|/blue/carolmathews/njofrica/Adjusted/ASD/|/blue/carolmathews/njofrica/Adjusted/OEE/|/blue/carolmathews/njofrica/Adjusted/TS/|.adjusted:|.adjusted"
 QC_ColNames <- c("ID", "LRR_mean", "LRR_median", "LRR_SD", "BAF_mean", "BAF_median", "BAF_SD", "BAF_drift", "WF", "GCWF")
 CNV_ColNames <- c("Position", "N_SNP", "LEN", "State", "CN", "ID", "start_snp", "end_snp", "CONF")
 
@@ -1161,4 +1168,19 @@ for(h in 1:nrow(DataFileNames)){
 # CHECKPOINT SAVE
 save(DATA, file="Validation_Final_082924.RData")
 load("Validation_Final_082924.RData")
+```
+
+### Step-One Validation Analyses
+Using the `Validation_Final_082924.RData` in local R session, validate CNV calls in simulated MarkerMatch scenario.
+
+```R
+# SET WORKING DIRECTORY, PREPARE THE ENVIRONMENT
+setwd("...")
+library(tidyverse)
+library(ggpubr)
+
+# LOAD DATA
+load("Validation_Final_082924.RData")
+
+
 ```
