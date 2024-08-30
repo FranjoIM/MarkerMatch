@@ -1094,3 +1094,13 @@ DUPLICATES %>%
 ### Analyze Step 1 Data
 Download the `Validation_Final_082624.RData` from the Cloud and import it into local R session, analyzing the outputs.
 
+```R
+# SET WORKING DIRECTORY, PREPARE THE ENVIRONMENT
+setwd("...")
+library(tidyverse)
+library(ggpubr)
+
+# LOAD DATA
+load("Validation_Final_082624.RData")
+
+```
