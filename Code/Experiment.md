@@ -208,19 +208,19 @@ OEE_MAN <- read_delim("DATA/OEE_MAN.txt", delim="\t")
 ```
 
 ### Graph Marker Density Plots
-In R, ran locally. Code for creating marker density plots, manuscript **Figure 3**. First, the data cen be prepared using [UsedSNPs.R](Scripts/UsedSNPs.R) script, and then plotted using [Figure3.R](Scripts/Figure3.R).
+In R, ran locally. Code for creating marker density plots, manuscript **Figure 3**. First, the data cen be prepared using [UsedSNPs.R](Scripts/UsedSNPs.R) script, and then plotted using [Plot3.R](Scripts/Plot3.R).
 
 ### Graph Gaps Plots
-In R, ran locally. Code for creating marker gaps plots, manuscript **Figure 4**. First, the data cen be plotted using [Figure4.R](Scripts/Figure4.R).
+In R, ran locally. Code for creating marker gaps plots, manuscript **Figure 4**. First, the data cen be plotted using [Plot4.R](Scripts/Plot4.R).
 
 ### Graph BAF Plots
-In R, ran locally. Code for creating BAF plots, manuscript **Figure 5**. First, the data cen be plotted using [Figure5.R](Scripts/Figure5.R).
+In R, ran locally. Code for creating BAF plots, manuscript **Figure 5**. First, the data cen be plotted using [Plot5.R](Scripts/Plot5.R).
 
 ### Graph LRR-SD Plots
-In R, ran locally. Code for creating LRR-sd plots, manuscript **Figure 6**. First, the data cen be plotted using [Figure6.R](Scripts/Figure6.R).
+In R, ran locally. Code for creating LRR-sd plots, manuscript **Figure 6**. First, the data cen be plotted using [Plot6.R](Scripts/Plot6.R).
 
 ### Graph LRR-Mean Plots
-In R, ran locally. Code for creating LRR-mean plots, manuscript **Figure 7**. First, the data cen be plotted using [Figure7.R](Scripts/Figure7.R).
+In R, ran locally. Code for creating LRR-mean plots, manuscript **Figure 7**. First, the data cen be plotted using [Plot7.R](Scripts/Plot7.R).
 
 ### Split Final Reports
 On the cloud, after Illumina final reports have been uploaded, split the final reports. `split_illumina_report.pl` is a part of PennCNV software.
@@ -1173,14 +1173,5 @@ load("Validation_Final_082924.RData")
 ### Step-One Validation Analyses
 Using the `Validation_Final_082924.RData` in local R session, validate CNV calls in simulated MarkerMatch scenario.
 
-```R
-# SET WORKING DIRECTORY, PREPARE THE ENVIRONMENT
-setwd("...")
-library(tidyverse)
-library(ggpubr)
-
-# LOAD DATA
-load("Validation_Final_082924.RData")
-
-
-```
+Code for step-one genome-wide performance metrics, manuscript **Figure 8-28** is available at [Plot8-28.R](Scripts/Plot8-28.R).
+Code for step-one regional performance metrics, manuscript **Figure 29-35** is available at [Plot29-35.R](Scripts/Plot29-35.R).
