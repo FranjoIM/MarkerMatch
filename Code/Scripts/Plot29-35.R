@@ -40,6 +40,13 @@ for(h in 1:nrow(DataFileNames)){
              STATE = as.numeric(STATE),
              CN = as.numeric(CN)) %>%
       select(-c(StartSNP, EndSNP, NumSNP, Length))
+
+    # Keep only same for the analysis
+    KEEP_IDs <- intersect(unique(REF$ID), unique(MAT$ID))
+    REF <- REF %>%
+      filter(ID %in% KEEP_IDs)
+    MAT <- MAT %>%
+      filter(ID %in% KEEP_IDs)
     
     # Join the CNVs into ID, CHR, STATE, and CN matched DF
     # Classify CNVs by size and by FP/TP/FN/TN status
