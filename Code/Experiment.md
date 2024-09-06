@@ -1178,5 +1178,31 @@ Code for step-one regional performance metrics, manuscript **Figure 29-35** is a
 ### Step-Two Validation Analyses
 Using the `Validation_Final_082924.RData` in local R session, validate CNV calls in simulated MarkerMatch scenario.
 
-Code for step-one genome-wide performance metrics, manuscript **Figure 37-57** is available at [Plot37-57.R](Scripts/Plot37-57.R).
-Code for step-one regional performance metrics, manuscript **Figure 58-64** is available at [Plot58-64.R](Scripts/Plot58-64.R).
+Code for step-two genome-wide performance metrics, manuscript **Figure 37-57** is available at [Plot37-57.R](Scripts/Plot37-57.R).
+Code for step-two regional performance metrics, manuscript **Figure 58-64** is available at [Plot58-64.R](Scripts/Plot58-64.R).
+Code for step-two determination of optimal LEN and N_SNP cutoffs, manuscript **Figure 65-67** is available at [Plot65-67.R](Scripts/Plot65-67.R), and the output of model summary is shown below.
+```
+Call:
+lm(formula = PPV ~ LEN_Cutoff + N_SNP_Cutoff + Matching_Method, 
+    data = filter(ANALYSIS_STEP2_CUTOFFS, !Matching_Method %in% 
+        c("FullSet", "PerfectMatch")))
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.26643 -0.20000 -0.04473  0.19982  0.23138 
+
+Coefficients:
+                         Estimate Std. Error t value Pr(>|t|)    
+(Intercept)             7.232e-01  1.679e-02  43.065  < 2e-16 ***
+LEN_Cutoff              5.054e-08  3.274e-08   1.544  0.12282    
+N_SNP_Cutoff            1.174e-03  3.657e-04   3.209  0.00135 ** 
+Matching_MethodLRRmean  1.056e-02  1.335e-02   0.791  0.42920    
+Matching_MethodLRRsd   -5.762e-03  1.335e-02  -0.431  0.66617    
+Matching_MethodPos     -3.533e-03  1.335e-02  -0.265  0.79136    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.2003 on 1794 degrees of freedom
+Multiple R-squared:  0.007985,	Adjusted R-squared:  0.005221 
+F-statistic: 2.888 on 5 and 1794 DF,  p-value: 0.01328
+```
