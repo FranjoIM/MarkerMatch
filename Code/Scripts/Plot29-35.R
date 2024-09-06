@@ -40,7 +40,7 @@ for(h in 1:nrow(DataFileNames)){
              STATE = as.numeric(STATE),
              CN = as.numeric(CN)) %>%
       select(-c(StartSNP, EndSNP, NumSNP, Length))
-
+    
     # Keep only same for the analysis
     KEEP_IDs <- intersect(unique(REF$ID), unique(MAT$ID))
     REF <- REF %>%
@@ -108,7 +108,7 @@ for(h in 1:nrow(DataFileNames)){
     COM <- rbind(COM_TEMP1, COM_TEMP2, COM_TEMP3, COM_TEMP4)
     
     for(p in c("Tel", "Cen", "SegDup")){
-        
+      
       if(p=="Tel"){
         p_Lab <- "Telomeric"
         p_Regx <- "Tel.x"
@@ -239,7 +239,7 @@ PLOTS <- map(A, function(x) map(B, function(y) MetricPlot(a=x, b=y)))
 ggarrange(PLOTS$Tel$Sensitivity, 
           PLOTS$Cen$Sensitivity + rremove("ylab"),
           PLOTS$SegDup$Sensitivity + rremove("ylab"), 
-          align="hv", labels=c("A", "B", "C"), common.legend=T, nrow=1,
+          align="hv", labels=c(" ", " ", " "), common.legend=T, nrow=1,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot29.png",
          device="png",
@@ -253,7 +253,7 @@ ggarrange(PLOTS$Tel$Sensitivity,
 ggarrange(PLOTS$Tel$PPV + ylim(0.65, 1), 
           PLOTS$Cen$PPV + rremove("ylab") + ylim(0.65, 1),
           PLOTS$SegDup$PPV + rremove("ylab") + ylim(0.65, 1), 
-          align="hv", labels=c("A", "B", "C"), common.legend=T, nrow=1,
+          align="hv", labels=c(" ", " ", " "), common.legend=T, nrow=1,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot30.png",
          device="png",
@@ -267,7 +267,7 @@ ggarrange(PLOTS$Tel$PPV + ylim(0.65, 1),
 ggarrange(PLOTS$Tel$FNR, 
           PLOTS$Cen$FNR + rremove("ylab"),
           PLOTS$SegDup$FNR + rremove("ylab"), 
-          align="hv", labels=c("A", "B", "C"), common.legend=T, nrow=1,
+          align="hv", labels=c(" ", " ", " "), common.legend=T, nrow=1,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot31.png",
          device="png",
@@ -281,7 +281,7 @@ ggarrange(PLOTS$Tel$FNR,
 ggarrange(PLOTS$Tel$FDR + ylim(0, 0.35), 
           PLOTS$Cen$FDR + rremove("ylab") + ylim(0, 0.35),
           PLOTS$SegDup$FDR + rremove("ylab") + ylim(0, 0.35), 
-          align="hv", labels=c("A", "B", "C"), common.legend=T, nrow=1,
+          align="hv", labels=c(" ", " ", " "), common.legend=T, nrow=1,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot32.png",
          device="png",
@@ -295,7 +295,7 @@ ggarrange(PLOTS$Tel$FDR + ylim(0, 0.35),
 ggarrange(PLOTS$Tel$F1, 
           PLOTS$Cen$F1 + rremove("ylab"),
           PLOTS$SegDup$F1 + rremove("ylab"), 
-          align="hv", labels=c("A", "B", "C"), common.legend=T, nrow=1,
+          align="hv", labels=c(" ", " ", " "), common.legend=T, nrow=1,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot33.png",
          device="png",
@@ -309,7 +309,7 @@ ggarrange(PLOTS$Tel$F1,
 ggarrange(PLOTS$Tel$FMI, 
           PLOTS$Cen$FMI + rremove("ylab"),
           PLOTS$SegDup$FMI + rremove("ylab"), 
-          align="hv", labels=c("A", "B", "C"), common.legend=T, nrow=1,
+          align="hv", labels=c(" ", " ", " "), common.legend=T, nrow=1,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot34.png",
          device="png",
@@ -323,7 +323,7 @@ ggarrange(PLOTS$Tel$FMI,
 ggarrange(PLOTS$Tel$JI, 
           PLOTS$Cen$JI + rremove("ylab"),
           PLOTS$SegDup$JI + rremove("ylab"), 
-          align="hv", labels=c("A", "B", "C"), common.legend=T, nrow=1,
+          align="hv", labels=c(" ", " ", " "), common.legend=T, nrow=1,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot35.png",
          device="png",
@@ -339,4 +339,4 @@ ANALYSIS_REGIONAL_SSC %>%
          MaxD=Matching_Distance,
          QC=Matching_Type) %>%
   select(-MaxD_LOG) %>%
-  write_tsv("TABLES/Table10.tsv", col_names=TRUE)                               
+  write_tsv("TABLES/Table10.tsv", col_names=TRUE)
