@@ -925,14 +925,6 @@ QC_Curate <- "NOTICE: quality summary for /Adjusted/ASD/|NOTICE: quality summary
 QC_ColNames <- c("ID", "LRR_mean", "LRR_median", "LRR_SD", "BAF_mean", "BAF_median", "BAF_SD", "BAF_drift", "WF", "GCWF")
 CNV_ColNames <- c("Position", "N_SNP", "LEN", "State", "CN", "ID", "start_snp", "end_snp", "CONF")
 
-# LOAD DATA
-load("Validation_Import_082924.RData")
-
-# PROCESS IMPORTED DATA
-QC_Curate <- "NOTICE: quality summary for /blue/carolmathews/njofrica/Adjusted/ASD/|NOTICE: quality summary for /blue/carolmathews/njofrica/Adjusted/OEE/|NOTICE: quality summary for /blue/carolmathews/njofrica/Adjusted/TS|_Omni2.5_FinalReport.txt:|LRR_mean=|LRR_median=|LRR_SD=|BAF_mean=|BAF_median=|BAF_SD=|BAF_DRIFT=|WF=|GCWF=|_Omni2.5_FinalReport.txt|/|numsnp=|length=|state|cn=|startsnp=|endsnp=|conf=|/blue/carolmathews/njofrica/Adjusted/ASD/|/blue/carolmathews/njofrica/Adjusted/OEE/|/blue/carolmathews/njofrica/Adjusted/TS/|.adjusted:|.adjusted"
-QC_ColNames <- c("ID", "LRR_mean", "LRR_median", "LRR_SD", "BAF_mean", "BAF_median", "BAF_SD", "BAF_drift", "WF", "GCWF")
-CNV_ColNames <- c("Position", "N_SNP", "LEN", "State", "CN", "ID", "start_snp", "end_snp", "CONF")
-
 # CREATE DATAFRAME OF INPUT LISTS
 DataFileNames <- data.frame(
   Subdirectory=c(rep("SSC", 50), rep("GSA", 6), rep("OEE", 6)),
@@ -961,6 +953,14 @@ Process_CNV <- function(DF) {
            STATE=str_split(StateCopyNumber, ",")[[1]][1],
            CN=str_split(StateCopyNumber, ",")[[1]][2],
            .keep="unused") %>%
+    mutate(N_SNP = as.numeric(NumSNP),
+           LEN = as.numeric(gsub(",", "", Length)),
+           CHR = as.numeric(CHR),
+           START = as.numeric(START),
+           END = as.numeric(END),
+           STATE = as.numeric(STATE),
+           CN = as.numeric(CN)) %>%
+    select(-c(StartSNP, EndSNP, NumSNP, Length)) %>%
     ungroup() %>%
     mutate(CNV_ID=paste0(ID, "-", CHR, "-", START, "-", END, "-", STATE, "-", CN))
 }
@@ -1108,8 +1108,8 @@ for(h in 1:nrow(DataFileNames)){
   # filter out CNVs spanning less than 10 SNPs and less than 20kb
   DATA[["QCd"]][[k]][[i]][[j]][["CNV"]] <- DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] %>%
     filter(!ID %in% REMOVE_SAM) %>%
-    filter(NumSNP >= 10) %>%
-    filter(Length >= 20000)
+    filter(N_SNP >= 10) %>%
+    filter(LEN >= 20000)
   
   DATA[["QCd"]][[k]][[i]][[j]][["QC"]] <- DATA[["Raw"]][[k]][[i]][[j]][["QC"]] %>%
     filter(!ID %in% REMOVE_SAM)
