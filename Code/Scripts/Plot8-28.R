@@ -22,24 +22,8 @@ for(h in 1:nrow(DataFileNames)){
   
   # Pull out CNVs overlapping in full set and partial sets
   for(o in c("Raw", "QCd")){
-    REF <- DATA[["Raw"]][["SSC"]][["FullSet"]][["0"]][["CNV"]] %>%
-      mutate(N_SNP = as.numeric(NumSNP),
-             LEN = as.numeric(gsub(",", "", Length)),
-             CHR = as.numeric(CHR),
-             START = as.numeric(START),
-             END = as.numeric(END),
-             STATE = as.numeric(STATE),
-             CN = as.numeric(CN)) %>%
-      select(-c(StartSNP, EndSNP, NumSNP, Length))
-    MAT <- DATA[[o]][["SSC"]][[i]][[j]][["CNV"]] %>%
-      mutate(N_SNP = as.numeric(NumSNP),
-             LEN = as.numeric(gsub(",", "", Length)),
-             CHR = as.numeric(CHR),
-             START = as.numeric(START),
-             END = as.numeric(END),
-             STATE = as.numeric(STATE),
-             CN = as.numeric(CN)) %>%
-      select(-c(StartSNP, EndSNP, NumSNP, Length))
+    REF <- DATA[["Raw"]][["SSC"]][["FullSet"]][["0"]][["CNV"]]
+    MAT <- DATA[[o]][["SSC"]][[i]][[j]][["CNV"]]
 
     # Keep only same for the analysis
     KEEP_IDs <- intersect(unique(REF$ID), unique(MAT$ID))
