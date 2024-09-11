@@ -1188,21 +1188,21 @@ lm(formula = PPV ~ LEN_Cutoff + N_SNP_Cutoff + Matching_Method,
         c("FullSet", "PerfectMatch")))
 
 Residuals:
-     Min       1Q   Median       3Q      Max 
--0.26643 -0.20000 -0.04473  0.19982  0.23138 
+    Min      1Q  Median      3Q     Max 
+-0.2290 -0.2241  0.0000  0.2241  0.2290 
 
 Coefficients:
-                         Estimate Std. Error t value Pr(>|t|)    
-(Intercept)             7.232e-01  1.679e-02  43.065  < 2e-16 ***
-LEN_Cutoff              5.054e-08  3.274e-08   1.544  0.12282    
-N_SNP_Cutoff            1.174e-03  3.657e-04   3.209  0.00135 ** 
-Matching_MethodLRRmean  1.056e-02  1.335e-02   0.791  0.42920    
-Matching_MethodLRRsd   -5.762e-03  1.335e-02  -0.431  0.66617    
-Matching_MethodPos     -3.533e-03  1.335e-02  -0.265  0.79136    
+                        Estimate Std. Error t value Pr(>|t|)    
+(Intercept)            5.790e-01  1.879e-02  30.811  < 2e-16 ***
+LEN_Cutoff             4.057e-21  3.663e-08   0.000  1.00000    
+N_SNP_Cutoff           4.221e-17  4.093e-04   0.000  1.00000    
+Matching_MethodLRRmean 4.100e-02  1.494e-02   2.744  0.00614 ** 
+Matching_MethodLRRsd   3.650e-02  1.494e-02   2.442  0.01468 *  
+Matching_MethodPos     1.850e-02  1.494e-02   1.238  0.21590    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 0.2003 on 1794 degrees of freedom
-Multiple R-squared:  0.007985,	Adjusted R-squared:  0.005221 
-F-statistic: 2.888 on 5 and 1794 DF,  p-value: 0.01328
+Residual standard error: 0.2242 on 1794 degrees of freedom
+Multiple R-squared:  0.005222,	Adjusted R-squared:  0.002449 
+F-statistic: 1.883 on 5 and 1794 DF,  p-value: 0.09414
 ```
