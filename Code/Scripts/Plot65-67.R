@@ -4,7 +4,7 @@ library(tidyverse)
 library(ggpubr)
 
 # LOAD DATA
-load("Validation_Final_082924.RData")
+load("Validation_Final_103024.RData")
 
 DataFileNames <- data.frame(
   Factor=c("FullSet", "PerfectMatch", "BAF", "LRRmean", "LRRsd", "Pos"),
@@ -31,8 +31,10 @@ for(h in 1:nrow(DataFileNames)){
       for(o in CNV_Types){
        
         # Pull out CNVs overlapping in full set and partial sets
-        REF <- DATA[["Raw"]][[k]][["FullSet"]][["0"]][["CNV"]]
-        MAT <- DATA[[o]][[l]][[i]][[j]][["CNV"]]
+        REF <- DATA[["Raw"]][[k]][["FullSet"]][["0"]][["CNV"]] %>%
+          filter(LEN>=m & N_SNP>=n)
+        MAT <- DATA[[o]][[l]][[i]][[j]][["CNV"]] %>%
+          filter(LEN>=m & N_SNP>=n)
         
         # Keep only same samples for the analysis
         KEEP_IDs <- intersect(unique(REF$ID), unique(MAT$ID))
