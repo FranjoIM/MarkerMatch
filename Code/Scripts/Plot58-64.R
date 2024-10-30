@@ -4,7 +4,7 @@ library(tidyverse)
 library(ggpubr)
 
 # LOAD DATA
-load("Validation_Final_082924.RData")
+load("Validation_Final_103024.RData")
 
 # PREPARE A DATA FILE NAMES FOR SSC
 DataFileNames <- data.frame(
@@ -35,12 +35,7 @@ for(h in 1:nrow(DataFileNames)){
       filter(ID %in% KEEP_IDs)
     MAT <- MAT %>%
       filter(ID %in% KEEP_IDs)
-    
-    # Remove telomeric, centromeric, and immunoglobulin regions from the QCd callset
-    if (o=="QCd") {
-      MAT <- MAT %>%
-        filter(Tel==0 & Cen==0 & Imu==0)}
-    
+     
     # Join the CNVs into ID, CHR, STATE, and CN matched DF
     # Classify CNVs by size and by FP/TP/FN/TN status
     COM <- full_join(REF, MAT, 
