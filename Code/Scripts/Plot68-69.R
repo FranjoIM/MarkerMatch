@@ -140,8 +140,8 @@ MetricPlot <- function(a, b, c, d){
     pivot_longer(c(TP, FP), names_to="Call_Type", values_to="Call_Type_Count") %>%
     ggplot(aes(x=as.factor(ID2), y=Call_Type_Count, color=Call_Type, fill=Call_Type)) +
     geom_bar(position="fill", stat="identity") +
-    labs(x="SAMPLE",
-         y="TP V. FP CALLS",
+    labs(x=NULL,
+         y=NULL,
          color="Call Type",
          fill="Call Type",
          subtitle=TITLE) +
@@ -151,6 +151,7 @@ MetricPlot <- function(a, b, c, d){
     scale_fill_manual(values=c("red3", "steelblue3"),
                       breaks=c("FP", "TP"),
                       labels=c("False Positive", "True Positive")) +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 3)) +
     theme_bw() +
     theme(axis.text.x=element_blank(),
           axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
@@ -168,7 +169,7 @@ MetricPlot <- function(a, b, c, d){
 }
 
 # PREPARE FOR PLOTTING
-A <- c("Full Set", "PerfectMatch", "BAF", "LRR mean", "LRR sd", "Pos")
+A <- c("Full Set", "Perfect Match", "BAF", "LRR mean", "LRR sd", "Pos")
 A <- set_names(A)
 
 B <- c("0", "10000")
@@ -182,3 +183,51 @@ D <- set_names(D)
 
 # PLOT METRICS
 PLOTS <- map(A, function(x) map(B, function(y) map(C, function(z) map(D, function(w) MetricPlot(a=x, b=y, c=z, d=w)))))
+
+# PLOT RAW CNV CALLS
+ggarrange(
+  PLOTS$`Full Set`$`0`$Raw$OEE + rremove("xlab"), 
+  PLOTS$`Full Set`$`0`$Raw$GSA + rremove("xlab") + rremove("ylab"),
+  PLOTS$`BAF`$`10000`$Raw$OEE + rremove("xlab"),
+  PLOTS$`BAF`$`10000`$Raw$GSA + rremove("xlab") + rremove("ylab"),
+  PLOTS$`LRR mean`$`10000`$Raw$OEE + rremove("xlab"),
+  PLOTS$`LRR mean`$`10000`$Raw$GSA + rremove("xlab") + rremove("ylab"),
+  PLOTS$`LRR sd`$`10000`$Raw$OEE + rremove("xlab"),
+  PLOTS$`LRR sd`$`10000`$Raw$GSA + rremove("xlab") + rremove("ylab"),
+  PLOTS$`Pos`$`10000`$Raw$OEE + rremove("xlab"),
+  PLOTS$`Pos`$`10000`$Raw$GSA + rremove("xlab") + rremove("ylab"),
+  PLOTS$`Perfect Match`$`0`$Raw$OEE,
+  PLOTS$`Perfect Match`$`0`$Raw$GSA +  rremove("ylab"),
+  align="hv", labels=c("A", "B", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "), common.legend=T,
+  legend="bottom", nrow=6, ncol=2) %>%
+  ggsave(filename="FIGURES/Plot68.png",
+         device="png",
+         width=7,
+         height=11,
+         units="in",
+         dpi=350,
+         bg="white")
+
+# PLOT QCD CNV CALLS
+ggarrange(
+  PLOTS$`Full Set`$`0`$QCd$OEE + rremove("xlab"), 
+  PLOTS$`Full Set`$`0`$QCd$GSA + rremove("xlab") + rremove("ylab"),
+  PLOTS$`BAF`$`10000`$QCd$OEE + rremove("xlab"),
+  PLOTS$`BAF`$`10000`$QCd$GSA + rremove("xlab") + rremove("ylab"),
+  PLOTS$`LRR mean`$`10000`$QCd$OEE + rremove("xlab"),
+  PLOTS$`LRR mean`$`10000`$QCd$GSA + rremove("xlab") + rremove("ylab"),
+  PLOTS$`LRR sd`$`10000`$QCd$OEE + rremove("xlab"),
+  PLOTS$`LRR sd`$`10000`$QCd$GSA + rremove("xlab") + rremove("ylab"),
+  PLOTS$`Pos`$`10000`$QCd$OEE + rremove("xlab"),
+  PLOTS$`Pos`$`10000`$QCd$GSA + rremove("xlab") + rremove("ylab"),
+  PLOTS$`Perfect Match`$`0`$QCd$OEE,
+  PLOTS$`Perfect Match`$`0`$QCd$GSA +  rremove("ylab"),
+  align="hv", labels=c("A", "B", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "), common.legend=T,
+  legend="bottom", nrow=6, ncol=2) %>%
+  ggsave(filename="FIGURES/Plot69.png",
+         device="png",
+         width=7,
+         height=11,
+         units="in",
+         dpi=350,
+         bg="white")
