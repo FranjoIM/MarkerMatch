@@ -260,7 +260,7 @@ ggarrange(
 
   PLOTS$All$All$Sensitivity$OEE, 
   PLOTS$All$Small$Sensitivity$OEE + rremove("ylab"),
-  PLOTS$All$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$All$Medium$Sensitivity$OEE + rremove("ylab"), 
   PLOTS$All$Large$Sensitivity$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -281,7 +281,7 @@ ggarrange(
   
   PLOTS$Deletions$All$Sensitivity$OEE, 
   PLOTS$Deletions$Small$Sensitivity$OEE + rremove("ylab"),
-  PLOTS$Deletions$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Deletions$Medium$Sensitivity$OEE + rremove("ylab"), 
   PLOTS$Deletions$Large$Sensitivity$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -302,7 +302,7 @@ ggarrange(
   
   PLOTS$Duplications$All$Sensitivity$OEE, 
   PLOTS$Duplications$Small$Sensitivity$OEE + rremove("ylab"),
-  PLOTS$Duplications$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Duplications$Medium$Sensitivity$OEE + rremove("ylab"), 
   PLOTS$Duplications$Large$Sensitivity$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -323,7 +323,7 @@ ggarrange(
 
   PLOTS$All$All$PPV$OEE, 
   PLOTS$All$Small$PPV$OEE + rremove("ylab"),
-  PLOTS$All$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$All$Medium$PPV$OEE + rremove("ylab"), 
   PLOTS$All$Large$PPV$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -344,7 +344,7 @@ ggarrange(
   
   PLOTS$Deletions$All$PPV$OEE, 
   PLOTS$Deletions$Small$PPV$OEE + rremove("ylab"),
-  PLOTS$Deletions$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Deletions$Medium$PPV$OEE + rremove("ylab"), 
   PLOTS$Deletions$Large$PPV$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -365,7 +365,7 @@ ggarrange(
   
   PLOTS$Duplications$All$PPV$OEE, 
   PLOTS$Duplications$Small$PPV$OEE + rremove("ylab"),
-  PLOTS$Duplications$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Duplications$Medium$PPV$OEE + rremove("ylab"), 
   PLOTS$Duplications$Large$PPV$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -386,7 +386,7 @@ ggarrange(
 
   PLOTS$All$All$FNR$OEE, 
   PLOTS$All$Small$FNR$OEE + rremove("ylab"),
-  PLOTS$All$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$All$Medium$PPV$OEE + rremove("ylab"), 
   PLOTS$All$Large$FNR$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -407,7 +407,7 @@ ggarrange(
   
   PLOTS$Deletions$All$FNR$OEE, 
   PLOTS$Deletions$Small$FNR$OEE + rremove("ylab"),
-  PLOTS$Deletions$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Deletions$Medium$FNR$OEE + rremove("ylab"), 
   PLOTS$Deletions$Large$FNR$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -428,7 +428,7 @@ ggarrange(
   
   PLOTS$Duplications$All$FNR$OEE, 
   PLOTS$Duplications$Small$FNR$OEE + rremove("ylab"),
-  PLOTS$Duplications$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Duplications$Medium$FNR$OEE + rremove("ylab"), 
   PLOTS$Duplications$Large$FNR$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -449,7 +449,7 @@ ggarrange(
 
   PLOTS$All$All$FDR$OEE, 
   PLOTS$All$Small$FDR$OEE + rremove("ylab"),
-  PLOTS$All$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$All$Medium$FDR$OEE + rremove("ylab"), 
   PLOTS$All$Large$FDR$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -470,7 +470,7 @@ ggarrange(
   
   PLOTS$Deletions$All$FDR$OEE, 
   PLOTS$Deletions$Small$FDR$OEE + rremove("ylab"),
-  PLOTS$Deletions$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Deletions$Medium$FDR$OEE + rremove("ylab"), 
   PLOTS$Deletions$Large$FDR$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -491,7 +491,7 @@ ggarrange(
   
   PLOTS$Duplications$All$FDR$OEE, 
   PLOTS$Duplications$Small$FDR$OEE + rremove("ylab"),
-  PLOTS$Duplications$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Duplications$Medium$FDR$OEE + rremove("ylab"), 
   PLOTS$Duplications$Large$FDR$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -512,7 +512,7 @@ ggarrange(
 
   PLOTS$All$All$F1$OEE, 
   PLOTS$All$Small$F1$OEE + rremove("ylab"),
-  PLOTS$All$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$All$Medium$F1$OEE + rremove("ylab"), 
   PLOTS$All$Large$F1$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -533,7 +533,7 @@ ggarrange(
   
   PLOTS$Deletions$All$F1$OEE, 
   PLOTS$Deletions$Small$F1$OEE + rremove("ylab"),
-  PLOTS$Deletions$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Deletions$Medium$F1$OEE + rremove("ylab"), 
   PLOTS$Deletions$Large$F1$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -554,7 +554,7 @@ ggarrange(
   
   PLOTS$Duplications$All$F1$OEE, 
   PLOTS$Duplications$Small$F1$OEE + rremove("ylab"),
-  PLOTS$Duplications$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Duplications$Medium$F1$OEE + rremove("ylab"), 
   PLOTS$Duplications$Large$F1$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -575,7 +575,7 @@ ggarrange(
 
   PLOTS$All$All$FMI$OEE, 
   PLOTS$All$Small$FMI$OEE + rremove("ylab"),
-  PLOTS$All$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$All$Medium$FMI$OEE + rremove("ylab"), 
   PLOTS$All$Large$FMI$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -596,7 +596,7 @@ ggarrange(
   
   PLOTS$Deletions$All$FMI$OEE, 
   PLOTS$Deletions$Small$FMI$OEE + rremove("ylab"),
-  PLOTS$Deletions$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Deletions$Medium$FMI$OEE + rremove("ylab"), 
   PLOTS$Deletions$Large$FMI$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -617,7 +617,7 @@ ggarrange(
   
   PLOTS$Duplications$All$FMI$OEE, 
   PLOTS$Duplications$Small$FMI$OEE + rremove("ylab"),
-  PLOTS$Duplications$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Duplications$Medium$FMI$OEE + rremove("ylab"), 
   PLOTS$Duplications$Large$FMI$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -638,7 +638,7 @@ ggarrange(
 
   PLOTS$All$All$JI$OEE, 
   PLOTS$All$Small$JI$OEE + rremove("ylab"),
-  PLOTS$All$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$All$Medium$JI$OEE + rremove("ylab"), 
   PLOTS$All$Large$JI$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -659,7 +659,7 @@ ggarrange(
   
   PLOTS$Deletions$All$JI$OEE, 
   PLOTS$Deletions$Small$JI$OEE + rremove("ylab"),
-  PLOTS$Deletions$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Deletions$Medium$JI$OEE + rremove("ylab"), 
   PLOTS$Deletions$Large$JI$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
@@ -680,7 +680,7 @@ ggarrange(
   
   PLOTS$Duplications$All$JI$OEE, 
   PLOTS$Duplications$Small$JI$OEE + rremove("ylab"),
-  PLOTS$Duplications$Medium$Sensitivit$OEE + rremove("ylab"), 
+  PLOTS$Duplications$Medium$JI$OEE + rremove("ylab"), 
   PLOTS$Duplications$Large$JI$OEE + rremove("ylab"),
   align="hv", labels=c("A", " ", " ", " ", "B", " ", " ", " "), common.legend=T,
   legend="top", nrow=2, ncol=4) %>%
