@@ -325,20 +325,50 @@ ggsave(plot=Plot7_C + coord_cartesian(ylim=c(-0.02, 0.02)),
 # SAVE ALL LRRMEANS FILES AS RDATA
 save(LRRMEANS_OMNI, LRRMEANS_OEE, LRRMEANS_GSA, file="Table8.RData")
 
-# TABULATE GAP SIZES ACROSS TABLES AND CONDITIONS
+# SAVE THE PANNELED PLOT
+ggarrange(ggarrange(Plot7_A + theme(legend.position="none", plot.subtitle=element_blank()),
+            align="hv", labels=c("A"), nrow=1, ncol=1, legend="top", common.legend=T),
+          ggarrange(Plot7_B + theme(legend.position="none", plot.subtitle=element_blank()),
+            Plot7_C + theme(legend.position="none", plot.subtitle=element_blank()),
+            align="hv", labels=c("B", "C"), nrow=1, ncol=2),
+          align="hv", nrow=2, ncol=1, legend="top", common.legend=T, heights=c(1, 1)) %>%
+ggsave(filename="FIGURES/Plot7.png",
+       device="png",
+       width=10,
+       height=10,
+       units="in",
+       dpi=350,
+       bg="white")
+
+# SAVE THE PANNELED ZOOMED PLOT
+ggarrange(ggarrange(Plot7_A + theme(legend.position="none", plot.subtitle=element_blank()) + coord_cartesian(ylim=c(-0.02, 0.02)),
+            align="hv", labels=c("A"), nrow=1, ncol=1, legend="top", common.legend=T),
+          ggarrange(Plot7_B + theme(legend.position="none", plot.subtitle=element_blank()) + coord_cartesian(ylim=c(-0.02, 0.02)),
+            Plot7_C + theme(legend.position="none", plot.subtitle=element_blank()) + coord_cartesian(ylim=c(-0.02, 0.02)),
+            align="hv", labels=c("B", "C"), nrow=1, ncol=2),
+          align="hv", nrow=2, ncol=1, legend="top", common.legend=T, heights=c(1, 1)) %>%
+ggsave(filename="FIGURES/Plot7_ZOOM.png",
+       device="png",
+       width=10,
+       height=10,
+       units="in",
+       dpi=350,
+       bg="white")
+
+# TABULATE LRRMEANS ACROSS TABLES AND CONDITIONS
 LRRMEANS_ALL <- bind_rows(
-  LRRMEANS_GSA %>%
-    select(c(FactorN, MaxD, LRRMEAN)) %>%
-    mutate(Matching="GSA", Reference="OEE"),
-  LRRMEANS_OEE %>%
-    select(c(FactorN, MaxD, LRRMEAN)) %>%
-    mutate(Matching="OEE", Reference="GSA"),
   LRRMEANS_OMNI %>%
     select(c(FactorN, MaxD, LRRMEAN)) %>%
-    mutate(Matching="OMNI", Reference="GSA"))
+    mutate(Figure_Reference="Figure S5A"),
+  LRRMEANS_OEE %>%
+    select(c(FactorN, MaxD, LRRMEAN)) %>%
+    mutate(Figure_Reference="Figure S5B"),
+  LRRMEANS_GSA %>%
+    select(c(FactorN, MaxD, LRRMEAN)) %>%
+    mutate(Figure_Reference="Figure S5C"))
 
 LRRMEANS_ALL %>%
-  group_by(Matching, Reference, FactorN, MaxD) %>%
+  group_by(Figure_Reference, FactorN, MaxD) %>%
   summarise(Min = min(LRRMEAN),
             Med = median(LRRMEAN),
             Mean = mean(LRRMEAN),
