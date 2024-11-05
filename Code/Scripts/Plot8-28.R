@@ -9,16 +9,55 @@ load("Validation_Final_103024.RData")
 # PREPARE A DATA FILE NAMES FOR SSC
 DataFileNames <- data.frame(
   Factor=c("FullSet", "PerfectMatch", rep("BAF", 12), rep("LRRmean", 12), rep("LRRsd", 12), rep("Pos", 12)),
-  MaxD=c(NA, NA, rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4)),
-  MaxDLab=c("0", "0", rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4)),
+  D_MAX=c(NA, NA, rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4)),
+  D_MAXLab=c("0", "0", rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4)),
   stringsAsFactors=FALSE)
 
-# INITIATE HOLDING DF
+# INITIATE HOLDING DF FOR SUMMARIZATION OF CNV CALLSETS
+CALLSET_SUMMARIZER <- data.frame(NULL)
+
+for(h in 1:nrow(DataFileNames)){
+  i <- DataFileNames$Factor[h]
+  j <- DataFileNames$D_MAXLab[h] 
+
+  for(o in c("Raw", "QCd")){
+
+    # PULL DATA FRAMES
+    DF_CNV <- DATA[[o]][["SSC"]][[i]][[j]][["CNV"]] %>%
+      mutate(CNSize=case_when(
+        is.na(LEN.y) & LEN.x<100000 ~ "Small",
+        is.na(LEN.y) & LEN.x>=100000 & LEN.x<500000 ~ "Medium",
+        is.na(LEN.y) & LEN.x>=500000 & LEN.x<1000000 ~ "Large",
+        is.na(LEN.y) & LEN.x>=1000000 & LEN.x<5000000 ~ "Very Large",
+        is.na(LEN.y) & LEN.x>=5000000 ~ "Ultra Large",
+        !is.na(LEN.y) & LEN.y<100000 ~ "Small",
+        !is.na(LEN.y) & LEN.y>=100000 & LEN.y<500000 ~ "Medium",
+        !is.na(LEN.y) & LEN.y>=500000 & LEN.y<1000000 ~ "Large",
+        !is.na(LEN.y) & LEN.y>=1000000 & LEN.y<5000000 ~ "Very Large",
+        !is.na(LEN.y) & LEN.y>=5000000 ~ "Ultra Large",
+        TRUE ~ "Edge Case"),
+      CNType=case_when(
+        CN < 2 ~ "Deletion",
+        CN > 2 ~ "Duplication",
+        TRUE ~ "Edge Case"))
+    
+    DF_QC <- DATA[[o]][["SSC"]][[i]][[j]][["QC"]]
+
+    ROW <- data.frame(NULL)
+
+    ROW[1, "Factor"] <- i
+    ROW[1, "Distance"]
+      
+  }
+
+}  
+
+# INITIATE HOLDING DF FOR VALIDATION
 ANALYSIS_SSC <- data.frame(NULL)
 
 for(h in 1:nrow(DataFileNames)){
   i <- DataFileNames$Factor[h]
-  j <- DataFileNames$MaxDLab[h] 
+  j <- DataFileNames$D_MAXLab[h] 
   
   # Pull out CNVs overlapping in full set and partial sets
   for(o in c("Raw", "QCd")){
@@ -163,7 +202,7 @@ ANALYSIS_SSC <- ANALYSIS_SSC %>%
          FMI=round(sqrt((TP/(FP+TP))*(TP/(TP+FN))), digits=3),
          JI=round(TP/(TP+FN+FP), digits=3)) %>%
   mutate(Matching_Distance=as.numeric(Matching_Distance)) %>%
-  mutate(MaxD_LOG=log10(Matching_Distance))
+  mutate(D_MAX_LOG=log10(Matching_Distance))
 
 # DEFINE PLOTTING FUNCTION
 MetricPlot <- function(a, b, c){
@@ -195,7 +234,7 @@ MetricPlot <- function(a, b, c){
   PLOT <- ANALYSIS_SSC %>%
     filter(!Matching_Method %in% c("PerfectMatch", "FullSet")) %>%
     filter(CNV_Type==a & CNV_Size==b) %>%
-    ggplot(aes(x=MaxD_LOG, y=.data[[c]], linetype=Matching_Type, color=Matching_Method)) +
+    ggplot(aes(x=D_MAX_LOG, y=.data[[c]], linetype=Matching_Type, color=Matching_Method)) +
     geom_hline(aes(yintercept=H1, color="Perfect Match", linetype="Raw"), linewidth=1) +
     geom_hline(aes(yintercept=H2, color="Perfect Match", linetype="QCd"), linewidth=1) +
     geom_hline(aes(yintercept=H3, color="Reference", linetype="Raw"), linewidth=1) +
@@ -595,7 +634,7 @@ ggarrange(PLOTS$Duplications$All$JI + rremove("xlab"),
 # WRITE TABLE DATA
 ANALYSIS_SSC %>%
   rename(Method=Matching_Method,
-    MaxD=Matching_Distance,
+    D_MAX=Matching_Distance,
     QC=Matching_Type) %>%
-  select(-MaxD_LOG) %>%
+  select(-D_MAX_LOG) %>%
   write_tsv("TABLES/Table9.tsv", col_names=TRUE)
