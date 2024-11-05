@@ -32,13 +32,13 @@ for(j in SETS_OMNI){
   b <- str_split(j, pattern="_")[[1]][2]
   
   ROW <- data.frame(Factor=a,
-                    MaxD=b,
+                    D_MAX=b,
                     BAF=BAF)
   
   BAFS_OMNI <- rbind(BAFS_OMNI, ROW)
 }
 
-BAFS_OMNI$MaxDF <- factor(BAFS_OMNI$MaxD, 
+BAFS_OMNI$D_MAXF <- factor(BAFS_OMNI$D_MAX, 
                           levels=c("0", "10", "50", "100", "500", "1000", "5000", "10000", 
                                    "50000", "100000", "500000", "1000000", "5000000"),
                           labels=c("0", "10", "50", "100", "500", "1,000", "5,000", "10,000", 
@@ -98,7 +98,7 @@ Plot5_A <- BAFS_OMNI %>%
         axis.ticks.x=element_blank()) +
   guides(color=guide_legend(title.position="top", nrow=1),
          fill=guide_legend(title.position="top", nrow=1)) + 
-  facet_grid(. ~ MaxDF, scales="free_x", space="free_x", switch="both")
+  facet_grid(. ~ D_MAXF, scales="free_x", space="free_x", switch="both")
 
 ggsave(plot=Plot5_A,
        filename="FIGURES/Plot5_A.png",
@@ -127,13 +127,13 @@ for(j in SETS_OEE){
     b <- str_split(j, pattern="_")[[1]][2]
     
     ROW <- data.frame(Factor=a,
-                      MaxD=b,
+                      D_MAX=b,
                       BAF=BAF)
     
     BAFS_OEE <- rbind(BAFS_OEE, ROW)
 }
 
-BAFS_OEE$MaxDF <- factor(BAFS_OEE$MaxD, 
+BAFS_OEE$D_MAXF <- factor(BAFS_OEE$D_MAX, 
                          levels=c("0", "10000"),
                          labels=c("0", "10,000"))
 
@@ -191,7 +191,7 @@ Plot5_B <- BAFS_OEE %>%
         axis.ticks.x=element_blank()) +
   guides(color=guide_legend(title.position="top", nrow=1),
          fill=guide_legend(title.position="top", nrow=1)) + 
-  facet_grid(. ~ MaxDF, scales="free_x", space="free_x", switch="both")
+  facet_grid(. ~ D_MAXF, scales="free_x", space="free_x", switch="both")
 
 ggsave(plot=Plot5_B,
        filename="FIGURES/Plot5_B.png",
@@ -220,13 +220,13 @@ for(j in SETS_GSA){
     b <- str_split(j, pattern="_")[[1]][2]
     
     ROW <- data.frame(Factor=a,
-                      MaxD=b,
+                      D_MAX=b,
                       BAF=BAF)
     
     BAFS_GSA <- rbind(BAFS_GSA, ROW)
 }
 
-BAFS_GSA$MaxDF <- factor(BAFS_GSA$MaxD, 
+BAFS_GSA$D_MAXF <- factor(BAFS_GSA$D_MAX, 
                          levels=c("0", "10000"),
                          labels=c("0", "10,000"))
 
@@ -284,7 +284,7 @@ Plot5_C <- BAFS_GSA %>%
         axis.ticks.x=element_blank()) +
   guides(color=guide_legend(title.position="top", nrow=1),
          fill=guide_legend(title.position="top", nrow=1)) + 
-  facet_grid(. ~ MaxDF, scales="free_x", space="free_x", switch="both")
+  facet_grid(. ~ D_MAXF, scales="free_x", space="free_x", switch="both")
 
 ggsave(plot=Plot5_C,
        filename="FIGURES/Plot5_C.png",
@@ -316,17 +316,17 @@ ggsave(filename="FIGURES/Plot5.png",
 # TABULATE BAFS ACROSS TABLES AND CONDITIONS
 BAFS_ALL <- bind_rows(
   BAFS_OMNI %>%
-    select(c(FactorN, MaxD, BAF)) %>%
+    select(c(FactorN, D_MAX, BAF)) %>%
     mutate(Figure_Reference="Figure S3A"),
   BAFS_OEE %>%
-    select(c(FactorN, MaxD, BAF)) %>%
+    select(c(FactorN, D_MAX, BAF)) %>%
     mutate(Figure_Reference="Figure S3B"),
   BAFS_GSA %>%
-    select(c(FactorN, MaxD, BAF)) %>%
+    select(c(FactorN, D_MAX, BAF)) %>%
     mutate(Figure_Reference="Figure S3C"))
 
 BAFS_ALL %>%
-  group_by(Figure_Reference, FactorN, MaxD) %>%
+  group_by(Figure_Reference, FactorN, D_MAX) %>%
   summarise(Min = min(BAF),
             Med = median(BAF),
             Mean = mean(BAF),
