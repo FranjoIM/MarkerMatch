@@ -46,7 +46,9 @@ for(h in 1:nrow(DataFileNames)){
     ROW <- data.frame(NULL)
 
     ROW[1, "Factor"] <- i
-    ROW[1, "Distance"]
+    ROW[1, "D_MAX"] <- j
+    ROW[1, "QC"] <- o
+    ROW[1, ]
       
   }
 
