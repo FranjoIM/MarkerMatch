@@ -40,7 +40,7 @@ for(j in SETS_OMNI){
     b <- str_split(j, pattern="_")[[1]][2]
     
     ROW <- data.frame(Factor=a,
-                      MaxD=b,
+                      D_MAX=b,
                       Chr=k,
                       Gaps=GAP)
     
@@ -48,7 +48,7 @@ for(j in SETS_OMNI){
   }
 }
 
-GAPS_OMNI$MaxDF <- factor(GAPS_OMNI$MaxD, 
+GAPS_OMNI$D_MAXF <- factor(GAPS_OMNI$D_MAX, 
                      levels=c("0", "10", "50", "100", "500", "1000", "5000", "10000", 
                               "50000", "100000", "500000", "1000000", "5000000"),
                      labels=c("0", "10", "50", "100", "500", "1,000", "5,000", "10,000", 
@@ -107,7 +107,7 @@ Plot4_A <- GAPS_OMNI %>%
         axis.ticks.x=element_blank()) +
   guides(color=guide_legend(title.position="top", nrow=1),
          fill=guide_legend(title.position="top", nrow=1)) + 
-  facet_grid(. ~ MaxDF, scales="free_x", space="free_x", switch="both")
+  facet_grid(. ~ D_MAXF, scales="free_x", space="free_x", switch="both")
 
 ggsave(plot=Plot4_A,
        filename="FIGURES/Plot4_A.png",
@@ -144,7 +144,7 @@ for(j in SETS_OEE){
     b <- str_split(j, pattern="_")[[1]][2]
     
     ROW <- data.frame(Factor=a,
-                      MaxD=b,
+                      D_MAX=b,
                       Chr=k,
                       Gaps=GAP)
     
@@ -152,7 +152,7 @@ for(j in SETS_OEE){
   }
 }
 
-GAPS_OEE$MaxDF <- factor(GAPS_OEE$MaxD, 
+GAPS_OEE$D_MAXF <- factor(GAPS_OEE$D_MAX, 
                           levels=c("0", "10000"),
                           labels=c("0", "10,000"))
 
@@ -209,7 +209,7 @@ Plot4_B <- GAPS_OEE %>%
         axis.ticks.x=element_blank()) +
   guides(color=guide_legend(title.position="top", nrow=1),
          fill=guide_legend(title.position="top", nrow=1)) + 
-  facet_grid(. ~ MaxDF, scales="free_x", space="free_x", switch="both")
+  facet_grid(. ~ D_MAXF, scales="free_x", space="free_x", switch="both")
 
 print(Plot4_B)
 
@@ -248,7 +248,7 @@ for(j in SETS_GSA){
     b <- str_split(j, pattern="_")[[1]][2]
     
     ROW <- data.frame(Factor=a,
-                      MaxD=b,
+                      D_MAX=b,
                       Chr=k,
                       Gaps=GAP)
     
@@ -256,7 +256,7 @@ for(j in SETS_GSA){
   }
 }
 
-GAPS_GSA$MaxDF <- factor(GAPS_GSA$MaxD, 
+GAPS_GSA$D_MAXF <- factor(GAPS_GSA$D_MAX, 
                           levels=c("0", "10000"),
                           labels=c("0", "10,000"))
 
@@ -313,7 +313,7 @@ Plot4_C <- GAPS_GSA %>%
         axis.ticks.x=element_blank()) +
   guides(color=guide_legend(title.position="top", nrow=1),
          fill=guide_legend(title.position="top", nrow=1)) + 
-  facet_grid(. ~ MaxDF, scales="free_x", space="free_x", switch="both")
+  facet_grid(. ~ D_MAXF, scales="free_x", space="free_x", switch="both")
 
 print(Plot4_C)
 
@@ -347,17 +347,17 @@ ggsave(filename="FIGURES/Plot4.png",
 # TABULATE GAP SIZES ACROSS TABLES AND CONDITIONS
 GAPS_ALL <- bind_rows(
   GAPS_OMNI %>%
-    select(c(FactorN, MaxD, Gaps)) %>%
+    select(c(FactorN, D_MAX, Gaps)) %>%
     mutate(Figure_Reference="Figure S2A"),
   GAPS_OEE %>%
-    select(c(FactorN, MaxD, Gaps)) %>%
+    select(c(FactorN, D_MAX, Gaps)) %>%
     mutate(Figure_Reference="Figure S2B"),
   GAPS_GSA %>%
-    select(c(FactorN, MaxD, Gaps)) %>%
+    select(c(FactorN, D_MAX, Gaps)) %>%
     mutate(Figure_Reference="Figure S2C"))
 
 GAPS_ALL %>%
-  group_by(Figure_Reference, FactorN, MaxD) %>%
+  group_by(Figure_Reference, FactorN, D_MAX) %>%
   summarise(Min = min(Gaps),
             Med = median(Gaps),
             Mean = mean(Gaps),
