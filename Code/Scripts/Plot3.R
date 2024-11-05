@@ -291,9 +291,9 @@ ggsave(plot=Plot3,
        bg="white")
 
 # OUTPUT TABLE WITH COVERAGE DATA
-bind_rows(mutate(NUMBERSNPS_OMNI, Figure_Reference="3A-B"),
-          mutate(NUMBERSNPS_OEE, Figure_Reference="3C"),
-          mutate(NUMBERSNPS_GSA, Figure_Reference="3D")) %>%
+bind_rows(mutate(NUMBERSNPS_OMNI, Figure_Reference="Figure 3A-B"),
+          mutate(NUMBERSNPS_OEE, Figure_Reference="Figure 3C"),
+          mutate(NUMBERSNPS_GSA, Figure_Reference="Figure 3D")) %>%
   select(c(Figure_Reference, FactorN, D_MAX, N_SNP, OMNI_Coverage, GSA_Coverage, OEE_Coverage)) %>%
   rename(Factor=FactorN) %>%
   write_tsv("TABLES/Table4.tsv", col_names=TRUE)
