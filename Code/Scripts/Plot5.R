@@ -298,20 +298,35 @@ ggsave(plot=Plot5_C,
 # SAVE ALL BAF FILES AS RDATA
 save(BAFS_OMNI, BAFS_OEE, BAFS_GSA, file="Table6.RData")
 
+# SAVE THE PANNELED PLOT
+ggarrange(ggarrange(Plot5_A + theme(legend.position="none", plot.subtitle=element_blank()),
+            align="hv", labels=c("A"), nrow=1, ncol=1, legend="top", common.legend=T),
+          ggarrange(Plot5_B + theme(legend.position="none", plot.subtitle=element_blank()),
+            Plot5_C + theme(legend.position="none", plot.subtitle=element_blank()),
+            align="hv", labels=c("B", "C"), nrow=1, ncol=2),
+          align="hv", nrow=2, ncol=1, legend="top", common.legend=T, heights=c(1, 1)) %>%
+ggsave(filename="FIGURES/Plot5.png",
+       device="png",
+       width=10,
+       height=10,
+       units="in",
+       dpi=350,
+       bg="white")
+
 # TABULATE BAFS ACROSS TABLES AND CONDITIONS
 BAFS_ALL <- bind_rows(
-  BAFS_GSA %>%
-    select(c(FactorN, MaxD, BAF)) %>%
-    mutate(Matching="GSA", Reference="OEE"),
-  BAFS_OEE %>%
-    select(c(FactorN, MaxD, BAF)) %>%
-    mutate(Matching="OEE", Reference="GSA"),
   BAFS_OMNI %>%
     select(c(FactorN, MaxD, BAF)) %>%
-    mutate(Matching="OMNI", Reference="GSA"))
+    mutate(Figure_Reference="Figure S3A"),
+  BAFS_OEE %>%
+    select(c(FactorN, MaxD, BAF)) %>%
+    mutate(Figure_Reference="Figure S3B"),
+  BAFS_GSA %>%
+    select(c(FactorN, MaxD, BAF)) %>%
+    mutate(Figure_Reference="Figure S3C"))
 
 BAFS_ALL %>%
-  group_by(Matching, Reference, FactorN, MaxD) %>%
+  group_by(Figure_Reference, FactorN, MaxD) %>%
   summarise(Min = min(BAF),
             Med = median(BAF),
             Mean = mean(BAF),
