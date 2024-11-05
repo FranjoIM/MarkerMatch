@@ -331,7 +331,7 @@ save(GAPS_OMNI, GAPS_OEE, GAPS_GSA, file="Table5.RData")
 
 # SAVE THE PANNELED PLOT
 ggarrange(ggarrange(Plot4_A + theme(legend.position="none", plot.subtitle=element_blank()),
-            align="hv", labels=c("A"), nrow=1, ncol=1),
+            align="hv", labels=c("A"), nrow=1, ncol=1, legend="top", common.legend=T),
           ggarrange(Plot4_B + theme(legend.position="none", plot.subtitle=element_blank()),
             Plot4_C + theme(legend.position="none", plot.subtitle=element_blank()),
             align="hv", labels=c("B", "C"), nrow=1, ncol=2),
