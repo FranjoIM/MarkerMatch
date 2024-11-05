@@ -338,7 +338,7 @@ ggarrange(ggarrange(Plot4_A + theme(legend.position="none", plot.subtitle=elemen
           align="hv", nrow=2, ncol=1, legend="top", common.legend=T, heights=c(1, 1)) %>%
 ggsave(filename="FIGURES/Plot4.png",
        device="png",
-       width=8,
+       width=10,
        height=10,
        units="in",
        dpi=350,
