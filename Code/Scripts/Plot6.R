@@ -301,20 +301,35 @@ ggsave(plot=Plot6_C,
 # SAVE ALL LRRSDS FILES AS RDATA
 save(LRRSDS_OMNI, LRRSDS_OEE, LRRSDS_GSA, file="Table7.RData")
 
-# TABULATE GAP SIZES ACROSS TABLES AND CONDITIONS
+# SAVE THE PANNELED PLOT
+ggarrange(ggarrange(Plot6_A + theme(legend.position="none", plot.subtitle=element_blank()),
+            align="hv", labels=c("A"), nrow=1, ncol=1, legend="top", common.legend=T),
+          ggarrange(Plot6_B + theme(legend.position="none", plot.subtitle=element_blank()),
+            Plot6_C + theme(legend.position="none", plot.subtitle=element_blank()),
+            align="hv", labels=c("B", "C"), nrow=1, ncol=2),
+          align="hv", nrow=2, ncol=1, legend="top", common.legend=T, heights=c(1, 1)) %>%
+ggsave(filename="FIGURES/Plot6.png",
+       device="png",
+       width=10,
+       height=10,
+       units="in",
+       dpi=350,
+       bg="white")
+
+# TABULATE LRRSDS ACROSS TABLES AND CONDITIONS
 LRRSDS_ALL <- bind_rows(
-  LRRSDS_GSA %>%
-    select(c(FactorN, MaxD, LRRSD)) %>%
-    mutate(Matching="GSA", Reference="OEE"),
-  LRRSDS_OEE %>%
-    select(c(FactorN, MaxD, LRRSD)) %>%
-    mutate(Matching="OEE", Reference="GSA"),
   LRRSDS_OMNI %>%
     select(c(FactorN, MaxD, LRRSD)) %>%
-    mutate(Matching="OMNI", Reference="GSA"))
+    mutate(Figure_Reference="Figure S4A"),
+  LRRSDS_OEE %>%
+    select(c(FactorN, MaxD, LRRSD)) %>%
+    mutate(Figure_Reference="Figure S4B"),
+  LRRSDS_GSA %>%
+    select(c(FactorN, MaxD, LRRSD)) %>%
+    mutate(Figure_Reference="Figure S4C"))
 
 LRRSDS_ALL %>%
-  group_by(Matching, Reference, FactorN, MaxD) %>%
+  group_by(Figure_Reference, FactorN, MaxD) %>%
   summarise(Min = min(LRRSD),
             Med = median(LRRSD),
             Mean = mean(LRRSD),
