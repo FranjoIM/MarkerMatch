@@ -236,7 +236,7 @@ NUMBERSNPS_OEE <- NUMBERSNPS
 
 # Save Plots
 ggsave(plot=PLOT_V1_OMNI_COVERAGE,
-       filename="FIGURES/Plot3_A1.png",
+       filename="FIGURES/Plot3_A.png",
        device="png",
        width=10,
        height=7,
@@ -245,7 +245,7 @@ ggsave(plot=PLOT_V1_OMNI_COVERAGE,
        bg="white")
 
 ggsave(plot=PLOT_V1_GSA_COVERAGE,
-       filename="FIGURES/Plot3_A2.png",
+       filename="FIGURES/Plot3_B.png",
        device="png",
        width=10,
        height=7,
@@ -254,7 +254,7 @@ ggsave(plot=PLOT_V1_GSA_COVERAGE,
        bg="white")
 
 ggsave(plot=PLOT_V3_OEE_COVERAGE,
-       filename="FIGURES/Plot3_B1.png",
+       filename="FIGURES/Plot3_C.png",
        device="png",
        width=6,
        height=7,
@@ -263,7 +263,7 @@ ggsave(plot=PLOT_V3_OEE_COVERAGE,
        bg="white")
 
 ggsave(plot=PLOT_V2_GSA_COVERAGE,
-       filename="FIGURES/Plot3_B2.png",
+       filename="FIGURES/Plot3_D.png",
        device="png",
        width=6,
        height=7,
@@ -272,18 +272,20 @@ ggsave(plot=PLOT_V2_GSA_COVERAGE,
        bg="white")
 
 # Arrange and save plots
-Plot3 <- ggarrange(PLOT_V1_OMNI_COVERAGE + theme(legend.position="none"), 
-          PLOT_V3_OEE_COVERAGE + theme(legend.position="none"),
-          PLOT_V1_GSA_COVERAGE + theme(legend.position="none"),
-          PLOT_V2_GSA_COVERAGE + theme(legend.position="none"),
-          align="hv", labels=c("A1", "B1", "A2", "B2"), nrow=2, ncol=2, widths=c(2.5, 1),
-          legend="top", common.legend=T)  
+Plot3 <- ggarrange(
+          ggarrange(PLOT_V1_OMNI_COVERAGE + theme(legend.position="none", plot.subtitle=element_blank()), 
+            PLOT_V1_GSA_COVERAGE + theme(legend.position="none", plot.subtitle=element_blank()),
+            align="hv", labels=c("A", "B"), nrow=2, ncol=1, legend="top", common.legend=T),        
+          ggarrange(PLOT_V3_OEE_COVERAGE + theme(legend.position="none", plot.subtitle=element_blank()),
+            PLOT_V2_GSA_COVERAGE + theme(legend.position="none", plot.subtitle=element_blank()),
+            align="hv", labels=c("C", "D"), nrow=1, ncol=2),
+          align="hv", nrow=2, ncol=1, legend="top", common.legend=T, heights=c(1, 0.5))
 
 ggsave(plot=Plot3,
        filename="FIGURES/Plot3.png",
        device="png",
-       width=10,
-       height=7,
+       width=7,
+       height=10,
        units="in",
        dpi=350,
        bg="white")
