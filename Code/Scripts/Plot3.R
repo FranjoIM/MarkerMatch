@@ -18,11 +18,11 @@ NUMBERSNPS <- read_delim("DATA/UsedSNPs_OMNI.txt", delim="\t", col_names=T) %>%
   rownames_to_column() %>%
   pivot_longer(!rowname, names_to="col1", values_to="col2") %>% 
   select(-rowname) %>%
-  separate(col1, c("Factor", "MaxD")) %>%
+  separate(col1, c("Factor", "D_MAX")) %>%
   rename(N_SNP=col2) %>%
   mutate(OMNI_Coverage=round(N_SNP/nrow(OMNI_MAN), digits=2),
          GSA_Coverage=round(N_SNP/nrow(GSA_MAN), digits=2),
-         MaxD_LOG=log10(as.numeric(MaxD)))
+         D_MAX_LOG=log10(as.numeric(D_MAX)))
 
 H1 <- NUMBERSNPS %>%
   filter(Factor=="FullSet") %>%
@@ -58,7 +58,7 @@ NUMBERSNPS$FactorF <- factor(NUMBERSNPS$FactorN,
 
 PLOT_V1_OMNI_COVERAGE <- NUMBERSNPS %>%
   filter(!FactorF %in% c("Full Set", "Perfect Match")) %>%
-  ggplot(aes(x=MaxD_LOG, y=OMNI_Coverage, color=FactorF)) +
+  ggplot(aes(x=D_MAX_LOG, y=OMNI_Coverage, color=FactorF)) +
   geom_hline(aes(yintercept=H2, color="Perfect Match"), size=1) +
   geom_hline(aes(yintercept=H1, color="Full Set"), size=1) +
   geom_line(size=1) +
@@ -82,7 +82,7 @@ PLOT_V1_OMNI_COVERAGE <- NUMBERSNPS %>%
 
 PLOT_V1_GSA_COVERAGE <- NUMBERSNPS %>%
   filter(!FactorF %in% c("Full Set", "Perfect Match")) %>%
-  ggplot(aes(x=MaxD_LOG, y=GSA_Coverage, color=FactorF)) +
+  ggplot(aes(x=D_MAX_LOG, y=GSA_Coverage, color=FactorF)) +
   geom_hline(aes(yintercept=H4, color="Perfect Match"), size=1) +
   geom_hline(aes(yintercept=1, color="Full Set"), size=1) +
   geom_line(size=1) +
@@ -113,11 +113,11 @@ NUMBERSNPS <- read_delim("DATA/UsedSNPs_GSA.txt", delim="\t", col_names=T) %>%
   rownames_to_column() %>%
   pivot_longer(!rowname, names_to="col1", values_to="col2") %>% 
   select(-rowname) %>%
-  separate(col1, c("Factor", "MaxD")) %>%
+  separate(col1, c("Factor", "D_MAX")) %>%
   rename(N_SNP=col2) %>%
   mutate(OEE_Coverage=round(N_SNP/nrow(OEE_MAN), digits=2),
          GSA_Coverage=round(N_SNP/nrow(GSA_MAN), digits=2),
-         MaxD_LOG=log10(as.numeric(MaxD)))
+         D_MAX_LOG=log10(as.numeric(D_MAX)))
 
 I1 <- NUMBERSNPS %>%
   filter(Factor=="FullSet") %>%
@@ -145,7 +145,7 @@ NUMBERSNPS$FactorF <- factor(NUMBERSNPS$FactorN,
 
 PLOT_V2_GSA_COVERAGE <- NUMBERSNPS %>%
   filter(!FactorF %in% c("Full Set", "Perfect Match")) %>%
-  ggplot(aes(x=MaxD_LOG, y=GSA_Coverage, color=FactorF)) +
+  ggplot(aes(x=D_MAX_LOG, y=GSA_Coverage, color=FactorF)) +
   geom_hline(aes(yintercept=I2, color="Perfect Match"), linewidth=1) +
   geom_hline(aes(yintercept=I1, color="Full Set"), linewidth=1) +
   geom_point(position = position_dodge(0.01), size=3, shape=17) +
@@ -177,11 +177,11 @@ NUMBERSNPS <- read_delim("DATA/UsedSNPs_OEE.txt", delim="\t", col_names=T) %>%
   rownames_to_column() %>%
   pivot_longer(!rowname, names_to="col1", values_to="col2") %>% 
   select(-rowname) %>%
-  separate(col1, c("Factor", "MaxD")) %>%
+  separate(col1, c("Factor", "D_MAX")) %>%
   rename(N_SNP=col2) %>%
   mutate(OEE_Coverage=round(N_SNP/nrow(OEE_MAN), digits=2),
          GSA_Coverage=round(N_SNP/nrow(GSA_MAN), digits=2),
-         MaxD_LOG=log10(as.numeric(MaxD)))
+         D_MAX_LOG=log10(as.numeric(D_MAX)))
 
 J1 <- NUMBERSNPS %>%
   filter(Factor=="FullSet") %>%
@@ -209,7 +209,7 @@ NUMBERSNPS$FactorF <- factor(NUMBERSNPS$FactorN,
 
 PLOT_V3_OEE_COVERAGE <- NUMBERSNPS %>%
   filter(!FactorF %in% c("Full Set", "Perfect Match")) %>%
-  ggplot(aes(x=MaxD_LOG, y=OEE_Coverage, color=FactorF)) +
+  ggplot(aes(x=D_MAX_LOG, y=OEE_Coverage, color=FactorF)) +
   geom_hline(aes(yintercept=J2, color="Perfect Match"), linewidth=1) +
   geom_hline(aes(yintercept=J1, color="Full Set"), linewidth=1) +
   geom_point(position = position_dodge(0.01), size=3, shape=17) +
@@ -291,7 +291,9 @@ ggsave(plot=Plot3,
        bg="white")
 
 # OUTPUT TABLE WITH COVERAGE DATA
-bind_rows(NUMBERSNPS_OMNI,
-          NUMBERSNPS_GSA,
-          NUMBERSNPS_OEE) %>%
+bind_rows(mutate(NUMBERSNPS_OMNI, Figure_Reference="3A-B"),
+          mutate(NUMBERSNPS_OEE, Figure_Reference="3C"),
+          mutate(NUMBERSNPS_GSA, Figure_Reference="3D")) %>%
+  select(c(Figure_Reference, FactorN, D_MAX, N_SNP, OMNI_Coverage, GSA_Coverage, OEE_Coverage)) %>%
+  rename(Factor=FactorN) %>%
   write_tsv("TABLES/Table4.tsv", col_names=TRUE)
