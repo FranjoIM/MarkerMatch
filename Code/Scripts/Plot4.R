@@ -329,20 +329,35 @@ ggsave(plot=Plot4_C,
 # SAVE ALL GAPS FILES AS RDATA
 save(GAPS_OMNI, GAPS_OEE, GAPS_GSA, file="Table5.RData")
 
+# SAVE THE PANNELED PLOT
+ggarrange(ggarrange(Plot4_A + theme(legend.position="none", plot.subtitle=element_blank()),
+            align="hv", labels=c("A"), nrow=1, ncol=1),
+          ggarrange(Plot4_B + theme(legend.position="none", plot.subtitle=element_blank()),
+            Plot4_C + theme(legend.position="none", plot.subtitle=element_blank()),
+            align="hv", labels=c("B", "C"), nrow=1, ncol=2),
+          align="hv", nrow=2, ncol=1, legend="top", common.legend=T, heights=c(1, 1)) %>%
+ggsave(filename="FIGURES/Plot4.png",
+       device="png",
+       width=8,
+       height=10,
+       units="in",
+       dpi=350,
+       bg="white")
+
 # TABULATE GAP SIZES ACROSS TABLES AND CONDITIONS
 GAPS_ALL <- bind_rows(
-  GAPS_GSA %>%
-    select(c(FactorN, MaxD, Gaps)) %>%
-    mutate(Matching="GSA", Reference="OEE"),
-  GAPS_OEE %>%
-    select(c(FactorN, MaxD, Gaps)) %>%
-    mutate(Matching="OEE", Reference="GSA"),
   GAPS_OMNI %>%
     select(c(FactorN, MaxD, Gaps)) %>%
-    mutate(Matching="OMNI", Reference="GSA"))
+    mutate(Figure_Reference="Figure S2A"),
+  GAPS_OEE %>%
+    select(c(FactorN, MaxD, Gaps)) %>%
+    mutate(Figure_Reference="Figure S2B"),
+  GAPS_GSA %>%
+    select(c(FactorN, MaxD, Gaps)) %>%
+    mutate(Figure_Reference="Figure S2C"))
 
 GAPS_ALL %>%
-  group_by(Matching, Reference, FactorN, MaxD) %>%
+  group_by(Figure_Reference, FactorN, MaxD) %>%
   summarise(Min = min(Gaps),
             Med = median(Gaps),
             Mean = mean(Gaps),
@@ -350,4 +365,4 @@ GAPS_ALL %>%
             StDev = sd(Gaps),
             IQR = IQR(Gaps),
             .groups="keep") %>%
-  write_tsv("TABLES/Table5.tsv", col_names=TRUE)
+ write_tsv("TABLES/Table5.tsv", col_names=TRUE)
