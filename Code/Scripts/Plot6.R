@@ -32,13 +32,13 @@ for(j in SETS_OMNI){
     b <- str_split(j, pattern="_")[[1]][2]
     
     ROW <- data.frame(Factor=a,
-                      MaxD=b,
+                      D_MAX=b,
                       LRRSD=LRRSD)
     
     LRRSDS_OMNI <- rbind(LRRSDS_OMNI, ROW)
 }
 
-LRRSDS_OMNI$MaxDF <- factor(LRRSDS_OMNI$MaxD, 
+LRRSDS_OMNI$D_MAXF <- factor(LRRSDS_OMNI$D_MAX, 
                             levels=c("0", "10", "50", "100", "500", "1000", "5000", "10000", 
                                      "50000", "100000", "500000", "1000000", "5000000"),
                             labels=c("0", "10", "50", "100", "500", "1,000", "5,000", "10,000", 
@@ -99,7 +99,7 @@ Plot6_A <- LRRSDS_OMNI %>%
         axis.ticks.x=element_blank()) +
   guides(color=guide_legend(title.position="top", nrow=1),
          fill=guide_legend(title.position="top", nrow=1)) + 
-  facet_grid(. ~ MaxDF, scales="free_x", space="free_x", switch="both")
+  facet_grid(. ~ D_MAXF, scales="free_x", space="free_x", switch="both")
 
 ggsave(plot=Plot6_A,
        filename="FIGURES/Plot6_A.png",
@@ -128,13 +128,13 @@ for(j in SETS_OEE){
     b <- str_split(j, pattern="_")[[1]][2]
     
     ROW <- data.frame(Factor=a,
-                      MaxD=b,
+                      D_MAX=b,
                       LRRSD=LRRSD)
     
     LRRSDS_OEE <- rbind(LRRSDS_OEE, ROW)
 }
 
-LRRSDS_OEE$MaxDF <- factor(LRRSDS_OEE$MaxD, 
+LRRSDS_OEE$D_MAXF <- factor(LRRSDS_OEE$D_MAX, 
                        levels=c("0", "10000"),
                        labels=c("0", "10,000"))
 
@@ -193,7 +193,7 @@ Plot6_B <- LRRSDS_OEE %>%
         axis.ticks.x=element_blank()) +
   guides(color=guide_legend(title.position="top", nrow=1),
          fill=guide_legend(title.position="top", nrow=1)) + 
-  facet_grid(. ~ MaxDF, scales="free_x", space="free_x", switch="both")
+  facet_grid(. ~ D_MAXF, scales="free_x", space="free_x", switch="both")
 
 ggsave(plot=Plot6_B,
        filename="FIGURES/Plot6_B.png",
@@ -222,13 +222,13 @@ for(j in SETS_GSA){
     b <- str_split(j, pattern="_")[[1]][2]
     
     ROW <- data.frame(Factor=a,
-                      MaxD=b,
+                      D_MAX=b,
                       LRRSD=LRRSD)
     
     LRRSDS_GSA <- rbind(LRRSDS_GSA, ROW)
 }
 
-LRRSDS_GSA$MaxDF <- factor(LRRSDS_GSA$MaxD, 
+LRRSDS_GSA$D_MAXF <- factor(LRRSDS_GSA$D_MAX, 
                        levels=c("0", "10000"),
                        labels=c("0", "10,000"))
 
@@ -287,7 +287,7 @@ Plot6_C <- LRRSDS_GSA %>%
         axis.ticks.x=element_blank()) +
   guides(color=guide_legend(title.position="top", nrow=1),
          fill=guide_legend(title.position="top", nrow=1)) + 
-  facet_grid(. ~ MaxDF, scales="free_x", space="free_x", switch="both")
+  facet_grid(. ~ D_MAXF, scales="free_x", space="free_x", switch="both")
 
 ggsave(plot=Plot6_C,
        filename="FIGURES/Plot6_C.png",
@@ -319,17 +319,17 @@ ggsave(filename="FIGURES/Plot6.png",
 # TABULATE LRRSDS ACROSS TABLES AND CONDITIONS
 LRRSDS_ALL <- bind_rows(
   LRRSDS_OMNI %>%
-    select(c(FactorN, MaxD, LRRSD)) %>%
+    select(c(FactorN, D_MAX, LRRSD)) %>%
     mutate(Figure_Reference="Figure S4A"),
   LRRSDS_OEE %>%
-    select(c(FactorN, MaxD, LRRSD)) %>%
+    select(c(FactorN, D_MAX, LRRSD)) %>%
     mutate(Figure_Reference="Figure S4B"),
   LRRSDS_GSA %>%
-    select(c(FactorN, MaxD, LRRSD)) %>%
+    select(c(FactorN, D_MAX, LRRSD)) %>%
     mutate(Figure_Reference="Figure S4C"))
 
 LRRSDS_ALL %>%
-  group_by(Figure_Reference, FactorN, MaxD) %>%
+  group_by(Figure_Reference, FactorN, D_MAX) %>%
   summarise(Min = min(LRRSD),
             Med = median(LRRSD),
             Mean = mean(LRRSD),
