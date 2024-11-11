@@ -19,40 +19,85 @@ CALLSET_SUMMARIZER <- data.frame(NULL)
 for(h in 1:nrow(DataFileNames)){
   i <- DataFileNames$Factor[h]
   j <- DataFileNames$D_MAXLab[h] 
-
+  
   for(o in c("Raw", "QCd")){
-
+    
     # PULL DATA FRAMES
     DF_CNV <- DATA[[o]][["SSC"]][[i]][[j]][["CNV"]] %>%
       mutate(CNSize=case_when(
-        is.na(LEN.y) & LEN.x<100000 ~ "Small",
-        is.na(LEN.y) & LEN.x>=100000 & LEN.x<500000 ~ "Medium",
-        is.na(LEN.y) & LEN.x>=500000 & LEN.x<1000000 ~ "Large",
-        is.na(LEN.y) & LEN.x>=1000000 & LEN.x<5000000 ~ "Very Large",
-        is.na(LEN.y) & LEN.x>=5000000 ~ "Ultra Large",
-        !is.na(LEN.y) & LEN.y<100000 ~ "Small",
-        !is.na(LEN.y) & LEN.y>=100000 & LEN.y<500000 ~ "Medium",
-        !is.na(LEN.y) & LEN.y>=500000 & LEN.y<1000000 ~ "Large",
-        !is.na(LEN.y) & LEN.y>=1000000 & LEN.y<5000000 ~ "Very Large",
-        !is.na(LEN.y) & LEN.y>=5000000 ~ "Ultra Large",
+        LEN<100000 ~ "Small",
+        LEN>=100000 & LEN<500000 ~ "Medium",
+        LEN>=500000 & LEN<1000000 ~ "Large",
+        LEN>=1000000 & LEN<5000000 ~ "Very Large",
+        LEN>=5000000 ~ "Ultra Large",
         TRUE ~ "Edge Case"),
-      CNType=case_when(
-        CN < 2 ~ "Deletion",
-        CN > 2 ~ "Duplication",
-        TRUE ~ "Edge Case"))
+        CNType=case_when(
+          CN < 2 ~ "Deletion",
+          CN > 2 ~ "Duplication",
+          TRUE ~ "Edge Case"))
     
-    DF_QC <- DATA[[o]][["SSC"]][[i]][[j]][["QC"]]
 
-    ROW <- data.frame(NULL)
-
-    ROW[1, "Factor"] <- i
-    ROW[1, "D_MAX"] <- j
-    ROW[1, "QC"] <- o
-    ROW[1, ]
-      
+    for(p in c("All", "Deletions", "Duplications")){
+      for(q in c("All", "Small", "Medium", "Large", "Very Large", "Ultra Large")){
+        
+        if(p=="Deletions"){
+          FILT <- DF_CNV %>%
+            filter(CN < 2)
+        } else if (p=="Duplications") {
+          FILT <- DF_CNV %>%
+            filter(CN > 2)
+        } else if (p=="All") {
+          FILT <- DF_CNV
+        }
+        
+        if(q!="All"){
+          FILT <- FILT %>%
+            filter(CNSize==q)
+        }
+        
+        ROW <- data.frame(NULL)
+        
+        ROW[1, "Factor"] <- i
+        ROW[1, "D_MAX"] <- j
+        ROW[1, "QC"] <- o
+        ROW[1, "Size"] <- p
+        ROW[1, "Type"] <- q
+        
+        COUNTS <- FILT %>%
+          count(ID, name="N")
+        
+        ROW[1, "N_CNV"] <- nrow(FILT)
+        ROW[1, "PER_SAMPLE_N_CNV_MEAN"] <- mean(COUNTS$N)
+        ROW[1, "PER_SAMPLE_N_CNV_SD"] <- sd(COUNTS$N)
+        ROW[1, "PER_SAMPLE_N_CNV_MEDIAN"] <- median(COUNTS$N)
+        ROW[1, "PER_SAMPLE_N_CNV_IQR"] <- IQR(COUNTS$N)
+        ROW[1, "PER_SAMPLE_N_CNV_MIN"] <- min(COUNTS$N)
+        ROW[1, "PER_SAMPLE_N_CNV_MAX"] <- max(COUNTS$N)
+        
+        ROW[1, "CNV_SIZE_MEAN"] <- mean(FILT$LEN)
+        ROW[1, "CNV_SIZE_SD"] <- sd(FILT$LEN)
+        ROW[1, "CNV_SIZE_MEDIAN"] <- median(FILT$LEN)
+        ROW[1, "CNV_SIZE_IQR"] <- IQR(FILT$LEN)
+        ROW[1, "CNV_SIZE_MIN"] <- min(FILT$LEN)
+        ROW[1, "CNV_SIZE_MAX"] <- max(FILT$LEN)
+        
+        ROW[1, "CNV_CONF_MEAN"] <- mean(FILT$Confidence)
+        ROW[1, "CNV_CONF_SD"] <- sd(FILT$Confidence)
+        ROW[1, "CNV_CONF_MEDIAN"] <- median(FILT$Confidence)
+        ROW[1, "CNV_CONF_IQR"] <- IQR(FILT$Confidence)
+        ROW[1, "CNV_CONF_MIN"] <- min(FILT$Confidence)
+        ROW[1, "CNV_CONF_MAX"] <- max(FILT$Confidence)
+        
+        CALLSET_SUMMARIZER <- rbind(CALLSET_SUMMARIZER, ROW) 
+        
+        rm(ROW)
+      }
+    }
   }
+}
 
-}  
+CALLSET_SUMMARIZER %>%
+  write_tsv("TABLES/TableS1G.tsv", col_names=TRUE)
 
 # INITIATE HOLDING DF FOR VALIDATION
 ANALYSIS_SSC <- data.frame(NULL)
@@ -639,4 +684,4 @@ ANALYSIS_SSC %>%
     D_MAX=Matching_Distance,
     QC=Matching_Type) %>%
   select(-D_MAX_LOG) %>%
-  write_tsv("TABLES/Table9.tsv", col_names=TRUE)
+  write_tsv("TABLES/TableS1H.tsv", col_names=TRUE)
