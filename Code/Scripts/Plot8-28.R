@@ -60,8 +60,8 @@ for(h in 1:nrow(DataFileNames)){
         ROW[1, "Factor"] <- i
         ROW[1, "D_MAX"] <- j
         ROW[1, "QC"] <- o
-        ROW[1, "Size"] <- p
-        ROW[1, "Type"] <- q
+        ROW[1, "Size"] <- q
+        ROW[1, "Type"] <- p
         
         COUNTS <- FILT %>%
           count(ID, name="N")
