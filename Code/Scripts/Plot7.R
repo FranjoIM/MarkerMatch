@@ -81,7 +81,7 @@ Plot7_A <- LRRMEANS_OMNI %>%
   scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
   labs(x=expression(bold("[" ~"D"["MAX"] ~ "]")),
-       y=expression(bold("[ LRR-mean ]")),
+       y=expression(bold("LRR-mean")),
        subtitle="OMNI matched on GSA",
        color="MATCHING METHOD",
        fill="MATCHING METHOD") +
@@ -183,7 +183,7 @@ Plot7_B <- LRRMEANS_OEE %>%
   scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
   labs(x=expression(bold("[" ~"D"["MAX"] ~ "]")),
-       y=expression(bold("[ LRR-mean ]")),
+       y=expression(bold("LRR-mean")),
        subtitle="OEE matched on GSA",
        color="MATCHING METHOD",
        fill="MATCHING METHOD") +
@@ -285,7 +285,7 @@ Plot7_C <- LRRMEANS_GSA %>%
   scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
   labs(x=expression(bold("[" ~"D"["MAX"] ~ "]")),
-       y=expression(bold("[ LRR-mean ]")),
+       y=expression(bold("LRR-mean")),
        subtitle="GSA matched on OEE",
        color="MATCHING METHOD",
        fill="MATCHING METHOD") +
