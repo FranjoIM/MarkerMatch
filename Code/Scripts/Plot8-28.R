@@ -13,7 +13,7 @@ DataFileNames <- data.frame(
   D_MAXLab=c("0", "0", rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4)),
   stringsAsFactors=FALSE)
 
-# INITIATE HOLDING DF FOR SUMMARIZATION OF CNV CALLSETS
+# SUMMARIZE CNV CALLSETS
 CALLSET_SUMMARIZER <- data.frame(NULL)
 
 for(h in 1:nrow(DataFileNames)){
@@ -97,7 +97,75 @@ for(h in 1:nrow(DataFileNames)){
 }
 
 CALLSET_SUMMARIZER %>%
+  rename(FactorS=Factor) %>%
+  mutate(Factor=case_when(
+    FactorS=="FullSet" ~ "Full Set",
+    FactorS=="PerfectMatch" ~ "Perfect Match",
+    FactorS=="LRRmean" ~ "LRR mean",
+    FactorS=="LRRsd" ~ "LRR sd",
+    FactorS=="Pos" ~ "Distance",
+    TRUE ~ FactorS), .before="FactorS") %>%
+  select(-FactorS) %>%
   write_tsv("TABLES/TableS1G.tsv", col_names=TRUE)
+
+# SUMMARIZE SAMPLE CALLSETS
+SAMPLE_SUMMARIZER <- data.frame(NULL)
+
+for(h in 1:nrow(DataFileNames)){
+  i <- DataFileNames$Factor[h]
+  j <- DataFileNames$D_MAXLab[h] 
+  
+  for(o in c("Raw", "QCd")){
+    
+    # PULL DATA FRAMES
+    DF_SAM <- DATA[[o]][["SSC"]][[i]][[j]][["QC"]]
+    
+    ROW <- data.frame(NULL)
+    
+    ROW[1, "Factor"] <- i
+    ROW[1, "D_MAX"] <- j
+    ROW[1, "QC"] <- o
+
+    ROW[1, "N_SAMPLE"] <- nrow(DF_SAM)
+    
+    ROW[1, "LRR_MEAN_MEAN"] <- mean(DF_SAM$LRR_mean)
+    ROW[1, "LRR_MEAN_SD"] <- sd(DF_SAM$LRR_mean)
+    
+    ROW[1, "LRR_SD_MEAN"] <- mean(DF_SAM$LRR_SD)
+    ROW[1, "LRR_SD_SD"] <- sd(DF_SAM$LRR_SD)
+    
+    ROW[1, "BAF_MEAN_MEAN"] <- mean(DF_SAM$BAF_mean)
+    ROW[1, "BAF_MEAN_SD"] <- sd(DF_SAM$BAF_mean)
+    
+    ROW[1, "BAF_SD_MEAN"] <- mean(DF_SAM$BAF_SD)
+    ROW[1, "BAF_SD_SD"] <- sd(DF_SAM$BAF_SD)
+    
+    ROW[1, "BAF_Drift_MEAN"] <- mean(DF_SAM$BAF_drift)
+    ROW[1, "BAF_Drift_SD"] <- sd(DF_SAM$BAF_drift)
+    
+    ROW[1, "WF_MEAN"] <- mean(DF_SAM$WF)
+    ROW[1, "WF_SD"] <- sd(DF_SAM$WF)
+    
+    ROW[1, "GCWF_MEAN"] <- mean(DF_SAM$GCWF)
+    ROW[1, "GCWF_SD"] <- sd(DF_SAM$GCWF)
+    
+    SAMPLE_SUMMARIZER <- rbind(SAMPLE_SUMMARIZER, ROW) 
+    
+    rm(ROW)
+  }
+}
+
+SAMPLE_SUMMARIZER %>%
+  rename(FactorS=Factor) %>%
+  mutate(Factor=case_when(
+    FactorS=="FullSet" ~ "Full Set",
+    FactorS=="PerfectMatch" ~ "Perfect Match",
+    FactorS=="LRRmean" ~ "LRR mean",
+    FactorS=="LRRsd" ~ "LRR sd",
+    FactorS=="Pos" ~ "Distance",
+    TRUE ~ FactorS), .before="FactorS") %>%
+  select(-FactorS) %>%
+  write_tsv("TABLES/TableS1H.tsv", col_names=TRUE)
 
 # INITIATE HOLDING DF FOR VALIDATION
 ANALYSIS_SSC <- data.frame(NULL)
@@ -680,8 +748,16 @@ ggarrange(PLOTS$Duplications$All$JI + rremove("xlab"),
 
 # WRITE TABLE DATA
 ANALYSIS_SSC %>%
-  rename(Method=Matching_Method,
+  rename(FactorS=Matching_Method,
     D_MAX=Matching_Distance,
     QC=Matching_Type) %>%
   select(-D_MAX_LOG) %>%
-  write_tsv("TABLES/TableS1H.tsv", col_names=TRUE)
+  mutate(Factor=case_when(
+    FactorS=="FullSet" ~ "Full Set",
+    FactorS=="PerfectMatch" ~ "Perfect Match",
+    FactorS=="LRRmean" ~ "LRR mean",
+    FactorS=="LRRsd" ~ "LRR sd",
+    FactorS=="Pos" ~ "Distance",
+    TRUE ~ FactorS), .before="FactorS") %>%
+  select(-FactorS) %>%
+  write_tsv("TABLES/TableS1I.tsv", col_names=TRUE)
