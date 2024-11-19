@@ -97,7 +97,9 @@ for(h in 1:nrow(DataFileNames)){
 }
 
 CALLSET_SUMMARIZER %>%
-  rename(FactorS=Factor) %>%
+  rename(FactorS=Factor,
+        Matching_Type=QC) %>%
+  mutate(QC=ifelse(Matching_Type=="Raw", "Low-stringency QC", "Medium-stringency QC")) %>%
   mutate(Factor=case_when(
     FactorS=="FullSet" ~ "Full Set",
     FactorS=="PerfectMatch" ~ "Perfect Match",
@@ -105,7 +107,7 @@ CALLSET_SUMMARIZER %>%
     FactorS=="LRRsd" ~ "LRR sd",
     FactorS=="Pos" ~ "Distance",
     TRUE ~ FactorS), .before="FactorS") %>%
-  select(-FactorS) %>%
+  select(-c(FactorS, Matching_Type)) %>%
   write_tsv("TABLES/TableS1G.tsv", col_names=TRUE)
 
 # SUMMARIZE SAMPLE CALLSETS
@@ -156,7 +158,9 @@ for(h in 1:nrow(DataFileNames)){
 }
 
 SAMPLE_SUMMARIZER %>%
-  rename(FactorS=Factor) %>%
+  rename(FactorS=Factor,
+        Matching_Type=QC) %>%
+  mutate(QC=ifelse(Matching_Type=="Raw", "Low-stringency QC", "Medium-stringency QC")) %>%
   mutate(Factor=case_when(
     FactorS=="FullSet" ~ "Full Set",
     FactorS=="PerfectMatch" ~ "Perfect Match",
@@ -164,7 +168,7 @@ SAMPLE_SUMMARIZER %>%
     FactorS=="LRRsd" ~ "LRR sd",
     FactorS=="Pos" ~ "Distance",
     TRUE ~ FactorS), .before="FactorS") %>%
-  select(-FactorS) %>%
+  select(-c(FactorS, Matching_Type)) %>%
   write_tsv("TABLES/TableS1H.tsv", col_names=TRUE)
 
 # INITIATE HOLDING DF FOR VALIDATION
@@ -325,13 +329,18 @@ ANALYSIS_SSC <- ANALYSIS_SSC %>%
       Factor=="LRRmean" ~ "LRR mean",
       Factor=="LRRsd" ~ "LRR sd",
       Factor=="Pos" ~ "Distance",
-      TRUE ~ NA_character_))
+      TRUE ~ NA_character_)) %>%
+  mutate(QC=ifelse(Matching_Type=="Raw", "Low-stringency QC", "Medium-stringency QC"))
 
 ANALYSIS_SSC$FactorF <- factor(ANALYSIS_SSC$FactorN,
   levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
            "LRR sd", "Distance"),
   labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
            "LRR sd", "Distance"))
+
+ANALYSIS_SSC$QCF <- factor(ANALYSIS_SSC$QC,
+  levels=c("Medium-stringency QC", "Low-stringency QC"),
+  labels=c("Medium-stringency QC", "Low-stringency QC"))
 
 # DEFINE PLOTTING FUNCTION
 MetricPlot <- function(a, b, c){
@@ -359,15 +368,15 @@ MetricPlot <- function(a, b, c){
     b == "Very Large" ~ "1Mb < CNV < 5Mb",
     b == "Ultra Large" ~ "5Mb < CNV",
     TRUE ~ NA_character_)
-  
+
   PLOT <- ANALYSIS_SSC %>%
     filter(!Factor %in% c("PerfectMatch", "FullSet")) %>%
     filter(CNV_Type==a & CNV_Size==b) %>%
-    ggplot(aes(x=D_MAX_LOG, y=.data[[c]], linetype=Matching_Type, color=FactorF)) +
-    geom_hline(aes(yintercept=H1, color="Perfect Match", linetype="Raw"), linewidth=1) +
-    geom_hline(aes(yintercept=H2, color="Perfect Match", linetype="QCd"), linewidth=1) +
-    geom_hline(aes(yintercept=H3, color="Full Set", linetype="Raw"), linewidth=1) +
-    geom_hline(aes(yintercept=H4, color="Full Set", linetype="QCd"), linewidth=1) +
+    ggplot(aes(x=D_MAX_LOG, y=.data[[c]], linetype=QCF, color=FactorF)) +
+    geom_hline(aes(yintercept=H1, color="Perfect Match", linetype="Low-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H2, color="Perfect Match", linetype="Medium-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H3, color="Full Set", linetype="Low-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H4, color="Full Set", linetype="Medium-stringency QC"), linewidth=1) +
     geom_line(linewidth=1) +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
                        breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
@@ -763,8 +772,8 @@ ggarrange(PLOTS$Duplications$All$JI + rremove("xlab"),
 # WRITE TABLE DATA
 ANALYSIS_SSC %>%
   select(-Factor) %>%
-  rename(Factor=FactorN,
-    QC=Matching_Type) %>%
+  rename(Factor=FactorN) %>%
   relocate(Factor, .before=D_MAX) %>%
-  select(-c(D_MAX_LOG, FactorF)) %>% 
+  mutate(QC=ifelse(Matching_Type=="Raw", "Low-stringency QC", "Medium-stringency QC")) %>%
+  select(-c(D_MAX_LOG, FactorF, Matching_Type)) %>% 
   write_tsv("TABLES/TableS1I.tsv", col_names=TRUE)
