@@ -284,8 +284,8 @@ for(h in 1:nrow(DataFileNames)){
           unique(.)
         
         NEW_ROW <- data.frame(
-          Matching_Method=i,
-          Matching_Distance=j,
+          Factor=i,
+          D_MAX=j,
           Matching_Type=o,
           CNV_Type=p,
           CNV_Size=q,
@@ -304,8 +304,8 @@ for(h in 1:nrow(DataFileNames)){
 }
 
 # CHECKPOINT
-save(ANALYSIS_SSC, file="Analysis_SSC_103024.RData")
-load("Analysis_SSC_103024.RData")
+save(ANALYSIS_SSC, file="Analysis_SSC_111924.RData")
+load("Analysis_SSC_111924.RData")
 
 # TIDY UP ANALYSIS
 ANALYSIS_SSC <- ANALYSIS_SSC %>%
@@ -316,25 +316,39 @@ ANALYSIS_SSC <- ANALYSIS_SSC %>%
          F1=round((2*TP)/(2*TP+FP+FN), digits=3),
          FMI=round(sqrt((TP/(FP+TP))*(TP/(TP+FN))), digits=3),
          JI=round(TP/(TP+FN+FP), digits=3)) %>%
-  mutate(Matching_Distance=as.numeric(Matching_Distance)) %>%
-  mutate(D_MAX_LOG=log10(Matching_Distance))
+  mutate(D_MAX=as.numeric(D_MAX)) %>%
+  mutate(D_MAX_LOG=log10(D_MAX)) %>%
+    mutate(FactorN=case_when(
+      Factor=="PerfectMatch" ~ "Perfect Match",
+      Factor=="FullSet" ~ "Full Set",
+      Factor=="BAF" ~ "BAF",
+      Factor=="LRRmean" ~ "LRR mean",
+      Factor=="LRRsd" ~ "LRR sd",
+      Factor=="Pos" ~ "Distance",
+      TRUE ~ NA_character_))
+
+ANALYSIS_SSC$FactorF <- factor(ANALYSIS_SSC$FactorN,
+  levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+           "LRR sd", "Distance"),
+  labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+           "LRR sd", "Distance"))
 
 # DEFINE PLOTTING FUNCTION
 MetricPlot <- function(a, b, c){
   H1 <- ANALYSIS_SSC %>%
-    filter(Matching_Method=="PerfectMatch" & CNV_Type==a & CNV_Size==b & Matching_Type=="Raw") %>%
+    filter(Factor=="PerfectMatch" & CNV_Type==a & CNV_Size==b & Matching_Type=="Raw") %>%
     pull(.data[[c]])
   
   H2 <- ANALYSIS_SSC %>%
-    filter(Matching_Method=="PerfectMatch" & CNV_Type==a & CNV_Size==b & Matching_Type=="QCd") %>%
+    filter(Factor=="PerfectMatch" & CNV_Type==a & CNV_Size==b & Matching_Type=="QCd") %>%
     pull(.data[[c]])
   
   H3 <- ANALYSIS_SSC %>%
-    filter(Matching_Method=="FullSet" & CNV_Type==a & CNV_Size==b & Matching_Type=="Raw") %>%
+    filter(Factor=="FullSet" & CNV_Type==a & CNV_Size==b & Matching_Type=="Raw") %>%
     pull(.data[[c]])
   
   H4 <- ANALYSIS_SSC %>%
-    filter(Matching_Method=="FullSet" & CNV_Type==a & CNV_Size==b & Matching_Type=="QCd") %>%
+    filter(Factor=="FullSet" & CNV_Type==a & CNV_Size==b & Matching_Type=="QCd") %>%
     pull(.data[[c]])
   
   TITLE <- case_when(
@@ -347,20 +361,20 @@ MetricPlot <- function(a, b, c){
     TRUE ~ NA_character_)
   
   PLOT <- ANALYSIS_SSC %>%
-    filter(!Matching_Method %in% c("PerfectMatch", "FullSet")) %>%
+    filter(!Factor %in% c("PerfectMatch", "FullSet")) %>%
     filter(CNV_Type==a & CNV_Size==b) %>%
-    ggplot(aes(x=D_MAX_LOG, y=.data[[c]], linetype=Matching_Type, color=Matching_Method)) +
+    ggplot(aes(x=D_MAX_LOG, y=.data[[c]], linetype=Matching_Type, color=FactorF)) +
     geom_hline(aes(yintercept=H1, color="Perfect Match", linetype="Raw"), linewidth=1) +
     geom_hline(aes(yintercept=H2, color="Perfect Match", linetype="QCd"), linewidth=1) +
-    geom_hline(aes(yintercept=H3, color="Reference", linetype="Raw"), linewidth=1) +
-    geom_hline(aes(yintercept=H4, color="Reference", linetype="QCd"), linewidth=1) +
+    geom_hline(aes(yintercept=H3, color="Full Set", linetype="Raw"), linewidth=1) +
+    geom_hline(aes(yintercept=H4, color="Full Set", linetype="QCd"), linewidth=1) +
     geom_line(linewidth=1) +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                       breaks=c("BAF", "LRRmean", "LRRsd", "Pos", "Perfect Match", "Reference")) +
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
     labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
          y=toupper(c),
          linetype="CNV CALLSET QC",
-         color="MATCHING METHOD",
+         color="FACTOR",
          subtitle=TITLE) +
     ylim(0, 1) +
     theme_bw() + 
@@ -748,16 +762,9 @@ ggarrange(PLOTS$Duplications$All$JI + rremove("xlab"),
 
 # WRITE TABLE DATA
 ANALYSIS_SSC %>%
-  rename(FactorS=Matching_Method,
-    D_MAX=Matching_Distance,
+  select(-Factor) %>%
+  rename(Factor=FactorN,
     QC=Matching_Type) %>%
-  select(-D_MAX_LOG) %>%
-  mutate(Factor=case_when(
-    FactorS=="FullSet" ~ "Full Set",
-    FactorS=="PerfectMatch" ~ "Perfect Match",
-    FactorS=="LRRmean" ~ "LRR mean",
-    FactorS=="LRRsd" ~ "LRR sd",
-    FactorS=="Pos" ~ "Distance",
-    TRUE ~ FactorS), .before="FactorS") %>%
-  select(-FactorS) %>%
+  relocate(Factor, .before=D_MAX) %>%
+  select(-c(D_MAX_LOG, FactorF)) %>% 
   write_tsv("TABLES/TableS1I.tsv", col_names=TRUE)
