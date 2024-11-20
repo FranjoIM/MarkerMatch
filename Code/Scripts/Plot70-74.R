@@ -236,3 +236,220 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
          units="in",
          dpi=350,
          bg="white")
+
+# PLOT THE SENSITIVITY FACTOR OUTCOMES  (PLOT 75)
+(ggplot(ANALYSIS_SSC_QC, aes(y=Sensitivity_p, color=Factor, fill=Factor)) +
+  geom_boxplot(alpha=0.2) +
+  theme_bw() +
+  facet_wrap(CNV_Type ~ CNV_SizeF, nrow=3) +
+  scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+  scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+  scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
+  theme(axis.text.x=element_blank(),
+        axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+        axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+        axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+        strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+        strip.background=element_rect(fill="#ffffff"),
+        legend.position="top",
+        legend.justification="left",
+        legend.title=element_text(size=12, face="bold"),
+        axis.ticks.x=element_blank()) +
+  labs(x=expression(bold("FACTOR")),
+       y="SENSITIVITY '",
+       fill="FACTOR",
+       color="FACTOR") +
+  guides(color=guide_legend(title.position="top", nrow=1),
+         fill=guide_legend(title.position="top"))) %>%
+  ggsave(filename="FIGURES/Plot75.png",
+         device="png",
+         width=11,
+         height=9,
+         units="in",
+         dpi=350,
+         bg="white")
+
+# PLOT THE PPV FACTOR OUTCOMES  (PLOT 76)
+(ggplot(ANALYSIS_SSC_QC, aes(y=PPV_p, color=Factor, fill=Factor)) +
+    geom_boxplot(alpha=0.2) +
+    theme_bw() +
+    facet_wrap(CNV_Type ~ CNV_SizeF, nrow=3) +
+    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                      breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
+    theme(axis.text.x=element_blank(),
+          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+          strip.background=element_rect(fill="#ffffff"),
+          legend.position="top",
+          legend.justification="left",
+          legend.title=element_text(size=12, face="bold"),
+          axis.ticks.x=element_blank()) +
+    labs(x=expression(bold("FACTOR")),
+         y="PPV '",
+         fill="FACTOR",
+         color="FACTOR") +
+    guides(color=guide_legend(title.position="top", nrow=1),
+           fill=guide_legend(title.position="top"))) %>%
+  ggsave(filename="FIGURES/Plot76.png",
+         device="png",
+         width=11,
+         height=9,
+         units="in",
+         dpi=350,
+         bg="white")
+
+# PLOT THE F1 FACTOR OUTCOMES  (PLOT 77)
+(ggplot(ANALYSIS_SSC_QC, aes(y=F1_p, color=Factor, fill=Factor)) +
+    geom_boxplot(alpha=0.2) +
+    theme_bw() +
+    facet_wrap(CNV_Type ~ CNV_SizeF, nrow=3) +
+    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                      breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
+    theme(axis.text.x=element_blank(),
+          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+          strip.background=element_rect(fill="#ffffff"),
+          legend.position="top",
+          legend.justification="left",
+          legend.title=element_text(size=12, face="bold"),
+          axis.ticks.x=element_blank()) +
+    labs(x=expression(bold("FACTOR")),
+         y="F1 '",
+         fill="FACTOR",
+         color="FACTOR") +
+    guides(color=guide_legend(title.position="top", nrow=1),
+           fill=guide_legend(title.position="top"))) %>%
+  ggsave(filename="FIGURES/Plot77.png",
+         device="png",
+         width=11,
+         height=9,
+         units="in",
+         dpi=350,
+         bg="white")
+
+# PLOT THE FMI FACTOR OUTCOMES  (PLOT 78)
+(ggplot(ANALYSIS_SSC_QC, aes(y=FMI_p, color=Factor, fill=Factor)) +
+    geom_boxplot(alpha=0.2) +
+    theme_bw() +
+    facet_wrap(CNV_Type ~ CNV_SizeF, nrow=3) +
+    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                      breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
+    theme(axis.text.x=element_blank(),
+          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+          strip.background=element_rect(fill="#ffffff"),
+          legend.position="top",
+          legend.justification="left",
+          legend.title=element_text(size=12, face="bold"),
+          axis.ticks.x=element_blank()) +
+    labs(x=expression(bold("FACTOR")),
+         y="FMI '",
+         fill="FACTOR",
+         color="FACTOR") +
+    guides(color=guide_legend(title.position="top", nrow=1),
+           fill=guide_legend(title.position="top"))) %>%
+  ggsave(filename="FIGURES/Plot78.png",
+         device="png",
+         width=11,
+         height=9,
+         units="in",
+         dpi=350,
+         bg="white")
+
+# PLOT THE JI FACTOR OUTCOMES  (PLOT 79)
+(ggplot(ANALYSIS_SSC_QC, aes(y=JI_p, color=Factor, fill=Factor)) +
+    geom_boxplot(alpha=0.2) +
+    theme_bw() +
+    facet_wrap(CNV_Type ~ CNV_SizeF, nrow=3) +
+    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                      breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
+    theme(axis.text.x=element_blank(),
+          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+          strip.background=element_rect(fill="#ffffff"),
+          legend.position="top",
+          legend.justification="left",
+          legend.title=element_text(size=12, face="bold"),
+          axis.ticks.x=element_blank()) +
+    labs(x=expression(bold("FACTOR")),
+         y="JI '",
+         fill="FACTOR",
+         color="FACTOR") +
+    guides(color=guide_legend(title.position="top", nrow=1),
+           fill=guide_legend(title.position="top"))) %>%
+  ggsave(filename="FIGURES/Plot79.png",
+         device="png",
+         width=11,
+         height=9,
+         units="in",
+         dpi=350,
+         bg="white")
+
+# RUN A T-TEST ON THESE DATA
+TEST_FACTOR <- data.frame(NULL)
+
+for(i in unique(ANALYSIS_SSC_QC$CNV_Type)){
+  for(j in unique(ANALYSIS_SSC_QC$CNV_Size)){
+    for(m in c("Sensitivity_p", "PPV_p", "F1_p", "FMI_p", "JI_p")){
+      for(k in unique(ANALYSIS_SSC_QC$Factor)){
+      
+        ROW <- data.frame(NULL)
+        ROW[1, "CNV_Type"] <- i
+        ROW[1, "CNV_Size"] <- j
+        ROW[1, "Metric"] <- m
+        ROW[1, "Factor"] <- k
+        
+        for(l in unique(ANALYSIS_SSC_QC$Factor)){
+          
+            A <- ANALYSIS_SSC_QC %>%
+              filter(CNV_Type==i, CNV_Size==j, Factor==k) %>%
+              pull(.data[[m]]) %>% unlist()
+            
+            B <- ANALYSIS_SSC_QC %>%
+              filter(CNV_Type==i, CNV_Size==j, Factor==l)%>%
+              pull(.data[[m]]) %>% unlist()
+  
+            ROW[1, l] <- t.test(A, B)$p.value
+        }
+        
+        TEST_FACTOR <- rbind(TEST_FACTOR, ROW)
+        
+      }
+    }
+  }
+}
+
+TEST_FACTOR <- TEST_FACTOR %>%
+  mutate(BAF=ifelse(Factor %in% c("BAF"), NA, BAF),
+         `LRR mean`=ifelse(Factor %in% c("BAF", "LRR mean"), NA, `LRR mean`),
+         `LRR sd`=ifelse(Factor %in% c("BAF", "LRR mean", "LRR sd"), NA, `LRR sd`),
+         Distance=NA) %>%
+  pivot_longer(c(BAF:Distance), names_to="Factor2", values_to="P") %>%
+  drop_na(P) %>%
+  mutate(P.adj=p.adjust(P, method="fdr")) %>% 
+  pivot_wider(names_from="Factor2",
+              values_from=c("P", "P.adj"),
+              names_vary="slowest") %>%
+  write_tsv("TABLES/TableS1K.tsv", col_names=TRUE)
