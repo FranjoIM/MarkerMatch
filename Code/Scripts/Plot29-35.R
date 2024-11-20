@@ -127,8 +127,8 @@ for(h in 1:nrow(DataFileNames)){
         unique(.)
       
       NEW_ROW <- data.frame(
-        Matching_Method=i,
-        Matching_Distance=j,
+        Factor=i,
+        D_MAX=j,
         Matching_Type=o,
         CNV_Region=p,
         TP=length(TP),
@@ -145,32 +145,51 @@ for(h in 1:nrow(DataFileNames)){
 
 # TIDY UP ANALYSIS
 ANALYSIS_REGIONAL_SSC <- ANALYSIS_REGIONAL_SSC %>%
-  mutate(Sensitivity=round(TP/(TP+FN), digits=3),
+  mutate(QC=ifelse(Matching_Type=="Raw", "Low-stringency QC", "Medium-stringency QC"),
+         Sensitivity=round(TP/(TP+FN), digits=3),
          PPV=round(TP/(FP+TP), digits=3),
          FNR=round(FN/(FN+TP), digits=3),
          FDR=round(FP/(FP+TP), digits=3),
          F1=round((2*TP)/(2*TP+FP+FN), digits=3),
          FMI=round(sqrt((TP/(FP+TP))*(TP/(TP+FN))), digits=3),
          JI=round(TP/(TP+FN+FP), digits=3)) %>%
-  mutate(Matching_Distance=as.numeric(Matching_Distance)) %>%
-  mutate(MaxD_LOG=log10(Matching_Distance))
+  mutate(D_MAX=as.numeric(D_MAX)) %>%
+  mutate(D_MAX_LOG=log10(D_MAX)) %>%
+  mutate(FactorN=case_when(
+    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="FullSet" ~ "Full Set",
+    Factor=="BAF" ~ "BAF",
+    Factor=="LRRmean" ~ "LRR mean",
+    Factor=="LRRsd" ~ "LRR sd",
+    Factor=="Pos" ~ "Distance",
+    TRUE ~ NA_character_)) 
+
+ANALYSIS_REGIONAL_SSC$FactorF <- factor(ANALYSIS_REGIONAL_SSC$FactorN,
+  levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+          "LRR sd", "Distance"),
+  labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+          "LRR sd", "Distance"))
+  
+ANALYSIS_REGIONAL_SSC$QCF <- factor(ANALYSIS_REGIONAL_SSC$QC,
+  levels=c("Medium-stringency QC", "Low-stringency QC"),
+  labels=c("Medium-stringency QC", "Low-stringency QC"))
 
 # DEFINE PLOTTING FUNCTION
 MetricPlot <- function(a, b){
   H1 <- ANALYSIS_REGIONAL_SSC %>%
-    filter(Matching_Method=="PerfectMatch" & CNV_Region==a & Matching_Type=="Raw") %>%
+    filter(Factor=="PerfectMatch" & CNV_Region==a & Matching_Type=="Raw") %>%
     pull(.data[[b]])
   
   H2 <- ANALYSIS_REGIONAL_SSC %>%
-    filter(Matching_Method=="PerfectMatch" & CNV_Region==a & Matching_Type=="QCd") %>%
+    filter(Factor=="PerfectMatch" & CNV_Region==a & Matching_Type=="QCd") %>%
     pull(.data[[b]])
   
   H3 <- ANALYSIS_REGIONAL_SSC %>%
-    filter(Matching_Method=="FullSet" & CNV_Region==a & Matching_Type=="Raw") %>%
+    filter(Factor=="FullSet" & CNV_Region==a & Matching_Type=="Raw") %>%
     pull(.data[[b]])
   
   H4 <- ANALYSIS_REGIONAL_SSC %>%
-    filter(Matching_Method=="FullSet" & CNV_Region==a & Matching_Type=="QCd") %>%
+    filter(Factor=="FullSet" & CNV_Region==a & Matching_Type=="QCd") %>%
     pull(.data[[b]])
   
   TITLE <- case_when(
@@ -180,20 +199,20 @@ MetricPlot <- function(a, b){
     TRUE ~ NA_character_)
   
   PLOT <- ANALYSIS_REGIONAL_SSC %>%
-    filter(!Matching_Method %in% c("PerfectMatch", "FullSet")) %>%
+    filter(!Factor %in% c("PerfectMatch", "FullSet")) %>%
     filter(CNV_Region==a) %>%
-    ggplot(aes(x=MaxD_LOG, y=.data[[b]], linetype=Matching_Type, color=Matching_Method)) +
-    geom_hline(aes(yintercept=H1, color="Perfect Match", linetype="Raw"), linewidth=1) +
-    geom_hline(aes(yintercept=H2, color="Perfect Match", linetype="QCd"), linewidth=1) +
-    geom_hline(aes(yintercept=H3, color="Reference", linetype="Raw"), linewidth=1) +
-    geom_hline(aes(yintercept=H4, color="Reference", linetype="QCd"), linewidth=1) +
+    ggplot(aes(x=D_MAX_LOG, y=.data[[b]], linetype=QCF, color=FactorF)) +
+    geom_hline(aes(yintercept=H1, color="Perfect Match", linetype="Low-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H2, color="Perfect Match", linetype="Medium-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H3, color="Full Set", linetype="Low-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H4, color="Full Set", linetype="Medium-stringency QC"), linewidth=1) +
     geom_line(linewidth=1) +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                       breaks=c("BAF", "LRRmean", "LRRsd", "Pos", "Perfect Match", "Reference")) +
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
     labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
          y=toupper(b),
          linetype="CNV CALLSET QC",
-         color="MATCHING METHOD",
+         color="FACTOR",
          subtitle=TITLE) +
     ylim(0, 1) +
     theme_bw() + 
@@ -319,8 +338,9 @@ ggarrange(PLOTS$Tel$JI,
 
 # WRITE TABLE DATA
 ANALYSIS_REGIONAL_SSC %>%
-  rename(Method=Matching_Method,
-         MaxD=Matching_Distance,
-         QC=Matching_Type) %>%
-  select(-MaxD_LOG) %>%
-  write_tsv("TABLES/Table10.tsv", col_names=TRUE)
+  relocate(QC, .before=CNV_Region) %>%
+  select(-Factor) %>%
+  rename(Factor=FactorN) %>%
+  relocate(Factor, .before=D_MAX) %>%
+  select(-c(D_MAX_LOG, QCF, FactorF, Matching_Type)) %>%
+  write_tsv("TABLES/TableS1J.tsv", col_names=TRUE)
