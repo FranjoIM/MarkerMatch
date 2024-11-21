@@ -448,7 +448,7 @@ TEST_FACTOR <- TEST_FACTOR %>%
          Distance=NA) %>%
   pivot_longer(c(BAF:Distance), names_to="Factor2", values_to="P") %>%
   drop_na(P) %>%
-  mutate(q=p.adjust(P, method="fdr")) %>% 
+  mutate(Q=p.adjust(P, method="fdr")) %>% 
   pivot_wider(names_from="Factor2",
               values_from=c("P", "P.adj"),
               names_vary="slowest") %>%
