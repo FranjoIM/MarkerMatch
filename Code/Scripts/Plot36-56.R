@@ -381,7 +381,7 @@ MetricPlot <- function(a, b, c, d){
     labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
          y=toupper(c),
          linetype="CNV CALLSET QC",
-         color="MATCHING METHOD",
+         color="FACTOR",
          shape=" ",
          subtitle=TITLE) +
     scale_x_continuous(breaks=4, n.breaks=1, labels=4, limits=c(3.98, 4.02)) +
