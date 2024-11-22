@@ -9,8 +9,8 @@ load("Validation_Final_103024.RData")
 # PREPARE A DATA FILE NAMES FOR SSC
 DataFileNames <- data.frame(
   Factor=rep(c("FullSet", "PerfectMatch", "BAF", "LRRmean", "LRRsd", "Pos"), 2),
-  MaxD=rep(c(NA, NA, rep("10000", 4)), 2),
-  MaxDLab=rep(c("0", "0", rep(c("10000"), 4)), 2),
+  D_MAX=rep(c(NA, NA, rep("10000", 4)), 2),
+  D_MAXLab=rep(c("0", "0", rep(c("10000"), 4)), 2),
   Ref=c(rep("GSA", 6), rep("OEE", 6)),
   Mat=c(rep("OEE", 6), rep("GSA", 6)),
   stringsAsFactors=FALSE)
@@ -20,7 +20,7 @@ ANALYSIS_STEP2_REGIONAL <- data.frame(NULL)
 
 for(h in 1:nrow(DataFileNames)){
   i <- DataFileNames$Factor[h]
-  j <- DataFileNames$MaxDLab[h]
+  j <- DataFileNames$D_MAXLab[h]
   k <- DataFileNames$Ref[h]
   l <- DataFileNames$Mat[h]
   
@@ -35,7 +35,7 @@ for(h in 1:nrow(DataFileNames)){
       filter(ID %in% KEEP_IDs)
     MAT <- MAT %>%
       filter(ID %in% KEEP_IDs)
-     
+    
     # Join the CNVs into ID, CHR, STATE, and CN matched DF
     # Classify CNVs by size and by FP/TP/FN/TN status
     COM <- full_join(REF, MAT, 
@@ -128,8 +128,8 @@ for(h in 1:nrow(DataFileNames)){
         unique(.)
       
       NEW_ROW <- data.frame(
-        Matching_Method=i,
-        Matching_Distance=j,
+        Factor=i,
+        D_MAX=j,
         Ref=k,
         Mat=l,
         Matching_Type=o,
@@ -148,32 +148,51 @@ for(h in 1:nrow(DataFileNames)){
 
 # TIDY UP ANALYSIS
 ANALYSIS_STEP2_REGIONAL <- ANALYSIS_STEP2_REGIONAL %>%
-  mutate(Sensitivity=round(TP/(TP+FN), digits=3),
+  mutate(QC=ifelse(Matching_Type=="Raw", "Low-stringency QC", "Medium-stringency QC"),
+         Sensitivity=round(TP/(TP+FN), digits=3),
          PPV=round(TP/(FP+TP), digits=3),
          FNR=round(FN/(FN+TP), digits=3),
          FDR=round(FP/(FP+TP), digits=3),
          F1=round((2*TP)/(2*TP+FP+FN), digits=3),
          FMI=round(sqrt((TP/(FP+TP))*(TP/(TP+FN))), digits=3),
          JI=round(TP/(TP+FN+FP), digits=3)) %>%
-  mutate(Matching_Distance=as.numeric(Matching_Distance)) %>%
-  mutate(MaxD_LOG=log10(Matching_Distance))
+  mutate(D_MAX=as.numeric(D_MAX)) %>%
+  mutate(D_MAX_LOG=log10(D_MAX)) %>%
+  mutate(FactorN=case_when(
+    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="FullSet" ~ "Full Set",
+    Factor=="BAF" ~ "BAF",
+    Factor=="LRRmean" ~ "LRR mean",
+    Factor=="LRRsd" ~ "LRR sd",
+    Factor=="Pos" ~ "Distance",
+    TRUE ~ NA_character_))
+
+ANALYSIS_STEP2_REGIONAL$FactorF <- factor(ANALYSIS_STEP2_REGIONAL$FactorN,
+    levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+             "LRR sd", "Distance"),
+    labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+             "LRR sd", "Distance"))
+
+ANALYSIS_STEP2_REGIONAL$QCF <- factor(ANALYSIS_STEP2_REGIONAL$QC,
+    levels=c("Medium-stringency QC", "Low-stringency QC"),
+    labels=c("Medium-stringency QC", "Low-stringency QC"))
 
 # DEFINE PLOTTING FUNCTION
 MetricPlot <- function(a, b, c){
   H1 <- ANALYSIS_STEP2_REGIONAL %>%
-    filter(Matching_Method=="PerfectMatch" & CNV_Region==a & Mat==c & Matching_Type=="Raw") %>%
+    filter(Factor=="PerfectMatch" & CNV_Region==a & Mat==c & Matching_Type=="Raw") %>%
     pull(.data[[b]])
   
   H2 <- ANALYSIS_STEP2_REGIONAL %>%
-    filter(Matching_Method=="PerfectMatch" & CNV_Region==a & Mat==c & Matching_Type=="QCd") %>%
+    filter(Factor=="PerfectMatch" & CNV_Region==a & Mat==c & Matching_Type=="QCd") %>%
     pull(.data[[b]])
   
   H3 <- ANALYSIS_STEP2_REGIONAL %>%
-    filter(Matching_Method=="FullSet" & CNV_Region==a & Mat==c & Matching_Type=="Raw") %>%
+    filter(Factor=="FullSet" & CNV_Region==a & Mat==c & Matching_Type=="Raw") %>%
     pull(.data[[b]])
   
   H4 <- ANALYSIS_STEP2_REGIONAL %>%
-    filter(Matching_Method=="FullSet" & CNV_Region==a & Mat==c & Matching_Type=="QCd") %>%
+    filter(Factor=="FullSet" & CNV_Region==a & Mat==c & Matching_Type=="QCd") %>%
     pull(.data[[b]])
   
   TITLE <- case_when(
@@ -184,29 +203,29 @@ MetricPlot <- function(a, b, c){
   
   PLOT <- ANALYSIS_STEP2_REGIONAL %>%
     filter(Mat==c) %>%
-    filter(!Matching_Method %in% c("PerfectMatch", "FullSet")) %>%
+    filter(!Factor %in% c("PerfectMatch", "FullSet")) %>%
     filter(CNV_Region==a) %>%
     ggplot() +
-    geom_hline(aes(yintercept=H1, color="Perfect Match", linetype="Raw"), linewidth=1) +
-    geom_hline(aes(yintercept=H2, color="Perfect Match", linetype="QCd"), linewidth=1) +
-    geom_hline(aes(yintercept=H3, color="Full Set", linetype="Raw"), linewidth=1) +
-    geom_hline(aes(yintercept=H4, color="Full Set", linetype="QCd"), linewidth=1) +
-    geom_point(aes(x=MaxD_LOG, y=.data[[b]], color=Matching_Method, shape="Raw"), 
-               data = ~filter(.x, Matching_Type=="Raw"),
+    geom_hline(aes(yintercept=H1, color="Perfect Match", linetype="Low-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H2, color="Perfect Match", linetype="Medium-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H3, color="Full Set", linetype="Low-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H4, color="Full Set", linetype="Medium-stringency QC"), linewidth=1) +
+    geom_point(aes(x=D_MAX_LOG, y=.data[[b]], color=FactorF, shape="Low-stringency QC"), 
+               data = ~filter(.x, QC=="Low-stringency QC"),
                position = position_dodge(0.01), size=3) +
-    geom_point(aes(x=MaxD_LOG, y=.data[[b]], color=Matching_Method, shape="QCd"), 
-               data = ~filter(.x, Matching_Type=="QCd"), 
+    geom_point(aes(x=D_MAX_LOG, y=.data[[b]], color=FactorF, shape="Medium-stringency QC"), 
+               data = ~filter(.x, QC=="Medium-stringency QC"), 
                position = position_dodge(0.01), size=3.5) +
     scale_shape_manual(values=c(2, 17),
-                       breaks=c("Raw", "QCd")) +
+                       breaks=c("Low-stringency QC", "Medium-stringency QC")) +
     scale_linetype_manual(values=c("dashed", "solid"),
-                          breaks=c("Raw", "QCd")) +
+                          breaks=c("Low-stringency QC", "Medium-stringency QC")) +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                       breaks=c("BAF", "LRRmean", "LRRsd", "Pos", "Perfect Match", "Full Set")) +
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
     labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
          y=toupper(b),
          linetype="CNV CALLSET QC",
-         color="MATCHING METHOD",
+         color="FACTOR",
          shape=" ",
          subtitle=TITLE) +
     scale_x_continuous(breaks=4, n.breaks=1, labels=4, limits=c(3.98, 4.02)) +
@@ -221,8 +240,8 @@ MetricPlot <- function(a, b, c){
           legend.justification="left",
           legend.title=element_text(size=12, face="bold")) +
     guides(color=guide_legend(title.position="top", nrow=1, order=1),
-           linetype=guide_legend(title.position="top", order=2),
-           shape=guide_legend(title.position="top", order=3))
+           linetype=guide_legend(title.position="top", nrow=2, order=2),
+           shape=guide_legend(title.position="top", nrow=2, order=3))
 }
 
 # PREPARE FOR PLOTTING
@@ -238,7 +257,7 @@ C <- set_names(C)
 # PLOT METRICS
 PLOTS <- map(A, function(x) map(B, function(y) map(C, function(z) MetricPlot(a=x, b=y, c=z))))
 
-# SENSITIVITY, ALL (PLOT 58)
+# SENSITIVITY, ALL (PLOT 57)
 ggarrange(PLOTS$Tel$Sensitivity$GSA + rremove("xlab"), 
           PLOTS$Cen$Sensitivity$GSA + rremove("xlab") + rremove("ylab"),
           PLOTS$SegDup$Sensitivity$GSA + rremove("xlab") + rremove("ylab"),
@@ -249,15 +268,15 @@ ggarrange(PLOTS$Tel$Sensitivity$GSA + rremove("xlab"),
           
           align="hv", labels=c("A", " ", " ", "B", " ", " "), common.legend=T, nrow=2, ncol=3,
           legend="top") %>%
-  ggsave(filename="FIGURES/Plot58.png",
+  ggsave(filename="FIGURES/Plot57.png",
          device="png",
-         width=11,
+         width=9.25,
          height=7,
          units="in",
          dpi=350,
          bg="white")
 
-# PPV, ALL (PLOT 59)
+# PPV, ALL (PLOT 58)
 ggarrange(PLOTS$Tel$PPV$GSA + rremove("xlab"), 
           PLOTS$Cen$PPV$GSA + rremove("xlab") + rremove("ylab"),
           PLOTS$SegDup$PPV$GSA + rremove("xlab") + rremove("ylab"),
@@ -268,16 +287,16 @@ ggarrange(PLOTS$Tel$PPV$GSA + rremove("xlab"),
           
           align="hv", labels=c("A", " ", " ", "B", " ", " "), common.legend=T, nrow=2, ncol=3,
           legend="top") %>%
-  ggsave(filename="FIGURES/Plot59.png",
+  ggsave(filename="FIGURES/Plot58.png",
          device="png",
-         width=11,
+         width=9.25,
          height=7,
          units="in",
          dpi=350,
          bg="white")
 
 
-# FNR, ALL (PLOT 60)
+# FNR, ALL (PLOT 59)
 ggarrange(PLOTS$Tel$FNR$GSA + rremove("xlab"), 
           PLOTS$Cen$FNR$GSA + rremove("xlab") + rremove("ylab"),
           PLOTS$SegDup$FNR$GSA + rremove("xlab") + rremove("ylab"),
@@ -288,15 +307,15 @@ ggarrange(PLOTS$Tel$FNR$GSA + rremove("xlab"),
           
           align="hv", labels=c("A", " ", " ", "B", " ", " "), common.legend=T, nrow=2, ncol=3,
           legend="top") %>%
-  ggsave(filename="FIGURES/Plot60.png",
+  ggsave(filename="FIGURES/Plot59.png",
          device="png",
-         width=11,
+         width=9.25,
          height=7,
          units="in",
          dpi=350,
          bg="white")
 
-# FDR, ALL (PLOT 61)
+# FDR, ALL (PLOT 60)
 ggarrange(PLOTS$Tel$FDR$GSA + rremove("xlab"), 
           PLOTS$Cen$FDR$GSA + rremove("xlab") + rremove("ylab"),
           PLOTS$SegDup$FDR$GSA + rremove("xlab") + rremove("ylab"),
@@ -307,15 +326,15 @@ ggarrange(PLOTS$Tel$FDR$GSA + rremove("xlab"),
           
           align="hv", labels=c("A", " ", " ", "B", " ", " "), common.legend=T, nrow=2, ncol=3,
           legend="top") %>%
-  ggsave(filename="FIGURES/Plot61.png",
+  ggsave(filename="FIGURES/Plot60.png",
          device="png",
-         width=11,
+         width=9.25,
          height=7,
          units="in",
          dpi=350,
          bg="white")
 
-# F1, ALL (PLOT 62)
+# F1, ALL (PLOT 61)
 ggarrange(PLOTS$Tel$F1$GSA + rremove("xlab"), 
           PLOTS$Cen$F1$GSA + rremove("xlab") + rremove("ylab"),
           PLOTS$SegDup$F1$GSA + rremove("xlab") + rremove("ylab"),
@@ -326,15 +345,15 @@ ggarrange(PLOTS$Tel$F1$GSA + rremove("xlab"),
           
           align="hv", labels=c("A", " ", " ", "B", " ", " "), common.legend=T, nrow=2, ncol=3,
           legend="top") %>%
-  ggsave(filename="FIGURES/Plot62.png",
+  ggsave(filename="FIGURES/Plot61.png",
          device="png",
-         width=11,
+         width=9.25,
          height=7,
          units="in",
          dpi=350,
          bg="white")
 
-# FMI, ALL (PLOT 63)
+# FMI, ALL (PLOT 62)
 ggarrange(PLOTS$Tel$FMI$GSA + rremove("xlab"), 
           PLOTS$Cen$FMI$GSA + rremove("xlab") + rremove("ylab"),
           PLOTS$SegDup$FMI$GSA + rremove("xlab") + rremove("ylab"),
@@ -345,15 +364,15 @@ ggarrange(PLOTS$Tel$FMI$GSA + rremove("xlab"),
           
           align="hv", labels=c("A", " ", " ", "B", " ", " "), common.legend=T, nrow=2, ncol=3,
           legend="top") %>%
-  ggsave(filename="FIGURES/Plot63.png",
+  ggsave(filename="FIGURES/Plot62.png",
          device="png",
-         width=11,
+         width=9.25,
          height=7,
          units="in",
          dpi=350,
          bg="white")
 
-# JI, ALL (PLOT 64)
+# JI, ALL (PLOT 63)
 ggarrange(PLOTS$Tel$JI$GSA + rremove("xlab"), 
           PLOTS$Cen$JI$GSA + rremove("xlab") + rremove("ylab"),
           PLOTS$SegDup$JI$GSA + rremove("xlab") + rremove("ylab"),
@@ -364,9 +383,9 @@ ggarrange(PLOTS$Tel$JI$GSA + rremove("xlab"),
           
           align="hv", labels=c("A", " ", " ", "B", " ", " "), common.legend=T, nrow=2, ncol=3,
           legend="top") %>%
-  ggsave(filename="FIGURES/Plot64.png",
+  ggsave(filename="FIGURES/Plot63.png",
          device="png",
-         width=11,
+         width=9.25,
          height=7,
          units="in",
          dpi=350,
@@ -374,8 +393,9 @@ ggarrange(PLOTS$Tel$JI$GSA + rremove("xlab"),
 
 # WRITE TABLE DATA
 ANALYSIS_STEP2_REGIONAL %>%
-  rename(Method=Matching_Method,
-         MaxD=Matching_Distance,
-         QC=Matching_Type) %>%
-  select(-MaxD_LOG) %>%
-  write_tsv("TABLES/Table12.tsv", col_names=TRUE)  
+  select(-c(D_MAX_LOG, Factor, Matching_Type, FactorF, QCF)) %>%
+  relocate(D_MAX, .after=Mat) %>%
+  relocate(FactorN, .after=Mat) %>%
+  relocate(QC, .after=D_MAX) %>%
+  rename(Factor=FactorN) %>%
+  write_tsv("TABLES/TableS1O.tsv", col_names=TRUE)
