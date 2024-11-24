@@ -208,19 +208,19 @@ OEE_MAN <- read_delim("DATA/OEE_MAN.txt", delim="\t")
 ```
 
 ### Graph Marker Density Plots
-In R, ran locally. Code for creating marker density plots, manuscript **Figure 3**. First, the data cen be prepared using [UsedSNPs.R](Scripts/UsedSNPs.R) script, and then plotted using [Plot3.R](Scripts/Plot3.R).
+In R, ran locally. Code for creating marker density plots, manuscript **Figure 3**. First, the data cen be prepared using [UsedSNPs.R](Scripts/UsedSNPs.R) script, and then plotted using [Plot03.R](Scripts/Plot03.R).
 
 ### Graph Gaps Plots
-In R, ran locally. Code for creating marker gaps plots, manuscript **Figure 4**. First, the data cen be plotted using [Plot4.R](Scripts/Plot4.R).
+In R, ran locally. Code for creating marker gaps plots, manuscript **Figure 4**. First, the data cen be plotted using [Plot04.R](Scripts/Plot04.R).
 
 ### Graph BAF Plots
-In R, ran locally. Code for creating BAF plots, manuscript **Figure 5**. First, the data cen be plotted using [Plot5.R](Scripts/Plot5.R).
+In R, ran locally. Code for creating BAF plots, manuscript **Figure 5**. First, the data cen be plotted using [Plot05.R](Scripts/Plot05.R).
 
 ### Graph LRR-SD Plots
-In R, ran locally. Code for creating LRR-sd plots, manuscript **Figure 6**. First, the data cen be plotted using [Plot6.R](Scripts/Plot6.R).
+In R, ran locally. Code for creating LRR-sd plots, manuscript **Figure 6**. First, the data cen be plotted using [Plot06.R](Scripts/Plot06.R).
 
 ### Graph LRR-Mean Plots
-In R, ran locally. Code for creating LRR-mean plots, manuscript **Figure 7**. First, the data cen be plotted using [Plot7.R](Scripts/Plot7.R).
+In R, ran locally. Code for creating LRR-mean plots, manuscript **Figure 7**. First, the data cen be plotted using [Plot07.R](Scripts/Plot07.R).
 
 ### Split Final Reports
 On the cloud, after Illumina final reports have been uploaded, split the final reports. `split_illumina_report.pl` is a part of PennCNV software.
@@ -1172,37 +1172,14 @@ load("Validation_Final_103024.RData")
 ### Step-One Validation Analyses
 Using the `Validation_Final_082924.RData` in local R session, validate CNV calls in simulated MarkerMatch scenario.
 
-Code for step-one genome-wide performance metrics, manuscript **Figure 8-28** is available at [Plot8-28.R](Scripts/Plot8-28.R).
+Code for step-one genome-wide performance metrics, manuscript **Figure 8-28** is available at [Plot08-28.R](Scripts/Plot08-28.R).
 Code for step-one regional performance metrics, manuscript **Figure 29-35** is available at [Plot29-35.R](Scripts/Plot29-35.R).
+Code for step-one D_MAX and Factor optimizations, manuscript **Figure 29-35** is available at [Plot70-74.R](Scripts/Plot70-74.R).
 
 ### Step-Two Validation Analyses
 Using the `Validation_Final_082924.RData` in local R session, validate CNV calls in simulated MarkerMatch scenario.
 
-Code for step-two genome-wide performance metrics, manuscript **Figure 37-57** is available at [Plot37-57.R](Scripts/Plot37-57.R).
-Code for step-two regional performance metrics, manuscript **Figure 58-64** is available at [Plot58-64.R](Scripts/Plot58-64.R).
-Code for step-two determination of optimal LEN and N_SNP cutoffs, manuscript **Figure 65-67** is available at [Plot65-67.R](Scripts/Plot65-67.R), and the output of model summary is shown below.
-```
-Call:
-lm(formula = PPV ~ LEN_Cutoff + N_SNP_Cutoff + Matching_Method, 
-    data = filter(ANALYSIS_STEP2_CUTOFFS, !Matching_Method %in% 
-        c("FullSet", "PerfectMatch")))
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--0.31339 -0.15476  0.04474  0.12573  0.29630 
-
-Coefficients:
-                        Estimate Std. Error t value Pr(>|t|)    
-(Intercept)            4.572e-01  1.292e-02  35.383   <2e-16 ***
-LEN_Cutoff             9.005e-07  2.519e-08  35.753   <2e-16 ***
-N_SNP_Cutoff           2.344e-04  2.814e-04   0.833   0.4049    
-Matching_MethodLRRmean 1.845e-02  1.027e-02   1.796   0.0727 .  
-Matching_MethodLRRsd   1.570e-02  1.027e-02   1.528   0.1266    
-Matching_MethodPos     1.033e-02  1.027e-02   1.005   0.3149    
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 0.1541 on 1794 degrees of freedom
-Multiple R-squared:  0.4169,	Adjusted R-squared:  0.4153 
-F-statistic: 256.6 on 5 and 1794 DF,  p-value: < 2.2e-16
-```
+Code for step-two genome-wide performance metrics, manuscript **Figure 37-57** is available at [Plot36-56.R](Scripts/Plot36-56.R).
+Code for step-two regional performance metrics, manuscript **Figure 57-64** is available at [Plot57-63.R](Scripts/Plot57-63.R).
+Code for step-two determination of optimal LEN and N_SNP cutoffs, manuscript **Figure 65-67** is available at [Plot64-69.R](Scripts/Plot64-69.R).
+Code for sample-wise error rates, manuscript **Figure 65-67** is available at [Plot75-76.R](Scripts/Plot75-76.R).
