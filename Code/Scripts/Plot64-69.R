@@ -177,14 +177,14 @@ SV_Trans <- function(x){
 ANALYSIS_STEP2_CUTOFFS <- ANALYSIS_STEP2_CUTOFFS %>%
   mutate(across(c(Sensitivity, PPV, F1, FMI, JI), SV_Trans))
 
-ANALYSIS_SSC_QC <- ANALYSIS_STEP2_CUTOFFS %>%
+ANALYSIS_S2VS_QC <- ANALYSIS_STEP2_CUTOFFS %>%
   filter(QC=="Medium-stringency QC") %>%
   mutate(LEN_Cutoff=LEN_Cutoff/10000)
 
 # MODEL METRICS ON LEN AND N_SNP CUTOFFS
 MOD_SEN_GSA <- betareg(Sensitivity ~ 
                  LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                 data=filter(ANALYSIS_SSC_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
+                 data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
                  link="logit")
 
 summary(MOD_SEN_GSA)
@@ -195,7 +195,7 @@ as.data.frame(model_parameters(MOD_SEN_GSA, component="conditional", exponentiat
 
 MOD_SEN_OEE <- betareg(Sensitivity ~ 
                          LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                       data=filter(ANALYSIS_SSC_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
+                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
                        link="logit")
 
 summary(MOD_SEN_OEE)
@@ -206,7 +206,7 @@ as.data.frame(model_parameters(MOD_SEN_OEE, component="conditional", exponentiat
 
 MOD_PPV_GSA <- betareg(PPV ~ 
                          LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                       data=filter(ANALYSIS_SSC_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
+                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
                        link="logit")
 
 summary(MOD_PPV_GSA)
@@ -217,7 +217,7 @@ as.data.frame(model_parameters(MOD_PPV_GSA, component="conditional", exponentiat
 
 MOD_PPV_OEE <- betareg(PPV ~ 
                          LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                       data=filter(ANALYSIS_SSC_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
+                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
                        link="logit")
 
 summary(MOD_PPV_OEE)
@@ -228,7 +228,7 @@ as.data.frame(model_parameters(MOD_PPV_OEE, component="conditional", exponentiat
 
 MOD_F1_GSA <- betareg(F1 ~ 
                          LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                       data=filter(ANALYSIS_SSC_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
+                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
                        link="logit")
 
 summary(MOD_F1_GSA)
@@ -239,7 +239,7 @@ as.data.frame(model_parameters(MOD_F1_GSA, component="conditional", exponentiate
 
 MOD_F1_OEE <- betareg(F1 ~ 
                          LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                       data=filter(ANALYSIS_SSC_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
+                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
                        link="logit")
 
 summary(MOD_F1_OEE)
@@ -250,7 +250,7 @@ as.data.frame(model_parameters(MOD_F1_OEE, component="conditional", exponentiate
 
 MOD_FMI_GSA <- betareg(FMI ~ 
                         LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                      data=filter(ANALYSIS_SSC_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
+                      data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
                       link="logit")
 
 summary(MOD_FMI_GSA)
@@ -261,7 +261,7 @@ as.data.frame(model_parameters(MOD_FMI_GSA, component="conditional", exponentiat
 
 MOD_FMI_OEE <- betareg(FMI ~ 
                         LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                      data=filter(ANALYSIS_SSC_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
+                      data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
                       link="logit")
 
 summary(MOD_FMI_OEE)
@@ -272,7 +272,7 @@ as.data.frame(model_parameters(MOD_FMI_OEE, component="conditional", exponentiat
 
 MOD_JI_GSA <- betareg(JI ~ 
                         LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                      data=filter(ANALYSIS_SSC_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
+                      data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
                       link="logit")
 
 summary(MOD_JI_GSA)
@@ -283,7 +283,7 @@ as.data.frame(model_parameters(MOD_JI_GSA, component="conditional", exponentiate
 
 MOD_JI_OEE <- betareg(JI ~ 
                         LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                      data=filter(ANALYSIS_SSC_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
+                      data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
                       link="logit")
 
 summary(MOD_JI_OEE)
@@ -292,7 +292,7 @@ as.data.frame(model_parameters(MOD_JI_OEE, component="conditional", exponentiate
   select(-c(CI, CI_low, CI_high, df_error)) %>%
   print(row.names=FALSE)
 
-(ANALYSIS_SSC_QC %>%
+(ANALYSIS_S2VS_QC %>%
     filter(N_SNP_Cutoff!=50) %>%
     mutate(N_SNP_Cutoff=paste0("Cutoff = ", N_SNP_Cutoff)) %>%
     ggplot(aes(x=LEN_Cutoff*10, y=PPV, color=FactorF, linetype=Mat)) +
@@ -332,7 +332,7 @@ as.data.frame(model_parameters(MOD_JI_OEE, component="conditional", exponentiate
          dpi=350,
          bg="white")
   
-(ANALYSIS_SSC_QC %>%
+(ANALYSIS_S2VS_QC %>%
     filter(N_SNP_Cutoff!=50) %>%
     mutate(N_SNP_Cutoff=paste0("Cutoff = ", N_SNP_Cutoff)) %>%
     ggplot(aes(x=LEN_Cutoff*10, y=F1, color=FactorF, linetype=Mat)) +
@@ -372,7 +372,7 @@ as.data.frame(model_parameters(MOD_JI_OEE, component="conditional", exponentiate
          dpi=350,
          bg="white")
 
-(ANALYSIS_SSC_QC %>%
+(ANALYSIS_S2VS_QC %>%
     filter(LEN_Cutoff %in% c(2, 4, 6, 8, 10, 20, 30, 40)) %>%
     mutate(LEN_Cutoff=paste0("Cutoff = ", LEN_Cutoff, "0,000bp")) %>%
     ggplot(aes(x=N_SNP_Cutoff, y=PPV, color=FactorF, linetype=Mat)) +
@@ -412,7 +412,7 @@ as.data.frame(model_parameters(MOD_JI_OEE, component="conditional", exponentiate
          dpi=350,
          bg="white")
 
-(ANALYSIS_SSC_QC %>%
+(ANALYSIS_S2VS_QC %>%
     filter(LEN_Cutoff %in% c(2, 4, 6, 8, 10, 20, 30, 40)) %>%
     mutate(LEN_Cutoff=paste0("Cutoff = ", LEN_Cutoff, "0,000bp")) %>%
     ggplot(aes(x=N_SNP_Cutoff, y=F1, color=FactorF, linetype=Mat)) +
@@ -452,11 +452,11 @@ as.data.frame(model_parameters(MOD_JI_OEE, component="conditional", exponentiate
          dpi=350,
          bg="white")
 
-ANALYSIS_SSC_QC$FactorF <- factor(ANALYSIS_SSC_QC$FactorN,
+ANALYSIS_S2VS_QC$FactorF <- factor(ANALYSIS_S2VS_QC$FactorN,
                                   labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Full Set", "Perfect Match"),
                                   levels=c("BAF", "LRR mean", "LRR sd", "Distance", "Full Set", "Perfect Match"))
 
-(ANALYSIS_SSC_QC %>%
+(ANALYSIS_S2VS_QC %>%
   filter(N_SNP_Cutoff %in% c(10, 20, 30, 40) & LEN_Cutoff %in% c(2, 4, 8, 16, 32)) %>%
   mutate(N_SNP_Cutoff=paste0(N_SNP_Cutoff, " SNPs"),
          LEN_Cutoff=paste0(LEN_Cutoff, "0,000bp")) %>%
@@ -495,7 +495,7 @@ ANALYSIS_SSC_QC$FactorF <- factor(ANALYSIS_SSC_QC$FactorN,
          dpi=350,
          bg="white")
 
-(ANALYSIS_SSC_QC %>%
+(ANALYSIS_S2VS_QC %>%
     filter(N_SNP_Cutoff %in% c(10, 20, 30, 40) & LEN_Cutoff %in% c(2, 4, 8, 16, 32)) %>%
     mutate(N_SNP_Cutoff=paste0(N_SNP_Cutoff, " SNPs"),
            LEN_Cutoff=paste0(LEN_Cutoff, "0,000bp")) %>%
