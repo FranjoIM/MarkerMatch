@@ -450,6 +450,6 @@ TEST_FACTOR <- TEST_FACTOR %>%
   drop_na(P) %>%
   mutate(Q=p.adjust(P, method="fdr")) %>% 
   pivot_wider(names_from="Factor2",
-              values_from=c("P", "P.adj"),
+              values_from=c("P", "Q"),
               names_vary="slowest") %>%
   write_tsv("TABLES/TableS1K.tsv", col_names=TRUE)
