@@ -344,15 +344,14 @@ CUM_ANALYSIS$FactorF <- factor(CUM_ANALYSIS$Factor,
                                levels=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match"),
                                labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match"))
 
-
 (CUM_ANALYSIS %>%
   filter(QC=="Medium-stringency QC") %>%
   ggplot(aes(x=`PPV Cutoff`, color=FactorF)) +
-  geom_line(aes(y=Under_PPV, linetype="Under Cutoff"), linewidth=1) +
-  geom_line(aes(y=Over_PPV, linetype="Over Cutoff"), linewidth=1) +
+  geom_line(aes(y=Under_PPV, linetype="Fail"), linewidth=1) +
+  geom_line(aes(y=Over_PPV, linetype="Pass"), linewidth=1) +
   labs(x="PPV Cutoff",
        y="PPV",
-       linetype="SEGMENTED PPV",
+       linetype="PPV QC",
        color="FACTOR") +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
                      breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
@@ -382,11 +381,11 @@ CUM_ANALYSIS$FactorF <- factor(CUM_ANALYSIS$Factor,
 (CUM_ANALYSIS %>%
     filter(QC=="Medium-stringency QC") %>%
     ggplot(aes(x=`PPV Cutoff`, color=FactorF)) +
-    geom_line(aes(y=Under_F1, linetype="Under Cutoff"), linewidth=1) +
-    geom_line(aes(y=Over_F1, linetype="Over Cutoff"), linewidth=1) +
+    geom_line(aes(y=Under_F1, linetype="Fail"), linewidth=1) +
+    geom_line(aes(y=Over_F1, linetype="Pass"), linewidth=1) +
     labs(x="PPV Cutoff",
          y="F1",
-         linetype="SEGMENTED F1",
+         linetype="PPV QC",
          color="FACTOR") +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
                        breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
