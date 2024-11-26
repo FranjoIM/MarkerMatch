@@ -611,6 +611,9 @@ cd $WKDIR/TS_TAAICG_OEE_1
 cd $WKDIR/TS_TAAICG_OEE_2
 ./plink --file 2024_OEE_328s --make-bed --out OEE_S02
 
+cd $WKDIR/ASD_SSC_OMNI_1
+./plink --file ASD_SSC_Omni2.5v1 --make-bed --out SSC
+
 # MOVE ALL CONVERTED FILES INTO A SINGLE PROCESSING FOLDER
 mkdir $WKDIR/PROCESSING
 mv $WKDIR/TS_TAAICG_GSA_1/GSA_S01*  $WKDIR/PROCESSING
@@ -618,6 +621,7 @@ mv $WKDIR/TS_TAAICG_GSA_2/GSA_S02*  $WKDIR/PROCESSING
 mv $WKDIR/TS_TAAICG_GSA_3/GSA_S03*  $WKDIR/PROCESSING
 mv $WKDIR/TS_TAAICG_OEE_1/OEE_S01*  $WKDIR/PROCESSING
 mv $WKDIR/TS_TAAICG_OEE_2/OEE_S02*  $WKDIR/PROCESSING
+mv $WKDIR/ASD_SSC_OMNI_1/SSC  $WKDIR/PROCESSING/SSC
 
 # COMBINE GSA FILES THEN OEE FILES
 cd $WKDIR/PROCESSING
@@ -625,12 +629,47 @@ cd $WKDIR/PROCESSING
 ./plink --merge-list OEE_LIST.txt --make-bed --out OEE
 
 # PERFORM BASIC QC ON THE PLINK DATASETS
-./plink --bfile GSA --geno 0.02 --maf 0.01 --hwe 0.000001 --make-bed --out GSA_QC
-./plink --bfile OEE --geno 0.02 --maf 0.01 --hwe 0.000001 --make-bed --out OEE_QC
+./plink --bfile GSA --geno 0.02 --mind 0.02 --maf 0.01 --hwe 0.000001 --make-bed --out GSA_QC
+./plink --bfile OEE --geno 0.02 --mind 0.02 --maf 0.01 --hwe 0.000001 --make-bed --out OEE_QC
+./plink --bfile SSC --geno 0.02 --mind 0.02 --maf 0.01 --hwe 0.000001 --make-bed --out SSC_QC
 
 # WRITE OUT MAF INFO FOR GSA AND OEE
 ./plink --bfile GSA --freqx --out GSA_MAF
 ./plink --bfile OEE --freqx --out OEE_MAF
+```
+Generate sex and PC data for SSC for burden testing.
+```bash
+# Create a holding directoory
+mkdir -p $WKDIR/FRAPOSA
+
+# LOAD IN FRAPOSA AND SET THE DIRECTORY
+FRAPOSA=".../fraposa"
+
+# SET UP WORKING AND TARGET DIRECTORIES
+REF_raw="${FRAPOSA}/thousandGenomes"
+SAM_raw="${WKDIR}/"
+SAM_pro="${WKDIR}/FRAPOSA"
+
+# MATCH VARIANTS
+${FRAPOSA}/commvar.sh \
+    ${REF_raw} \
+    ${SAM_raw}/ASD_QC \
+    ${SAM_pro}/Ref \
+    ${SAM_pro}/Sam
+
+# RUN PCA CALCULATIONS
+python3 ${FRAPOSA}/fraposa_runner.py \
+    --stu_filepref ${SAM_pro}/Sam \
+    --method oadp \
+    --dim_ref 20 \
+    ${SAM_pro}/Ref
+
+# PREDICT MAJOR ANCESTRAL POPULATIONS
+python3 ${FRAPOSA}/predstupopu.py \
+    --nneighbors 20 \
+    --weights uniform \
+    ${SAM_pro}/Ref \
+    ${SAM_pro}/Sam
 ```
 
 Open R, and use following code to determine which alleles to keep from both OEE and GSA sets for further analysis.
@@ -1174,7 +1213,7 @@ Using the `Validation_Final_082924.RData` in local R session, validate CNV calls
 
 Code for step-one genome-wide performance metrics, manuscript **Figure 8-28** is available at [Plot08-28.R](Scripts/Plot08-28.R).
 Code for step-one regional performance metrics, manuscript **Figure 29-35** is available at [Plot29-35.R](Scripts/Plot29-35.R).
-Code for step-one D_MAX and Factor optimizations, manuscript **Figure 29-35** is available at [Plot70-74.R](Scripts/Plot70-74.R).
+Code for step-one D_MAX and Factor optimizations, manuscript **Figure 29-35** is available at [Plot70-79.R](Scripts/Plot70-74.R).
 
 ### Step-Two Validation Analyses
 Using the `Validation_Final_082924.RData` in local R session, validate CNV calls in simulated MarkerMatch scenario.
@@ -1182,4 +1221,4 @@ Using the `Validation_Final_082924.RData` in local R session, validate CNV calls
 Code for step-two genome-wide performance metrics, manuscript **Figure 37-57** is available at [Plot36-56.R](Scripts/Plot36-56.R).
 Code for step-two regional performance metrics, manuscript **Figure 57-64** is available at [Plot57-63.R](Scripts/Plot57-63.R).
 Code for step-two determination of optimal LEN and N_SNP cutoffs, manuscript **Figure 65-67** is available at [Plot64-69.R](Scripts/Plot64-69.R).
-Code for sample-wise error rates, manuscript **Figure 65-67** is available at [Plot75-76.R](Scripts/Plot75-76.R).
+Code for sample-wise error rates, manuscript **Figure 65-67** is available at [Plot80-82.R](Scripts/Plot80-82.R).
