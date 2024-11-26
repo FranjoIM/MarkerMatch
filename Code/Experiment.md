@@ -651,25 +651,29 @@ SAM_raw="${WKDIR}/"
 SAM_pro="${WKDIR}/FRAPOSA"
 
 # MATCH VARIANTS
-${FRAPOSA}/commvar.sh \
+./${FRAPOSA}/commvar.sh \
     ${REF_raw} \
     ${SAM_raw}/ASD_QC \
     ${SAM_pro}/Ref \
     ${SAM_pro}/Sam
 
 # RUN PCA CALCULATIONS
-python3 ${FRAPOSA}/fraposa_runner.py \
+./python3 ${FRAPOSA}/fraposa_runner.py \
     --stu_filepref ${SAM_pro}/Sam \
     --method oadp \
     --dim_ref 20 \
     ${SAM_pro}/Ref
 
 # PREDICT MAJOR ANCESTRAL POPULATIONS
-python3 ${FRAPOSA}/predstupopu.py \
+./python3 ${FRAPOSA}/predstupopu.py \
     --nneighbors 20 \
     --weights uniform \
     ${SAM_pro}/Ref \
     ${SAM_pro}/Sam
+
+# CALCULATE SEX
+./plink --bfile SSC --check-sex --out SSC_QC_SEX
+
 ```
 
 Open R, and use following code to determine which alleles to keep from both OEE and GSA sets for further analysis.
