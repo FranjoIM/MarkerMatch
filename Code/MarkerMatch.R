@@ -11,8 +11,8 @@ MarkerMatch <- function(Reference=Reference, Matching=Matching, Factor=Factor, M
     stop("Matching is missing one of the following required columns: Name, Chr, Position, BAF, LRR_mean, LRR_sd.")
   }
   
-  if(!Factor %in% c("Distance","BAF.delta","LRR_mean.delta","LRR_sd.delta")){
-    stop("Factor must be one of the following: Distance, BAF.delta, LRR_mean.delta, or LRR_sd.delta.")
+  if(!Factor %in% c("Distance","BAF_delta","LRR_mean_delta","LRR_sd_delta")){
+    stop("Factor must be one of the following: Distance, BAF_delta, LRR_mean_delta, or LRR_sd_delta.")
   }
   
   if(!is.numeric(MaxD)){
@@ -45,9 +45,9 @@ MarkerMatch <- function(Reference=Reference, Matching=Matching, Factor=Factor, M
     PerfectMatch <- full_join(Ref, Mat, by="Position", keep=TRUE, relationship="many-to-many", suffix=c(".Ref", ".Mat")) %>%
       drop_na() %>%
       mutate(Distance=abs(Position.Ref-Position.Mat),
-             LRR_sd.delta=abs(LRR_sd.Ref-LRR_sd.Mat),
-             LRR_mean.delta=abs(LRR_mean.Ref-LRR_mean.Mat),
-             BAF.delta=abs(BAF.Ref-BAF.Mat),
+             LRR_sd_delta=abs(LRR_sd.Ref-LRR_sd.Mat),
+             LRR_mean_delta=abs(LRR_mean.Ref-LRR_mean.Mat),
+             BAF_delta=abs(BAF.Ref-BAF.Mat),
              Position=ifelse(Position.Ref==Position.Mat, "Same", "Different"),
              Name=ifelse(Name.Ref==Name.Mat, "Same", "Different"))
     
@@ -74,9 +74,9 @@ MarkerMatch <- function(Reference=Reference, Matching=Matching, Factor=Factor, M
       if(nrow(Match)>0){
         # Match manifests based on position, annotate distances, deltas, and name identity
         Match <- Match %>% 
-          mutate(LRR_sd.delta=abs(LRR_sd.Ref-LRR_sd.Mat),
-                 LRR_mean.delta=abs(LRR_mean.Ref-LRR_mean.Mat),
-                 BAF.delta=abs(BAF.Ref-BAF.Mat),
+          mutate(LRR_sd_delta=abs(LRR_sd.Ref-LRR_sd.Mat),
+                 LRR_mean_delta=abs(LRR_mean.Ref-LRR_mean.Mat),
+                 BAF_delta=abs(BAF.Ref-BAF.Mat),
                  Position=ifelse(Position.Ref==Position.Mat, "Same", "Different"),
                  Name=ifelse(Name.Ref==Name.Mat, "Same", "Different"))%>% 
           arrange_at({{Factor}}) %>%
