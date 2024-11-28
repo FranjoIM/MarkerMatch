@@ -14,7 +14,9 @@ def marker_match(reference: pd.DataFrame, matching: pd.DataFrame, factor: str, d
         out_path: Output file path.
 
     Returns:
-        Matching result dataframe.
+        N/A, saves three files: matched dataframe as *.csv file, a list of retainable
+        markers from reference array as *_RefSelect.csv file, and a list of retainable
+        probes from matching array as *_MatSelect.csv file.
     """
 
     start = datetime.now()
