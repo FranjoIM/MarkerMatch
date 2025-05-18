@@ -1,4 +1,4 @@
-MarkerMatch <- function(Reference=Reference, Matching=Matching, Factor=Factor, MaxD=MaxD, OutPath=OutPath){
+MarkerMatch <- function(Reference=Reference, Matching=Matching, Mathod=Mathod, D_MAX=D_MAX, OutPath=OutPath){
   require(tidyverse)
   
   # Define errors for function
@@ -11,12 +11,12 @@ MarkerMatch <- function(Reference=Reference, Matching=Matching, Factor=Factor, M
     stop("Matching is missing one of the following required columns: Name, Chr, Position, BAF, LRR_mean, LRR_sd.")
   }
   
-  if(!Factor %in% c("Distance","BAF_delta","LRR_mean_delta","LRR_sd_delta")){
-    stop("Factor must be one of the following: Distance, BAF_delta, LRR_mean_delta, or LRR_sd_delta.")
+  if(!Mathod %in% c("Distance","BAF_delta","LRR_mean_delta","LRR_sd_delta")){
+    stop("Mathod must be one of the following: Distance, BAF_delta, LRR_mean_delta, or LRR_sd_delta.")
   }
   
-  if(!is.numeric(MaxD)){
-    stop("MaxD must be a numeric value.")
+  if(!is.numeric(D_MAX)){
+    stop("D_MAX must be a numeric value.")
   }
   
   if(!is.character(OutPath)){
@@ -68,7 +68,7 @@ MarkerMatch <- function(Reference=Reference, Matching=Matching, Factor=Factor, M
       # Pull out SNP, filter matches by position distance criteria
       Match <- cross_join(Ref[i,], Mat, suffix=c(".Ref", ".Mat")) %>%
         mutate(Distance=abs(Position.Ref-Position.Mat)) %>%
-        filter(Distance<=MaxD)
+        filter(Distance<=D_MAX)
       
       # Match manifests based on position, annotate distances, deltas, and name identity
       if(nrow(Match)>0){
@@ -79,7 +79,7 @@ MarkerMatch <- function(Reference=Reference, Matching=Matching, Factor=Factor, M
                  BAF_delta=abs(BAF.Ref-BAF.Mat),
                  Position=ifelse(Position.Ref==Position.Mat, "Same", "Different"),
                  Name=ifelse(Name.Ref==Name.Mat, "Same", "Different"))%>% 
-          arrange_at({{Factor}}) %>%
+          arrange_at({{Mathod}}) %>%
           filter(row_number()==1)
         
         # Merge Match with master DF
