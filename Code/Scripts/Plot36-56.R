@@ -21,7 +21,7 @@ CALLSET_SUMMARIZER <- data.frame(NULL)
 for(h in 1:nrow(DataFileNames)){
   i <- DataFileNames$Factor[h]
   j <- DataFileNames$D_MAXLab[h] 
-  k <- DataFileNames$Ref[h]
+  k <- DataFileNames$Mat[h]
   
   for(o in c("Raw", "QCd")){
     
@@ -37,6 +37,9 @@ for(h in 1:nrow(DataFileNames)){
           CN > 2 ~ "Duplication",
           TRUE ~ "Edge Case"))
     
+    DF_ID <- DATA[["Raw"]][[k]][["FullSet"]][["0"]][["CNV"]] %>%
+      select(ID) %>%
+      distinct(.)
     
     for(p in c("All", "Deletions", "Duplications")){
       for(q in c("All", "Small", "Medium", "Large")){
@@ -68,13 +71,17 @@ for(h in 1:nrow(DataFileNames)){
         COUNTS <- FILT %>%
           count(ID, name="N")
         
+        COUNTS_ALL <- DF_ID %>%
+          left_join(COUNTS, by="ID") %>%
+          mutate(N=replace_na(N, 0))
+        
         ROW[1, "N_CNV"] <- nrow(FILT)
-        ROW[1, "PER_SAMPLE_N_CNV_MEAN"] <- mean(COUNTS$N)
-        ROW[1, "PER_SAMPLE_N_CNV_SD"] <- sd(COUNTS$N)
-        ROW[1, "PER_SAMPLE_N_CNV_MEDIAN"] <- median(COUNTS$N)
-        ROW[1, "PER_SAMPLE_N_CNV_IQR"] <- IQR(COUNTS$N)
-        ROW[1, "PER_SAMPLE_N_CNV_MIN"] <- min(COUNTS$N)
-        ROW[1, "PER_SAMPLE_N_CNV_MAX"] <- max(COUNTS$N)
+        ROW[1, "PER_SAMPLE_N_CNV_MEAN"] <- mean(COUNTS_ALL$N)
+        ROW[1, "PER_SAMPLE_N_CNV_SD"] <- sd(COUNTS_ALL$N)
+        ROW[1, "PER_SAMPLE_N_CNV_MEDIAN"] <- median(COUNTS_ALL$N)
+        ROW[1, "PER_SAMPLE_N_CNV_IQR"] <- IQR(COUNTS_ALL$N)
+        ROW[1, "PER_SAMPLE_N_CNV_MIN"] <- min(COUNTS_ALL$N)
+        ROW[1, "PER_SAMPLE_N_CNV_MAX"] <- max(COUNTS_ALL$N)
         
         ROW[1, "CNV_SIZE_MEAN"] <- mean(FILT$LEN)
         ROW[1, "CNV_SIZE_SD"] <- sd(FILT$LEN)
@@ -100,7 +107,7 @@ for(h in 1:nrow(DataFileNames)){
 
 CALLSET_SUMMARIZER %>%
   rename(FactorS=Factor) %>%
-  mutate(Factor=case_when(
+  mutate(Method=case_when(
     FactorS=="FullSet" ~ "Full Set",
     FactorS=="PerfectMatch" ~ "Perfect Match",
     FactorS=="LRRmean" ~ "LRR mean",
