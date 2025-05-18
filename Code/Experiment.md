@@ -124,70 +124,70 @@ GSA_MAN %>%
   write_delim("DATA/PerfectMatch_GSA_MatSelect", col_names=FALSE)
 
 # Run MarkerMatch
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=10, Factor="Distance", OutPath="DATA/Pos_10")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=10, Factor="BAF.delta", OutPath="DATA/BAF_10")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=10, Factor="LRR_sd.delta", OutPath="DATA/LRRsd_10")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=10, Factor="LRR_mean.delta", OutPath="DATA/LRRmean_10")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=10, Method="Distance", OutPath="DATA/Pos_10")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=10, Method="BAF.delta", OutPath="DATA/BAF_10")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=10, Method="LRR_sd.delta", OutPath="DATA/LRRsd_10")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=10, Method="LRR_mean.delta", OutPath="DATA/LRRmean_10")
 
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=50, Factor="Distance", OutPath="DATA/Pos_50")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=50, Factor="BAF.delta", OutPath="DATA/BAF_50")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=50, Factor="LRR_sd.delta", OutPath="DATA/LRRsd_50")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=50, Factor="LRR_mean.delta", OutPath="DATA/LRRmean_50")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=50, Method="Distance", OutPath="DATA/Pos_50")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=50, Method="BAF.delta", OutPath="DATA/BAF_50")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=50, Method="LRR_sd.delta", OutPath="DATA/LRRsd_50")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=50, Method="LRR_mean.delta", OutPath="DATA/LRRmean_50")
 
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=100, Factor="Distance", OutPath="DATA/Pos_100")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=100, Factor="BAF.delta", OutPath="DATA/BAF_100")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=100, Factor="LRR_sd.delta", OutPath="DATA/LRRsd_100")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=100, Factor="LRR_mean.delta", OutPath="DATA/LRRmean_100")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=100, Method="Distance", OutPath="DATA/Pos_100")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=100, Method="BAF.delta", OutPath="DATA/BAF_100")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=100, Method="LRR_sd.delta", OutPath="DATA/LRRsd_100")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=100, Method="LRR_mean.delta", OutPath="DATA/LRRmean_100")
 
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=500, Factor="Distance", OutPath="DATA/Pos_500")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=500, Factor="BAF.delta", OutPath="DATA/BAF_500")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=500, Factor="LRR_sd.delta", OutPath="DATA/LRRsd_500")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=500, Factor="LRR_mean.delta", OutPath="DATA/LRRmean_500")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=500, Method="Distance", OutPath="DATA/Pos_500")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=500, Method="BAF.delta", OutPath="DATA/BAF_500")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=500, Method="LRR_sd.delta", OutPath="DATA/LRRsd_500")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=500, Method="LRR_mean.delta", OutPath="DATA/LRRmean_500")
 
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=1000, Factor="Distance", OutPath="DATA/Pos_1000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=1000, Factor="BAF.delta", OutPath="DATA/BAF_1000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=1000, Factor="LRR_sd.delta", OutPath="DATA/LRRsd_1000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=1000, Factor="LRR_mean.delta", OutPath="DATA/LRRmean_1000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=1000, Method="Distance", OutPath="DATA/Pos_1000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=1000, Method="BAF.delta", OutPath="DATA/BAF_1000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=1000, Method="LRR_sd.delta", OutPath="DATA/LRRsd_1000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=1000, Method="LRR_mean.delta", OutPath="DATA/LRRmean_1000")
 
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=5000, Factor="Distance", OutPath="DATA/Pos_5000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=5000, Factor="BAF.delta", OutPath="DATA/BAF_5000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=5000, Factor="LRR_sd.delta", OutPath="DATA/LRRsd_5000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=5000, Factor="LRR_mean.delta", OutPath="DATA/LRRmean_5000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=5000, Method="Distance", OutPath="DATA/Pos_5000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=5000, Method="BAF.delta", OutPath="DATA/BAF_5000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=5000, Method="LRR_sd.delta", OutPath="DATA/LRRsd_5000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=5000, Method="LRR_mean.delta", OutPath="DATA/LRRmean_5000")
 
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=10000, Factor="Distance", OutPath="DATA/Pos_10000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=10000, Factor="BAF.delta", OutPath="DATA/BAF_10000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=10000, Factor="LRR_sd.delta", OutPath="DATA/LRRsd_10000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=10000, Factor="LRR_mean.delta", OutPath="DATA/LRRmean_10000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=10000, Method="Distance", OutPath="DATA/Pos_10000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=10000, Method="BAF.delta", OutPath="DATA/BAF_10000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=10000, Method="LRR_sd.delta", OutPath="DATA/LRRsd_10000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=10000, Method="LRR_mean.delta", OutPath="DATA/LRRmean_10000")
 
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=50000, Factor="Distance", OutPath="DATA/Pos_50000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=50000, Factor="BAF.delta", OutPath="DATA/BAF_50000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=50000, Factor="LRR_sd.delta", OutPath="DATA/LRRsd_50000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=50000, Factor="LRR_mean.delta", OutPath="DATA/LRRmean_50000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=50000, Method="Distance", OutPath="DATA/Pos_50000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=50000, Method="BAF.delta", OutPath="DATA/BAF_50000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=50000, Method="LRR_sd.delta", OutPath="DATA/LRRsd_50000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=50000, Method="LRR_mean.delta", OutPath="DATA/LRRmean_50000")
 
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=100000, Factor="Distance", OutPath="DATA/Pos_100000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=100000, Factor="BAF.delta", OutPath="DATA/BAF_100000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=100000, Factor="LRR_sd.delta", OutPath="DATA/LRRsd_100000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=100000, Factor="LRR_mean.delta", OutPath="DATA/LRRmean_100000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=100000, Method="Distance", OutPath="DATA/Pos_100000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=100000, Method="BAF.delta", OutPath="DATA/BAF_100000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=100000, Method="LRR_sd.delta", OutPath="DATA/LRRsd_100000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=100000, Method="LRR_mean.delta", OutPath="DATA/LRRmean_100000")
 
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=500000, Factor="Distance", OutPath="DATA/Pos_500000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=500000, Factor="BAF.delta", OutPath="DATA/BAF_500000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=500000, Factor="LRR_sd.delta", OutPath="DATA/LRRsd_500000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=500000, Factor="LRR_mean.delta", OutPath="DATA/LRRmean_500000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=500000, Method="Distance", OutPath="DATA/Pos_500000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=500000, Method="BAF.delta", OutPath="DATA/BAF_500000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=500000, Method="LRR_sd.delta", OutPath="DATA/LRRsd_500000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=500000, Method="LRR_mean.delta", OutPath="DATA/LRRmean_500000")
 
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=1000000, Factor="Distance", OutPath="DATA/Pos_1000000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=1000000, Factor="BAF.delta", OutPath="DATA/BAF_1000000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=1000000, Factor="LRR_sd.delta", OutPath="DATA/LRRsd_1000000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=1000000, Factor="LRR_mean.delta", OutPath="DATA/LRRmean_1000000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=1000000, Method="Distance", OutPath="DATA/Pos_1000000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=1000000, Method="BAF.delta", OutPath="DATA/BAF_1000000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=1000000, Method="LRR_sd.delta", OutPath="DATA/LRRsd_1000000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=1000000, Method="LRR_mean.delta", OutPath="DATA/LRRmean_1000000")
 
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=5000000, Factor="Distance", OutPath="DATA/Pos_5000000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=5000000, Factor="BAF.delta", OutPath="DATA/BAF_5000000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=5000000, Factor="LRR_sd.delta", OutPath="DATA/LRRsd_5000000")
-MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, MaxD=5000000, Factor="LRR_mean.delta", OutPath="DATA/LRRmean_5000000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=5000000, Method="Distance", OutPath="DATA/Pos_5000000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=5000000, Method="BAF.delta", OutPath="DATA/BAF_5000000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=5000000, Method="LRR_sd.delta", OutPath="DATA/LRRsd_5000000")
+MarkerMatch(Reference=GSA_MAN, Matching=OMNI_MAN, D_MAX=5000000, Method="LRR_mean.delta", OutPath="DATA/LRRmean_5000000")
 
-MarkerMatch(Reference=GSA_MAN, Matching=OEE_MAN, MaxD=10000, Factor="Distance", OutPath="DATA/OEE_Pos_10000")
-MarkerMatch(Reference=GSA_MAN, Matching=OEE_MAN, MaxD=10000, Factor="BAF.delta", OutPath="DATA/OEE_BAF_10000")
-MarkerMatch(Reference=GSA_MAN, Matching=OEE_MAN, MaxD=10000, Factor="LRR_sd.delta", OutPath="DATA/OEE_LRRsd_10000")
-MarkerMatch(Reference=GSA_MAN, Matching=OEE_MAN, MaxD=10000, Factor="LRR_mean.delta", OutPath="DATA/OEE_LRRmean_10000")
+MarkerMatch(Reference=GSA_MAN, Matching=OEE_MAN, D_MAX=10000, Method="Distance", OutPath="DATA/OEE_Pos_10000")
+MarkerMatch(Reference=GSA_MAN, Matching=OEE_MAN, D_MAX=10000, Method="BAF.delta", OutPath="DATA/OEE_BAF_10000")
+MarkerMatch(Reference=GSA_MAN, Matching=OEE_MAN, D_MAX=10000, Method="LRR_sd.delta", OutPath="DATA/OEE_LRRsd_10000")
+MarkerMatch(Reference=GSA_MAN, Matching=OEE_MAN, D_MAX=10000, Method="LRR_mean.delta", OutPath="DATA/OEE_LRRmean_10000")
 ```
 
 ### Graph Runtimes
@@ -554,10 +554,10 @@ DataCNV <- data.frame(
 # CREATE DATAFRAME OF INPUT LISTS
 DataFileNames <- data.frame(
     Subdirectory=c(rep("SSC", 50), rep("GSA", 6), rep("OEE", 6)),
-    Factor=c("FullSet", "PerfectMatch", rep("BAF", 12), rep("LRRmean", 12), rep("LRRsd", 12), rep("Pos", 12), "GSA_FullSet", "GSA_PerfectMatch", "GSA_BAF", "GSA_LRRmean", "GSA_LRRsd", "GSA_Pos", "OEE_FullSet", "OEE_PerfectMatch", "OEE_BAF", "OEE_LRRmean", "OEE_LRRsd", "OEE_Pos"),
-    MaxD=c(NA, NA, rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4), NA, "0", rep("10000", 4),  NA, "0", rep("10000", 4)),
-    FactorLab=c("FullSet", "PerfectMatch", rep("BAF", 12), rep("LRRmean", 12), rep("LRRsd", 12), rep("Pos", 12), rep(c("FullSet", "PerfectMatch", "BAF", "LRRmean", "LRRsd", "Pos"), 2)),
-    MaxDLab=c("0", "0", rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4), "0", "0", rep("10000", 4),  "0", "0", rep("10000", 4)),
+    Method=c("FullSet", "PerfectMatch", rep("BAF", 12), rep("LRRmean", 12), rep("LRRsd", 12), rep("Pos", 12), "GSA_FullSet", "GSA_PerfectMatch", "GSA_BAF", "GSA_LRRmean", "GSA_LRRsd", "GSA_Pos", "OEE_FullSet", "OEE_PerfectMatch", "OEE_BAF", "OEE_LRRmean", "OEE_LRRsd", "OEE_Pos"),
+    D_MAX=c(NA, NA, rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4), NA, "0", rep("10000", 4),  NA, "0", rep("10000", 4)),
+    MethodLab=c("FullSet", "PerfectMatch", rep("BAF", 12), rep("LRRmean", 12), rep("LRRsd", 12), rep("Pos", 12), rep(c("FullSet", "PerfectMatch", "BAF", "LRRmean", "LRRsd", "Pos"), 2)),
+    D_MAXLab=c("0", "0", rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4), "0", "0", rep("10000", 4),  "0", "0", rep("10000", 4)),
     stringsAsFactors=FALSE)
 
 # LOAD CNV AND QC DATA INTO A LIST
@@ -566,21 +566,21 @@ DATA <- list()
 # IMPORT DATA
 WORK_DIR <- getwd()
 for(i in 1:nrow(DataFileNames)){
-    FIL_NAME <- ifelse(is.na(DataFileNames$MaxD[i]), DataFileNames$Factor[i], paste0(DataFileNames$Factor[i], "_", DataFileNames$MaxD[i]))
+    FIL_NAME <- ifelse(is.na(DataFileNames$D_MAX[i]), DataFileNames$Method[i], paste0(DataFileNames$Method[i], "_", DataFileNames$D_MAX[i]))
 
     con <- file(paste0(WORK_DIR, "/", DataFileNames$Subdirectory[i], "/Log/", FIL_NAME, ".Log"), open="r")
-    DATA[["Raw"]][[DataFileNames$Subdirectory[i]]][[DataFileNames$FactorLab[i]]][[DataFileNames$MaxDLab[i]]][["QC"]] <- data.frame(lines=readLines(con))
+    DATA[["Raw"]][[DataFileNames$Subdirectory[i]]][[DataFileNames$MethodLab[i]]][[DataFileNames$D_MAXLab[i]]][["QC"]] <- data.frame(lines=readLines(con))
     close(con)
 
-    DATA[["Raw"]][[DataFileNames$Subdirectory[i]]][[DataFileNames$FactorLab[i]]][[DataFileNames$MaxDLab[i]]][["CNV"]] <- read.table(paste0(WORK_DIR, "/", DataFileNames$Subdirectory[i], "/Mer/", FIL_NAME, ".Mer"), sep="", col.names=c("Position", "NumSNP", "Length", "StateCopyNumber", "ID", "StartSNP", "EndSNP", "Confidence"), skip=0, blank.lines.skip=TRUE, header=FALSE, stringsAsFactors=FALSE)
+    DATA[["Raw"]][[DataFileNames$Subdirectory[i]]][[DataFileNames$MethodLab[i]]][[DataFileNames$D_MAXLab[i]]][["CNV"]] <- read.table(paste0(WORK_DIR, "/", DataFileNames$Subdirectory[i], "/Mer/", FIL_NAME, ".Mer"), sep="", col.names=c("Position", "NumSNP", "Length", "StateCopyNumber", "ID", "StartSNP", "EndSNP", "Confidence"), skip=0, blank.lines.skip=TRUE, header=FALSE, stringsAsFactors=FALSE)
 
-    DATA[["Raw"]][[DataFileNames$Subdirectory[i]]][[DataFileNames$FactorLab[i]]][[DataFileNames$MaxDLab[i]]][["Cen"]] <- read.table(paste0(WORK_DIR, "/", DataFileNames$Subdirectory[i], "/Extra/", FIL_NAME, ".Centromere"), sep="", col.names=c("Position", "NumSNP", "Length", "StateCopyNumber", "ID", "StartSNP", "EndSNP", "Confidence"), skip=0, blank.lines.skip=TRUE, header=FALSE, stringsAsFactors=FALSE)
+    DATA[["Raw"]][[DataFileNames$Subdirectory[i]]][[DataFileNames$MethodLab[i]]][[DataFileNames$D_MAXLab[i]]][["Cen"]] <- read.table(paste0(WORK_DIR, "/", DataFileNames$Subdirectory[i], "/Extra/", FIL_NAME, ".Centromere"), sep="", col.names=c("Position", "NumSNP", "Length", "StateCopyNumber", "ID", "StartSNP", "EndSNP", "Confidence"), skip=0, blank.lines.skip=TRUE, header=FALSE, stringsAsFactors=FALSE)
 
-    DATA[["Raw"]][[DataFileNames$Subdirectory[i]]][[DataFileNames$FactorLab[i]]][[DataFileNames$MaxDLab[i]]][["Imu"]] <- read.table(paste0(WORK_DIR, "/", DataFileNames$Subdirectory[i], "/Extra/", FIL_NAME, ".Imumune"), sep="", col.names=c("Position", "NumSNP", "Length", "StateCopyNumber", "ID", "StartSNP", "EndSNP", "Confidence"), skip=0, blank.lines.skip=TRUE, header=FALSE, stringsAsFactors=FALSE)
+    DATA[["Raw"]][[DataFileNames$Subdirectory[i]]][[DataFileNames$MethodLab[i]]][[DataFileNames$D_MAXLab[i]]][["Imu"]] <- read.table(paste0(WORK_DIR, "/", DataFileNames$Subdirectory[i], "/Extra/", FIL_NAME, ".Imumune"), sep="", col.names=c("Position", "NumSNP", "Length", "StateCopyNumber", "ID", "StartSNP", "EndSNP", "Confidence"), skip=0, blank.lines.skip=TRUE, header=FALSE, stringsAsFactors=FALSE)
 
-    DATA[["Raw"]][[DataFileNames$Subdirectory[i]]][[DataFileNames$FactorLab[i]]][[DataFileNames$MaxDLab[i]]][["Tel"]] <- read.table(paste0(WORK_DIR, "/", DataFileNames$Subdirectory[i], "/Extra/", FIL_NAME, ".Telomere"), sep="", col.names=c("Position", "NumSNP", "Length", "StateCopyNumber", "ID", "StartSNP", "EndSNP", "Confidence"), skip=0, blank.lines.skip=TRUE, header=FALSE, stringsAsFactors=FALSE)
+    DATA[["Raw"]][[DataFileNames$Subdirectory[i]]][[DataFileNames$MethodLab[i]]][[DataFileNames$D_MAXLab[i]]][["Tel"]] <- read.table(paste0(WORK_DIR, "/", DataFileNames$Subdirectory[i], "/Extra/", FIL_NAME, ".Telomere"), sep="", col.names=c("Position", "NumSNP", "Length", "StateCopyNumber", "ID", "StartSNP", "EndSNP", "Confidence"), skip=0, blank.lines.skip=TRUE, header=FALSE, stringsAsFactors=FALSE)
 
-    DATA[["Raw"]][[DataFileNames$Subdirectory[i]]][[DataFileNames$FactorLab[i]]][[DataFileNames$MaxDLab[i]]][["SegDup"]] <- read.table(paste0(WORK_DIR, "/", DataFileNames$Subdirectory[i], "/Extra/", FIL_NAME, ".SegDup"), sep="", col.names=c("Position", "NumSNP", "Length", "StateCopyNumber", "ID", "StartSNP", "EndSNP", "Confidence"), skip=0, blank.lines.skip=TRUE, header=FALSE, stringsAsFactors=FALSE)
+    DATA[["Raw"]][[DataFileNames$Subdirectory[i]]][[DataFileNames$MethodLab[i]]][[DataFileNames$D_MAXLab[i]]][["SegDup"]] <- read.table(paste0(WORK_DIR, "/", DataFileNames$Subdirectory[i], "/Extra/", FIL_NAME, ".SegDup"), sep="", col.names=c("Position", "NumSNP", "Length", "StateCopyNumber", "ID", "StartSNP", "EndSNP", "Confidence"), skip=0, blank.lines.skip=TRUE, header=FALSE, stringsAsFactors=FALSE)
 }
 
 # CHECKPOINT SAVE
@@ -971,10 +971,10 @@ CNV_ColNames <- c("Position", "N_SNP", "LEN", "State", "CN", "ID", "start_snp", 
 # CREATE DATAFRAME OF INPUT LISTS
 DataFileNames <- data.frame(
   Subdirectory=c(rep("SSC", 50), rep("GSA", 6), rep("OEE", 6)),
-  Factor=c("FullSet", "PerfectMatch", rep("BAF", 12), rep("LRRmean", 12), rep("LRRsd", 12), rep("Pos", 12), "GSA_FullSet", "GSA_PerfectMatch", "GSA_BAF", "GSA_LRRmean", "GSA_LRRsd", "GSA_Pos", "OEE_FullSet", "OEE_PerfectMatch", "OEE_BAF", "OEE_LRRmean", "OEE_LRRsd", "OEE_Pos"),
-  MaxD=c(NA, NA, rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4), NA, "0", rep("10000", 4),  NA, "0", rep("10000", 4)),
-  FactorLab=c("FullSet", "PerfectMatch", rep("BAF", 12), rep("LRRmean", 12), rep("LRRsd", 12), rep("Pos", 12), rep(c("FullSet", "PerfectMatch", "BAF", "LRRmean", "LRRsd", "Pos"), 2)),
-  MaxDLab=c("0", "0", rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4), "0", "0", rep("10000", 4),  "0", "0", rep("10000", 4)),
+  Method=c("FullSet", "PerfectMatch", rep("BAF", 12), rep("LRRmean", 12), rep("LRRsd", 12), rep("Pos", 12), "GSA_FullSet", "GSA_PerfectMatch", "GSA_BAF", "GSA_LRRmean", "GSA_LRRsd", "GSA_Pos", "OEE_FullSet", "OEE_PerfectMatch", "OEE_BAF", "OEE_LRRmean", "OEE_LRRsd", "OEE_Pos"),
+  D_MAX=c(NA, NA, rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4), NA, "0", rep("10000", 4),  NA, "0", rep("10000", 4)),
+  MethodLab=c("FullSet", "PerfectMatch", rep("BAF", 12), rep("LRRmean", 12), rep("LRRsd", 12), rep("Pos", 12), rep(c("FullSet", "PerfectMatch", "BAF", "LRRmean", "LRRsd", "Pos"), 2)),
+  D_MAXLab=c("0", "0", rep(c("10", "50", "100", "500", "1000", "5000", "10000", "50000", "100000", "500000", "1000000", "5000000"), 4), "0", "0", rep("10000", 4),  "0", "0", rep("10000", 4)),
   stringsAsFactors=FALSE)
 
 Process_QC <- function(DF) {
@@ -1010,8 +1010,8 @@ Process_CNV <- function(DF) {
 
 for(h in 1:nrow(DataFileNames)){
   k <- DataFileNames$Subdirectory[h]
-  i <- DataFileNames$FactorLab[h]
-  j <- DataFileNames$MaxDLab[h]
+  i <- DataFileNames$MethodLab[h]
+  j <- DataFileNames$D_MAXLab[h]
   
   message(k, "\t", i, "\t", j)
   
@@ -1021,26 +1021,26 @@ for(h in 1:nrow(DataFileNames)){
 
 for(h in 1:nrow(DataFileNames)){
   k <- DataFileNames$Subdirectory[h]
-  i <- DataFileNames$FactorLab[h]
-  j <- DataFileNames$MaxDLab[h]
+  i <- DataFileNames$MethodLab[h]
+  j <- DataFileNames$D_MAXLab[h]
   
   message(k, "\t", i, "\t", j)
   
   if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Cen"]]) > 0) {
     DATA[["Raw"]][[k]][[i]][[j]][["Cen"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Cen"]] %>% Process_CNV(.) %>% pull(CNV_ID)
-  } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with centromeres.\n")}
+  } else {cat(DataFileNames$Method[h], "_", DataFileNames$D_MAXLab[h], " has no overlaps with centromeres.\n")}
   
   if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Tel"]]) > 0) {
     DATA[["Raw"]][[k]][[i]][[j]][["Tel"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Tel"]] %>% Process_CNV(.) %>% pull(CNV_ID)
-  } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with telomeres.\n")}
+  } else {cat(DataFileNames$Method[h], "_", DataFileNames$D_MAXLab[h], " has no overlaps with telomeres.\n")}
   
   if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["Imu"]]) > 0) {
     DATA[["Raw"]][[k]][[i]][[j]][["Imu"]] <- DATA[["Raw"]][[k]][[i]][[j]][["Imu"]] %>% Process_CNV(.) %>% pull(CNV_ID)
-  } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with immune regions.\n")}
+  } else {cat(DataFileNames$Method[h], "_", DataFileNames$D_MAXLab[h], " has no overlaps with immune regions.\n")}
   
   if (nrow(DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]]) > 0) {
     DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]] <- DATA[["Raw"]][[k]][[i]][[j]][["SegDup"]] %>% Process_CNV(.) %>% pull(CNV_ID)
-  } else {cat(DataFileNames$Factor[h], "_", DataFileNames$MaxDLab[h], " has no overlaps with segmental duplications.\n")}
+  } else {cat(DataFileNames$Method[h], "_", DataFileNames$D_MAXLab[h], " has no overlaps with segmental duplications.\n")}
 }
 
 # CHECKPOINT SAVE
@@ -1052,8 +1052,8 @@ CONF_SCORE <- as.numeric(NULL)
 
 for(h in 1:nrow(DataFileNames)){
   k <- DataFileNames$Subdirectory[h]
-  i <- DataFileNames$FactorLab[h]
-  j <- DataFileNames$MaxDLab[h]
+  i <- DataFileNames$MethodLab[h]
+  j <- DataFileNames$D_MAXLab[h]
   
   # Annotate overlaps
   CONF_SCORE <- c(CONF_SCORE, DATA[["Raw"]][[k]][[i]][[j]][["CNV"]]$Confidence)
@@ -1064,8 +1064,8 @@ quantile(as.numeric(CONF_SCORE), probs=seq(0.1,1, by=0.1))
 # STRATIFIERS
 for(h in 1:nrow(DataFileNames)){
   k <- DataFileNames$Subdirectory[h]
-  i <- DataFileNames$FactorLab[h]
-  j <- DataFileNames$MaxDLab[h] 
+  i <- DataFileNames$MethodLab[h]
+  j <- DataFileNames$D_MAXLab[h] 
   
   # Annotate overlaps
   DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] <- DATA[["Raw"]][[k]][[i]][[j]][["CNV"]] %>%
@@ -1102,8 +1102,8 @@ MAD <- function(X=X, direction=direction, scale=1){
 # QUALITY CONTROL
 for(h in 1:nrow(DataFileNames)){
   k <- DataFileNames$Subdirectory[h]
-  i <- DataFileNames$FactorLab[h]
-  j <- DataFileNames$MaxDLab[h] 
+  i <- DataFileNames$MethodLab[h]
+  j <- DataFileNames$D_MAXLab[h] 
   
   # Initialize data frames
   DATA[["QCd"]][[k]][[i]][[j]][["CNV"]] <- data.frame(NULL)
@@ -1168,8 +1168,8 @@ SAM_NAM <- read_tsv("TS_DUPLICATES.tsv", col_names=TRUE)
 # QUALITY CONTROL
 for(h in 1:nrow(DataFileNames)){
   k <- DataFileNames$Subdirectory[h]
-  i <- DataFileNames$FactorLab[h]
-  j <- DataFileNames$MaxDLab[h]
+  i <- DataFileNames$MethodLab[h]
+  j <- DataFileNames$D_MAXLab[h]
   
   if(k=="SSC") {next}
   if(k=="OEE") {
@@ -1217,7 +1217,7 @@ Using the `Validation_Final_082924.RData` in local R session, validate CNV calls
 
 Code for step-one genome-wide performance metrics, manuscript **Figure 8-28** is available at [Plot08-28.R](Scripts/Plot08-28.R).
 Code for step-one regional performance metrics, manuscript **Figure 29-35** is available at [Plot29-35.R](Scripts/Plot29-35.R).
-Code for step-one D_MAX and Factor optimizations, manuscript **Figure 29-35** is available at [Plot70-79.R](Scripts/Plot70-74.R).
+Code for step-one D_MAX and Method optimizations, manuscript **Figure 29-35** is available at [Plot70-79.R](Scripts/Plot70-74.R).
 
 ### Step-Two Validation Analyses
 Using the `Validation_Final_082924.RData` in local R session, validate CNV calls in simulated MarkerMatch scenario.
