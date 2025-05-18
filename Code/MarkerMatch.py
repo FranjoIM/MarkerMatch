@@ -2,14 +2,14 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-def marker_match(reference: pd.DataFrame, matching: pd.DataFrame, factor: str, d_max: int, out_path: str) -> pd.DataFrame:
+def marker_match(reference: pd.DataFrame, matching: pd.DataFrame, method: str, d_max: int, out_path: str) -> pd.DataFrame:
     """
     Matches markers between two dataframes based on specified criteria.
 
     Args:
         reference: Reference dataframe.
         matching: Matching dataframe.
-        factor: Matching factor.
+        method: Matching method.
         d_max: Maximum distance for matching.
         out_path: Output file path.
 
@@ -30,8 +30,8 @@ def marker_match(reference: pd.DataFrame, matching: pd.DataFrame, factor: str, d
     if not all(col in matching.columns for col in test_colname):
         raise ValueError("Matching is missing one of the required columns: Name, Chr, Position, BAF, LRR_mean, LRR_sd.")
     
-    if factor not in ["Distance", "BAF_delta", "LRR_mean_delta", "LRR_sd_delta"]:
-        raise ValueError("Factor must be one of the following: Distance, BAF_delta, LRR_mean_delta, or LRR_sd_delta.")
+    if method not in ["Distance", "BAF_delta", "LRR_mean_delta", "LRR_sd_delta"]:
+        raise ValueError("Method must be one of the following: Distance, BAF_delta, LRR_mean_delta, or LRR_sd_delta.")
     
     if not isinstance(d_max, (int, float)):
         raise TypeError("D_MAX must be a numeric value.")
@@ -98,7 +98,7 @@ def marker_match(reference: pd.DataFrame, matching: pd.DataFrame, factor: str, d
                     Name=np.where(match['Name.Ref'] == match['Name.Mat'], 'Same', 'Different'),
                 )
 
-                match = match.sort_values(by=[factor]).iloc[[0]]
+                match = match.sort_values(by=[method]).iloc[[0]]
 
                 # Merge Match with master DF
                 results.append(match)
