@@ -39,14 +39,14 @@ for(j in SETS_OMNI){
 }
 
 BAFS_OMNI$D_MAXF <- factor(BAFS_OMNI$D_MAX, 
-                          levels=c("0", "10", "50", "100", "500", "1000", "5000", "10000", 
-                                   "50000", "100000", "500000", "1000000", "5000000"),
-                          labels=c("0", "10", "50", "100", "500", "1,000", "5,000", "10,000", 
-                                   "50,000", "100,000", "500,000", "1,000,000", "5,000,000"))
+                           levels=c("0", "10", "50", "100", "500", "1000", "5000", "10000", 
+                                    "50000", "100000", "500000", "1000000", "5000000"),
+                           labels=c("0", "10", "50", "100", "500", "1,000", "5,000", "10,000", 
+                                    "50,000", "100,000", "500,000", "1,000,000", "5,000,000"))
 
 BAFS_OMNI <- BAFS_OMNI %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -56,9 +56,9 @@ BAFS_OMNI <- BAFS_OMNI %>%
   drop_na(BAF)
 
 BAFS_OMNI$FactorF <- factor(BAFS_OMNI$FactorN,
-                            levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                            levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
                                      "LRR sd", "Distance"),
-                            labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                            labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
                                      "LRR sd", "Distance"))
 
 H1_OMNI <- BAFS_OMNI %>%
@@ -74,12 +74,12 @@ H2_OMNI <- BAFS_OMNI %>%
 Plot5_A <- BAFS_OMNI %>%
   ggplot(aes(x=FactorF, color=FactorF, fill=FactorF, y=BAF)) +
   geom_boxplot(position=position_dodge2(preserve="single"), alpha=0.2) +
-  geom_hline(aes(yintercept=H1_OMNI, color="Perfect Match"), size=1) +
-  geom_hline(aes(yintercept=H2_OMNI, color="Full Set"), size=1) +
+  geom_hline(aes(yintercept=H1_OMNI, color="Exact Match"), linewidth=1) +
+  geom_hline(aes(yintercept=H2_OMNI, color="Full Set"), linewidth=1) +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
        y="BAF",
        subtitle="OMNI matched on GSA",
@@ -119,27 +119,27 @@ for(j in SETS_OEE){
     filter(!is.na(.[[2]])) %>%
     pull(Name)
   
-    BAF <- OEE_MAN %>%
-      filter(Name %in% FNAME) %>%
-      pull(BAF)
-    
-    a <- str_split(j, pattern="_")[[1]][1]
-    b <- str_split(j, pattern="_")[[1]][2]
-    
-    ROW <- data.frame(Factor=a,
-                      D_MAX=b,
-                      BAF=BAF)
-    
-    BAFS_OEE <- rbind(BAFS_OEE, ROW)
+  BAF <- OEE_MAN %>%
+    filter(Name %in% FNAME) %>%
+    pull(BAF)
+  
+  a <- str_split(j, pattern="_")[[1]][1]
+  b <- str_split(j, pattern="_")[[1]][2]
+  
+  ROW <- data.frame(Factor=a,
+                    D_MAX=b,
+                    BAF=BAF)
+  
+  BAFS_OEE <- rbind(BAFS_OEE, ROW)
 }
 
 BAFS_OEE$D_MAXF <- factor(BAFS_OEE$D_MAX, 
-                         levels=c("0", "10000"),
-                         labels=c("0", "10,000"))
+                          levels=c("0", "10000"),
+                          labels=c("0", "10,000"))
 
 BAFS_OEE <- BAFS_OEE %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -149,9 +149,9 @@ BAFS_OEE <- BAFS_OEE %>%
   drop_na(BAF)
 
 BAFS_OEE$FactorF <- factor(BAFS_OEE$FactorN,
-                           levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                           levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
                                     "LRR sd", "Distance"),
-                           labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                           labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
                                     "LRR sd", "Distance"))
 
 H1_OEE <- BAFS_OEE %>%
@@ -167,12 +167,12 @@ H2_OEE <- BAFS_OEE %>%
 Plot5_B <- BAFS_OEE %>%
   ggplot(aes(x=FactorF, color=FactorF, fill=FactorF, y=BAF)) +
   geom_boxplot(position=position_dodge2(preserve="single"), alpha=0.2) +
-  geom_hline(aes(yintercept=H1_OEE, color="Perfect Match"), size=1) +
-  geom_hline(aes(yintercept=H2_OEE, color="Full Set"), size=1) +
+  geom_hline(aes(yintercept=H1_OEE, color="Exact Match"), linewidth=1) +
+  geom_hline(aes(yintercept=H2_OEE, color="Full Set"), linewidth=1) +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
        y="BAF",
        subtitle="OEE matched on GSA",
@@ -212,27 +212,27 @@ for(j in SETS_GSA){
     filter(!is.na(.[[2]])) %>%
     pull(Name)
   
-    BAF <- GSA_MAN %>%
-      filter(Name %in% FNAME) %>%
-      pull(BAF)
-    
-    a <- str_split(j, pattern="_")[[1]][1]
-    b <- str_split(j, pattern="_")[[1]][2]
-    
-    ROW <- data.frame(Factor=a,
-                      D_MAX=b,
-                      BAF=BAF)
-    
-    BAFS_GSA <- rbind(BAFS_GSA, ROW)
+  BAF <- GSA_MAN %>%
+    filter(Name %in% FNAME) %>%
+    pull(BAF)
+  
+  a <- str_split(j, pattern="_")[[1]][1]
+  b <- str_split(j, pattern="_")[[1]][2]
+  
+  ROW <- data.frame(Factor=a,
+                    D_MAX=b,
+                    BAF=BAF)
+  
+  BAFS_GSA <- rbind(BAFS_GSA, ROW)
 }
 
 BAFS_GSA$D_MAXF <- factor(BAFS_GSA$D_MAX, 
-                         levels=c("0", "10000"),
-                         labels=c("0", "10,000"))
+                          levels=c("0", "10000"),
+                          labels=c("0", "10,000"))
 
 BAFS_GSA <- BAFS_GSA %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -242,9 +242,9 @@ BAFS_GSA <- BAFS_GSA %>%
   drop_na(BAF)
 
 BAFS_GSA$FactorF <- factor(BAFS_GSA$FactorN,
-                           levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                           levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
                                     "LRR sd", "Distance"),
-                           labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                           labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
                                     "LRR sd", "Distance"))
 
 H1_GSA <- BAFS_GSA %>%
@@ -260,12 +260,12 @@ H2_GSA <- BAFS_GSA %>%
 Plot5_C <- BAFS_GSA %>%
   ggplot(aes(x=FactorF, color=FactorF, fill=FactorF, y=BAF)) +
   geom_boxplot(position=position_dodge2(preserve="single"), alpha=0.2) +
-  geom_hline(aes(yintercept=H1_GSA, color="Perfect Match"), size=1) +
-  geom_hline(aes(yintercept=H2_GSA, color="Full Set"), size=1) +
+  geom_hline(aes(yintercept=H1_GSA, color="Exact Match"), linewidth=1) +
+  geom_hline(aes(yintercept=H2_GSA, color="Full Set"), linewidth=1) +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
        y="BAF",
        subtitle="GSA matched on OEE",
@@ -300,18 +300,18 @@ save(BAFS_OMNI, BAFS_OEE, BAFS_GSA, file="Table6.RData")
 
 # SAVE THE PANNELED PLOT
 ggarrange(ggarrange(Plot5_A + theme(legend.position="none", plot.subtitle=element_blank()),
-            align="hv", labels=c("A"), nrow=1, ncol=1, legend="top", common.legend=T),
+                    align="hv", labels=c("A"), nrow=1, ncol=1, legend="top", common.legend=T),
           ggarrange(Plot5_B + theme(legend.position="none", plot.subtitle=element_blank()),
-            Plot5_C + theme(legend.position="none", plot.subtitle=element_blank()),
-            align="hv", labels=c("B", "C"), nrow=1, ncol=2),
+                    Plot5_C + theme(legend.position="none", plot.subtitle=element_blank()),
+                    align="hv", labels=c("B", "C"), nrow=1, ncol=2),
           align="hv", nrow=2, ncol=1, legend="top", common.legend=T, heights=c(1, 1)) %>%
-ggsave(filename="FIGURES/Plot5.png",
-       device="png",
-       width=10,
-       height=10,
-       units="in",
-       dpi=350,
-       bg="white")
+  ggsave(filename="FIGURES/Plot5.png",
+         device="png",
+         width=10,
+         height=10,
+         units="in",
+         dpi=350,
+         bg="white")
 
 # TABULATE BAFS ACROSS TABLES AND CONDITIONS
 BAFS_ALL <- bind_rows(
@@ -334,4 +334,4 @@ BAFS_ALL %>%
             StDev = sd(BAF),
             IQR = IQR(BAF),
             .groups="keep") %>%
-  write_tsv("TABLES/Table6.tsv", col_names=TRUE)
+  write_tsv("TABLES/TableS1D.tsv", col_names=TRUE)
