@@ -42,7 +42,7 @@ H4 <- NUMBERSNPS %>%
 
 NUMBERSNPS <- NUMBERSNPS %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -51,19 +51,19 @@ NUMBERSNPS <- NUMBERSNPS %>%
     TRUE ~ NA_character_))
 
 NUMBERSNPS$FactorF <- factor(NUMBERSNPS$FactorN,
-                             levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                             levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
                                       "LRR sd", "Distance"),
-                             labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                             labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
                                       "LRR sd", "Distance"))
 
 PLOT_V1_OMNI_COVERAGE <- NUMBERSNPS %>%
-  filter(!FactorF %in% c("Full Set", "Perfect Match")) %>%
+  filter(!FactorF %in% c("Full Set", "Exact Match")) %>%
   ggplot(aes(x=D_MAX_LOG, y=OMNI_Coverage, color=FactorF)) +
-  geom_hline(aes(yintercept=H2, color="Perfect Match"), size=1) +
-  geom_hline(aes(yintercept=H1, color="Full Set"), size=1) +
+  geom_hline(aes(yintercept=H2, color="Exact Match"), linewidth=1) +
+  geom_hline(aes(yintercept=H1, color="Full Set"), linewidth=1) +
   geom_line(size=1) +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
        y="COVERAGE",
        subtitle="OMNI Coverage, \nOMNI matched on GSA",
@@ -81,13 +81,13 @@ PLOT_V1_OMNI_COVERAGE <- NUMBERSNPS %>%
   guides(color=guide_legend(title.position="top", nrow=1))
 
 PLOT_V1_GSA_COVERAGE <- NUMBERSNPS %>%
-  filter(!FactorF %in% c("Full Set", "Perfect Match")) %>%
+  filter(!FactorF %in% c("Full Set", "Exact Match")) %>%
   ggplot(aes(x=D_MAX_LOG, y=GSA_Coverage, color=FactorF)) +
-  geom_hline(aes(yintercept=H4, color="Perfect Match"), size=1) +
-  geom_hline(aes(yintercept=1, color="Full Set"), size=1) +
+  geom_hline(aes(yintercept=H4, color="Exact Match"), linewidth=1) +
+  geom_hline(aes(yintercept=1, color="Full Set"), linewidth=1) +
   geom_line(size=1) +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
        y="COVERAGE",
        subtitle="GSA Coverage, \nOMNI matched on GSA",
@@ -129,7 +129,7 @@ I2 <- NUMBERSNPS %>%
 
 NUMBERSNPS <- NUMBERSNPS %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -138,19 +138,19 @@ NUMBERSNPS <- NUMBERSNPS %>%
     TRUE ~ NA_character_))
 
 NUMBERSNPS$FactorF <- factor(NUMBERSNPS$FactorN,
-                             levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                             levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
                                       "LRR sd", "Distance"),
-                             labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                             labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
                                       "LRR sd", "Distance"))
 
 PLOT_V2_GSA_COVERAGE <- NUMBERSNPS %>%
-  filter(!FactorF %in% c("Full Set", "Perfect Match")) %>%
+  filter(!FactorF %in% c("Full Set", "Exact Match")) %>%
   ggplot(aes(x=D_MAX_LOG, y=GSA_Coverage, color=FactorF)) +
-  geom_hline(aes(yintercept=I2, color="Perfect Match"), linewidth=1) +
+  geom_hline(aes(yintercept=I2, color="Exact Match"), linewidth=1) +
   geom_hline(aes(yintercept=I1, color="Full Set"), linewidth=1) +
   geom_point(position = position_dodge(0.01), size=3, shape=17) +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
        y="COVERAGE",
        subtitle="GSA Coverage, \nOEE matched on GSA",
@@ -193,7 +193,7 @@ J2 <- NUMBERSNPS %>%
 
 NUMBERSNPS <- NUMBERSNPS %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -202,19 +202,19 @@ NUMBERSNPS <- NUMBERSNPS %>%
     TRUE ~ NA_character_))
 
 NUMBERSNPS$FactorF <- factor(NUMBERSNPS$FactorN,
-                             levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                             levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
                                       "LRR sd", "Distance"),
-                             labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
+                             labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
                                       "LRR sd", "Distance"))
 
 PLOT_V3_OEE_COVERAGE <- NUMBERSNPS %>%
-  filter(!FactorF %in% c("Full Set", "Perfect Match")) %>%
+  filter(!FactorF %in% c("Full Set", "Exact Match")) %>%
   ggplot(aes(x=D_MAX_LOG, y=OEE_Coverage, color=FactorF)) +
-  geom_hline(aes(yintercept=J2, color="Perfect Match"), linewidth=1) +
+  geom_hline(aes(yintercept=J2, color="Exact Match"), linewidth=1) +
   geom_hline(aes(yintercept=J1, color="Full Set"), linewidth=1) +
   geom_point(position = position_dodge(0.01), size=3, shape=17) +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
        y="COVERAGE",
        subtitle="OEE Coverage, \nOEE matched on GSA",
@@ -273,13 +273,13 @@ ggsave(plot=PLOT_V2_GSA_COVERAGE,
 
 # Arrange and save plots
 Plot3 <- ggarrange(
-          ggarrange(PLOT_V1_OMNI_COVERAGE + theme(legend.position="none", plot.subtitle=element_blank()), 
+  ggarrange(PLOT_V1_OMNI_COVERAGE + theme(legend.position="none", plot.subtitle=element_blank()), 
             PLOT_V1_GSA_COVERAGE + theme(legend.position="none", plot.subtitle=element_blank()),
             align="hv", labels=c("A", "B"), nrow=2, ncol=1, legend="top", common.legend=T),        
-          ggarrange(PLOT_V3_OEE_COVERAGE + theme(legend.position="none", plot.subtitle=element_blank()),
+  ggarrange(PLOT_V3_OEE_COVERAGE + theme(legend.position="none", plot.subtitle=element_blank()),
             PLOT_V2_GSA_COVERAGE + theme(legend.position="none", plot.subtitle=element_blank()),
             align="hv", labels=c("C", "D"), nrow=1, ncol=2),
-          align="hv", nrow=2, ncol=1, legend="top", common.legend=T, heights=c(1, 0.5))
+  align="hv", nrow=2, ncol=1, legend="top", common.legend=T, heights=c(1, 0.5))
 
 ggsave(plot=Plot3,
        filename="FIGURES/Plot3.png",
@@ -296,4 +296,4 @@ bind_rows(mutate(NUMBERSNPS_OMNI, Figure_Reference="Figure 3A-B"),
           mutate(NUMBERSNPS_GSA, Figure_Reference="Figure 3D")) %>%
   select(c(Figure_Reference, FactorN, D_MAX, N_SNP, OMNI_Coverage, GSA_Coverage, OEE_Coverage)) %>%
   rename(Factor=FactorN) %>%
-  write_tsv("TABLES/Table4.tsv", col_names=TRUE)
+  write_tsv("TABLES/TableS1B.tsv", col_names=TRUE)
