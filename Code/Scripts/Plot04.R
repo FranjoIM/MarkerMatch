@@ -49,14 +49,14 @@ for(j in SETS_OMNI){
 }
 
 GAPS_OMNI$D_MAXF <- factor(GAPS_OMNI$D_MAX, 
-                     levels=c("0", "10", "50", "100", "500", "1000", "5000", "10000", 
-                              "50000", "100000", "500000", "1000000", "5000000"),
-                     labels=c("0", "10", "50", "100", "500", "1,000", "5,000", "10,000", 
-                              "50,000", "100,000", "500,000", "1,000,000", "5,000,000"))
+                           levels=c("0", "10", "50", "100", "500", "1000", "5000", "10000", 
+                                    "50000", "100000", "500000", "1000000", "5000000"),
+                           labels=c("0", "10", "50", "100", "500", "1,000", "5,000", "10,000", 
+                                    "50,000", "100,000", "500,000", "1,000,000", "5,000,000"))
 
 GAPS_OMNI <- GAPS_OMNI %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -65,10 +65,10 @@ GAPS_OMNI <- GAPS_OMNI %>%
     TRUE ~ NA_character_))
 
 GAPS_OMNI$FactorF <- factor(GAPS_OMNI$FactorN,
-                       levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                "LRR sd", "Distance"),
-                       labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                "LRR sd", "Distance"))
+                            levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                     "LRR sd", "Distance"),
+                            labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                     "LRR sd", "Distance"))
 
 H1_OMNI <- GAPS_OMNI %>%
   filter(Factor=="PerfectMatch") %>%
@@ -83,12 +83,12 @@ H2_OMNI <- GAPS_OMNI %>%
 Plot4_A <- GAPS_OMNI %>%
   ggplot(aes(x=FactorF, color=FactorF, fill=FactorF, y=Gaps)) +
   geom_boxplot(position=position_dodge2(preserve="single"), alpha=0.2) +
-  geom_hline(aes(yintercept=H1_OMNI, color="Perfect Match"), linewidth=1) +
+  geom_hline(aes(yintercept=H1_OMNI, color="Exact Match"), linewidth=1) +
   geom_hline(aes(yintercept=H2_OMNI, color="Full Set"), linewidth=1) +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
        y=expression(bold("LOG"["10"] ~ "[ GAP ]")),
        subtitle="OMNI matched on GSA",
@@ -158,7 +158,7 @@ GAPS_OEE$D_MAXF <- factor(GAPS_OEE$D_MAX,
 
 GAPS_OEE <- GAPS_OEE %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -167,10 +167,10 @@ GAPS_OEE <- GAPS_OEE %>%
     TRUE ~ NA_character_))
 
 GAPS_OEE$FactorF <- factor(GAPS_OEE$FactorN,
-                            levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                     "LRR sd", "Distance"),
-                            labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                     "LRR sd", "Distance"))
+                           levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                    "LRR sd", "Distance"),
+                           labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                    "LRR sd", "Distance"))
 
 H1_OEE <- GAPS_OEE %>%
   filter(Factor=="PerfectMatch") %>%
@@ -185,12 +185,12 @@ H2_OEE <- GAPS_OEE %>%
 Plot4_B <- GAPS_OEE %>%
   ggplot(aes(x=FactorF, color=FactorF, fill=FactorF, y=Gaps)) +
   geom_boxplot(position=position_dodge2(preserve="single"), alpha=0.2) +
-  geom_hline(aes(yintercept=H1_OEE, color="Perfect Match"), linewidth=1) +
+  geom_hline(aes(yintercept=H1_OEE, color="Exact Match"), linewidth=1) +
   geom_hline(aes(yintercept=H2_OEE, color="Full Set"), linewidth=1) +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
        y=expression(bold("LOG"["10"] ~ "[ GAP ]")),
        subtitle="OEE matched on GSA",
@@ -210,8 +210,6 @@ Plot4_B <- GAPS_OEE %>%
   guides(color=guide_legend(title.position="top", nrow=1),
          fill=guide_legend(title.position="top", nrow=1)) + 
   facet_grid(. ~ D_MAXF, scales="free_x", space="free_x", switch="both")
-
-print(Plot4_B)
 
 ggsave(plot=Plot4_B,
        filename="FIGURES/Plot4_B.png",
@@ -262,7 +260,7 @@ GAPS_GSA$D_MAXF <- factor(GAPS_GSA$D_MAX,
 
 GAPS_GSA <- GAPS_GSA %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -271,10 +269,10 @@ GAPS_GSA <- GAPS_GSA %>%
     TRUE ~ NA_character_))
 
 GAPS_GSA$FactorF <- factor(GAPS_GSA$FactorN,
-                            levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                     "LRR sd", "Distance"),
-                            labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                     "LRR sd", "Distance"))
+                           levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                    "LRR sd", "Distance"),
+                           labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                    "LRR sd", "Distance"))
 
 H1_GSA <- GAPS_GSA %>%
   filter(Factor=="PerfectMatch") %>%
@@ -289,12 +287,12 @@ H2_GSA <- GAPS_GSA %>%
 Plot4_C <- GAPS_GSA %>%
   ggplot(aes(x=FactorF, color=FactorF, fill=FactorF, y=Gaps)) +
   geom_boxplot(position=position_dodge2(preserve="single"), alpha=0.2) +
-  geom_hline(aes(yintercept=H1_GSA, color="Perfect Match"), linewidth=1) +
+  geom_hline(aes(yintercept=H1_GSA, color="Exact Match"), linewidth=1) +
   geom_hline(aes(yintercept=H2_GSA, color="Full Set"), linewidth=1) +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
        y=expression(bold("LOG"["10"] ~ "[ GAP ]")),
        subtitle="GSA matched on OEE",
@@ -315,8 +313,6 @@ Plot4_C <- GAPS_GSA %>%
          fill=guide_legend(title.position="top", nrow=1)) + 
   facet_grid(. ~ D_MAXF, scales="free_x", space="free_x", switch="both")
 
-print(Plot4_C)
-
 ggsave(plot=Plot4_C,
        filename="FIGURES/Plot4_C.png",
        device="png",
@@ -331,18 +327,18 @@ save(GAPS_OMNI, GAPS_OEE, GAPS_GSA, file="Table5.RData")
 
 # SAVE THE PANNELED PLOT
 ggarrange(ggarrange(Plot4_A + theme(legend.position="none", plot.subtitle=element_blank()),
-            align="hv", labels=c("A"), nrow=1, ncol=1, legend="top", common.legend=T),
+                    align="hv", labels=c("A"), nrow=1, ncol=1, legend="top", common.legend=T),
           ggarrange(Plot4_B + theme(legend.position="none", plot.subtitle=element_blank()),
-            Plot4_C + theme(legend.position="none", plot.subtitle=element_blank()),
-            align="hv", labels=c("B", "C"), nrow=1, ncol=2),
+                    Plot4_C + theme(legend.position="none", plot.subtitle=element_blank()),
+                    align="hv", labels=c("B", "C"), nrow=1, ncol=2),
           align="hv", nrow=2, ncol=1, legend="top", common.legend=T, heights=c(1, 1)) %>%
-ggsave(filename="FIGURES/Plot4.png",
-       device="png",
-       width=10,
-       height=10,
-       units="in",
-       dpi=350,
-       bg="white")
+  ggsave(filename="FIGURES/Plot4.png",
+         device="png",
+         width=10,
+         height=10,
+         units="in",
+         dpi=350,
+         bg="white")
 
 # TABULATE GAP SIZES ACROSS TABLES AND CONDITIONS
 GAPS_ALL <- bind_rows(
@@ -365,4 +361,4 @@ GAPS_ALL %>%
             StDev = sd(Gaps),
             IQR = IQR(Gaps),
             .groups="keep") %>%
- write_tsv("TABLES/Table5.tsv", col_names=TRUE)
+  write_tsv("TABLES/TableS1C.tsv", col_names=TRUE)
