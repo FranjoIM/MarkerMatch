@@ -17,9 +17,9 @@ DF$MethodF <- factor(DF$Method,
     ggplot(aes(x=D_MAX_LOG, y=Times, linetype=Language, color=MethodF)) +
     geom_line(linewidth=1) +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
-                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match")) +
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match")) +
     labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
-         y="EXECUTION TIME",
+         y="EXECUTION TIME (MIN)",
          linetype="LANGUAGE",
          color="METHOD") +
     theme_bw() + 
@@ -32,7 +32,7 @@ DF$MethodF <- factor(DF$Method,
           legend.justification="left",
           legend.title=element_text(size=12, face="bold")) +
     guides(color=guide_legend(title.position="top", nrow=1),
-           linetype=guide_legend(title.position="top")) )%>%
+           linetype=guide_legend(title.position="top"))) %>%
   ggsave(filename="FIGURES/Plot2.png",
          device="png",
          width=9,
