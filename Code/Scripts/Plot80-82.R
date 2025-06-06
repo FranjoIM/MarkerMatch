@@ -132,6 +132,7 @@ MetricPlot <- function(a, b, c, d){
   TITLE <- paste0(a)
   
   a <- gsub(" ", "", a)
+  if(a=="ExactMatch"){a <- "PerfectMatch"}
   
   PLOT <- ANALYSIS_STEP3_SAMPLES %>%
     filter(Factor==a) %>%
@@ -173,7 +174,7 @@ MetricPlot <- function(a, b, c, d){
 }
 
 # PREPARE FOR PLOTTING
-A <- c("Full Set", "Perfect Match", "BAF", "LRR mean", "LRR sd", "Pos")
+A <- c("Full Set", "Exact Match", "BAF", "LRR mean", "LRR sd", "Pos")
 A <- set_names(A)
 
 B <- c("0", "10000")
@@ -205,9 +206,9 @@ ggarrange(
   PLOTS$`Pos`$`10000`$QCd$GSA + rremove("xlab"),
   PLOTS$`Pos`$`10000`$QCd$OEE + rremove("xlab") + rremove("ylab"),
   PLOTS$`Pos`$`10000`$QCd$SSC + rremove("xlab") + rremove("ylab"),
-  PLOTS$`Perfect Match`$`0`$QCd$GSA,
-  PLOTS$`Perfect Match`$`0`$QCd$OEE +  rremove("ylab"),
-  PLOTS$`Perfect Match`$`0`$QCd$SSC +  rremove("ylab"),
+  PLOTS$`Exact Match`$`0`$QCd$GSA,
+  PLOTS$`Exact Match`$`0`$QCd$OEE +  rremove("ylab"),
+  PLOTS$`Exact Match`$`0`$QCd$SSC +  rremove("ylab"),
   align="hv", labels=c("A", "B", "C", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "), 
   common.legend=T, legend="bottom", nrow=6, ncol=3) %>%
   ggsave(filename="FIGURES/Plot80.png",
@@ -239,7 +240,7 @@ ANALYSIS_PPV <- ANALYSIS_STEP3_SAMPLES %>%
     TRUE ~ NA_character_)) %>%
   group_by(Mat, Factor, QC, Tens) %>%
   summarize(PPV_C=n())
-  
+
 ANALYSIS_F1 <- ANALYSIS_STEP3_SAMPLES %>%
   mutate(METRIC=round((2*TP)/(2*TP+FP+FN), digits=3)) %>%
   arrange(desc(METRIC)) %>%
@@ -287,89 +288,89 @@ for(i in 1:nrow(ITER_DF)){
               SumFN = sum(FN))
   
   for(j in seq(0.0, 1.0, by=c(0.05))) {
-      
-      ROW <- data.frame(NULL)
-      
-      ROW[1, "Factor"] <- ITER_DF$Factor[i]
-      ROW[1, "QC"] <- ITER_DF$QC[i]
-      ROW[1, "Mat"] <- ITER_DF$Mat[i]
-      
-      FIL <- ANALYSIS_STEP3_SAMPLES %>%
-        filter(Factor == ITER_DF$Factor[i] &
-                 QC == ITER_DF$QC[i] &
-                 Mat == ITER_DF$Mat[i]) %>%
-        mutate(PPV=round(TP/(FP+TP), digits=3)) %>%
-        filter(PPV <= j)
-      
-      NUM <- FIL %>%
-        summarize(SumTP = sum(TP),
-                  SumFP = sum(FP),
-                  SumFN = sum(FN))
-      
-      COM <- ANALYSIS_STEP3_SAMPLES %>%
-        filter(Factor == ITER_DF$Factor[i] &
-                 QC == ITER_DF$QC[i] &
-                 Mat == ITER_DF$Mat[i]) %>%
-        filter(!ID %in% FIL$ID) %>%
-        summarize(SumTP = sum(TP),
-                  SumFP = sum(FP),
-                  SumFN = sum(FN))
-      
-      ROW[1, "PPV Cutoff"] <- j
-      ROW[1, "Samples"] <- nrow(FIL)
-      ROW[1, "TP"] <- NUM$SumTP
-      ROW[1, "FP"] <- NUM$SumFP
-      ROW[1, "FN"] <- NUM$SumFN
-      ROW[1, "Under_PPV"] <- round(NUM$SumTP / (NUM$SumFP + NUM$SumTP), digits=3)
-      ROW[1, "Over_PPV"] <- round(COM$SumTP / (COM$SumFP + COM$SumTP), digits=3)
-      ROW[1, "Under_F1"] <- round(2*NUM$SumTP / (NUM$SumFP + 2*NUM$SumTP + NUM$SumFN), digits=3)
-      ROW[1, "Over_F1"] <- round(2*COM$SumTP / (COM$SumFP + 2*COM$SumTP + NUM$SumFN), digits=3)
-      
-      CUM_ANALYSIS <- rbind(CUM_ANALYSIS, ROW)
+    
+    ROW <- data.frame(NULL)
+    
+    ROW[1, "Factor"] <- ITER_DF$Factor[i]
+    ROW[1, "QC"] <- ITER_DF$QC[i]
+    ROW[1, "Mat"] <- ITER_DF$Mat[i]
+    
+    FIL <- ANALYSIS_STEP3_SAMPLES %>%
+      filter(Factor == ITER_DF$Factor[i] &
+               QC == ITER_DF$QC[i] &
+               Mat == ITER_DF$Mat[i]) %>%
+      mutate(PPV=round(TP/(FP+TP), digits=3)) %>%
+      filter(PPV <= j)
+    
+    NUM <- FIL %>%
+      summarize(SumTP = sum(TP),
+                SumFP = sum(FP),
+                SumFN = sum(FN))
+    
+    COM <- ANALYSIS_STEP3_SAMPLES %>%
+      filter(Factor == ITER_DF$Factor[i] &
+               QC == ITER_DF$QC[i] &
+               Mat == ITER_DF$Mat[i]) %>%
+      filter(!ID %in% FIL$ID) %>%
+      summarize(SumTP = sum(TP),
+                SumFP = sum(FP),
+                SumFN = sum(FN))
+    
+    ROW[1, "PPV Cutoff"] <- j
+    ROW[1, "Samples"] <- nrow(FIL)
+    ROW[1, "TP"] <- NUM$SumTP
+    ROW[1, "FP"] <- NUM$SumFP
+    ROW[1, "FN"] <- NUM$SumFN
+    ROW[1, "Under_PPV"] <- round(NUM$SumTP / (NUM$SumFP + NUM$SumTP), digits=3)
+    ROW[1, "Over_PPV"] <- round(COM$SumTP / (COM$SumFP + COM$SumTP), digits=3)
+    ROW[1, "Under_F1"] <- round(2*NUM$SumTP / (NUM$SumFP + 2*NUM$SumTP + NUM$SumFN), digits=3)
+    ROW[1, "Over_F1"] <- round(2*COM$SumTP / (COM$SumFP + 2*COM$SumTP + NUM$SumFN), digits=3)
+    
+    CUM_ANALYSIS <- rbind(CUM_ANALYSIS, ROW)
   }
 }
 
 CUM_ANALYSIS <- CUM_ANALYSIS %>%
-   mutate(QC=ifelse(QC=="Raw", "Low-stringency QC", "Medium-stringency QC"),
+  mutate(QC=ifelse(QC=="Raw", "Low-stringency QC", "Medium-stringency QC"),
          Factor=ifelse(Factor=="FullSet", "Full Set",
-                ifelse(Factor=="LRRmean", "LRR mean",
-                ifelse(Factor=="LRRsd", "LRR sd",
-                ifelse(Factor=="Pos", "Distance",
-                ifelse(Factor=="PerfectMatch", "Perfect Match", Factor)))))) 
+                       ifelse(Factor=="LRRmean", "LRR mean",
+                              ifelse(Factor=="LRRsd", "LRR sd",
+                                     ifelse(Factor=="Pos", "Distance",
+                                            ifelse(Factor=="PerfectMatch", "Exact Match", Factor)))))) 
 
 write_tsv(CUM_ANALYSIS, "TABLES/TableS1Q.tsv", col_names=TRUE)
-  
+
 # PLOT THE CURVES
 CUM_ANALYSIS$FactorF <- factor(CUM_ANALYSIS$Factor,
-                               levels=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match"),
-                               labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match"))
+                               levels=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match"),
+                               labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match"))
 
 (CUM_ANALYSIS %>%
-  filter(QC=="Medium-stringency QC") %>%
-  ggplot(aes(x=`PPV Cutoff`, color=FactorF)) +
-  geom_line(aes(y=Under_PPV, linetype="Fail"), linewidth=1) +
-  geom_line(aes(y=Over_PPV, linetype="Pass"), linewidth=1) +
-  labs(x="PPV Cutoff",
-       y="PPV",
-       linetype="PPV QC",
-       color="FACTOR") +
-  scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
-  facet_wrap(. ~ Mat, ncol=3) +
-  theme_bw() +
-  theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
-        axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
-        axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
-        axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
-        plot.subtitle=element_text(size=12, hjust=0, vjust=0, face="bold.italic"),
-        legend.position="top",
-        legend.justification="left",
-        legend.title=element_text(size=12, face="bold"),
-        plot.caption=element_text(size=12, face="bold.italic"),
-        strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
-        strip.background=element_rect(fill="#ffffff")) +
-  guides(color=guide_legend(title.position="top", nrow=1, order=1),
-         linetype=guide_legend(title.position="top", nrow=1, order=1))) %>%
+    filter(QC=="Medium-stringency QC") %>%
+    ggplot(aes(x=`PPV Cutoff`, color=FactorF)) +
+    geom_line(aes(y=Under_PPV, linetype="Fail"), linewidth=1) +
+    geom_line(aes(y=Over_PPV, linetype="Pass"), linewidth=1) +
+    labs(x="PPV Cutoff",
+         y="PPV",
+         linetype="PPV QC",
+         color="METHOD") +
+    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
+    facet_wrap(. ~ Mat, ncol=3) +
+    theme_bw() +
+    theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
+          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+          plot.subtitle=element_text(size=12, hjust=0, vjust=0, face="bold.italic"),
+          legend.position="top",
+          legend.justification="left",
+          legend.title=element_text(size=12, face="bold"),
+          plot.caption=element_text(size=12, face="bold.italic"),
+          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+          strip.background=element_rect(fill="#ffffff")) +
+    guides(color=guide_legend(title.position="top", nrow=1, order=1),
+           linetype=guide_legend(title.position="top", nrow=1, order=1))) %>%
   ggsave(filename="FIGURES/Plot81.png",
          device="png",
          width=7,
@@ -386,9 +387,9 @@ CUM_ANALYSIS$FactorF <- factor(CUM_ANALYSIS$Factor,
     labs(x="PPV Cutoff",
          y="F1",
          linetype="PPV QC",
-         color="FACTOR") +
+         color="METHOD") +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
     facet_wrap(. ~ Mat, ncol=3) +
     theme_bw() +
     theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
