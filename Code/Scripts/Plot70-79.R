@@ -18,7 +18,7 @@ ANALYSIS_SSC <- ANALYSIS_SSC %>%
   mutate(D_MAX=as.numeric(D_MAX)) %>%
   mutate(D_MAX_LOG=log10(D_MAX)) %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -31,7 +31,7 @@ ANALYSIS_SSC <- ANALYSIS_SSC %>%
 ANALYSIS_SSC <- ANALYSIS_SSC %>%
   filter(QC=="Medium-stringency QC") %>%
   select(-c(Matching_Type, Factor)) %>%
-  filter(FactorN!="Perfect Match") %>%
+  filter(FactorN!="Exact Match") %>%
   filter(!CNV_Size %in% c("Very Large", "Ultra Large")) %>%
   filter(D_MAX >= 100 | D_MAX==0)
 
@@ -74,32 +74,32 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
 
 # PLOT THE SENSITIVITY OUTCOMES (PLOT 70)
 (ggplot(ANALYSIS_SSC_QC, aes(x=log10(D_MAX), y=Sensitivity_p, color=Factor, linetype=CNV_Type)) +
-  annotate("rect", xmin=3, xmax=5, ymin=-Inf, ymax=Inf, fill="steelblue3", alpha=0.1) +
-  geom_vline(xintercept=4, color="steelblue3", linewidth=1.5) +
-  geom_smooth(linewidth=1, method="loess", se=FALSE) +
-  theme_bw() +
-  facet_wrap(. ~ CNV_SizeF, nrow=4) +
-  scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
-  scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
-  theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
-        axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
-        axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
-        axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
-        strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
-        strip.background=element_rect(fill="#ffffff"),
-        legend.position="top",
-        legend.justification="left",
-        legend.title=element_text(size=12, face="bold")) +
-  labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
-       y="SENSITIVITY '",
-       linetype="CNV TYPE",
-       color="FACTOR") +
-  guides(color=guide_legend(title.position="top", nrow=1),
-         linetype=guide_legend(title.position="top"))) %>%
+    annotate("rect", xmin=3, xmax=5, ymin=-Inf, ymax=Inf, fill="steelblue3", alpha=0.1) +
+    geom_vline(xintercept=4, color="steelblue3", linewidth=1.5) +
+    geom_smooth(linewidth=1, method="loess", se=FALSE) +
+    theme_bw() +
+    facet_wrap(. ~ CNV_SizeF, nrow=4) +
+    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
+    theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
+          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+          strip.background=element_rect(fill="#ffffff"),
+          legend.position="top",
+          legend.justification="left",
+          legend.title=element_text(size=12, face="bold")) +
+    labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
+         y="SENSITIVITY '",
+         linetype="CNV TYPE",
+         color="METHOD") +
+    guides(color=guide_legend(title.position="top", nrow=1),
+           linetype=guide_legend(title.position="top"))) %>%
   ggsave(filename="FIGURES/Plot70.png",
          device="png",
-         width=7,
+         width=8,
          height=11,
          units="in",
          dpi=350,
@@ -107,32 +107,32 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
 
 # PLOT THE PPV OUTCOMES (PLOT 71)
 (ggplot(ANALYSIS_SSC_QC, aes(x=log10(D_MAX), y=PPV_p, color=Factor, linetype=CNV_Type)) +
-  annotate("rect", xmin=3, xmax=5, ymin=-Inf, ymax=Inf, fill="steelblue3", alpha=0.1) +
-  geom_vline(xintercept=4, color="steelblue3", linewidth=1.5) +
-  geom_smooth(linewidth=1, method="loess", se=FALSE) +
-  theme_bw() +
-  facet_wrap(. ~ CNV_SizeF, nrow=4) +
-  scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
-  scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
-  theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
-        axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
-        axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
-        axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
-        strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
-        strip.background=element_rect(fill="#ffffff"),
-        legend.position="top",
-        legend.justification="left",
-        legend.title=element_text(size=12, face="bold")) +
-  labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
-       y="PPV '",
-       linetype="CNV TYPE",
-       color="FACTOR") +
-  guides(color=guide_legend(title.position="top", nrow=1),
-         linetype=guide_legend(title.position="top"))) %>%
+    annotate("rect", xmin=3, xmax=5, ymin=-Inf, ymax=Inf, fill="steelblue3", alpha=0.1) +
+    geom_vline(xintercept=4, color="steelblue3", linewidth=1.5) +
+    geom_smooth(linewidth=1, method="loess", se=FALSE) +
+    theme_bw() +
+    facet_wrap(. ~ CNV_SizeF, nrow=4) +
+    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
+    theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
+          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+          strip.background=element_rect(fill="#ffffff"),
+          legend.position="top",
+          legend.justification="left",
+          legend.title=element_text(size=12, face="bold")) +
+    labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
+         y="PPV '",
+         linetype="CNV TYPE",
+         color="METHOD") +
+    guides(color=guide_legend(title.position="top", nrow=1),
+           linetype=guide_legend(title.position="top"))) %>%
   ggsave(filename="FIGURES/Plot71.png",
          device="png",
-         width=7,
+         width=8,
          height=11,
          units="in",
          dpi=350,
@@ -140,32 +140,32 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
 
 # PLOT THE F1 OUTCOMES  (PLOT 72)
 (ggplot(ANALYSIS_SSC_QC, aes(x=log10(D_MAX), y=F1_p, color=Factor, linetype=CNV_Type)) +
-  annotate("rect", xmin=3, xmax=5, ymin=-Inf, ymax=Inf, fill="steelblue3", alpha=0.1) +
-  geom_vline(xintercept=4, color="steelblue3", linewidth=1.5) +
-  geom_smooth(linewidth=1, method="loess", se=FALSE) +
-  theme_bw() +
-  facet_wrap(. ~ CNV_SizeF, nrow=4) +
-  scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
-  scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
-  theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
-        axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
-        axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
-        axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
-        strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
-        strip.background=element_rect(fill="#ffffff"),
-        legend.position="top",
-        legend.justification="left",
-        legend.title=element_text(size=12, face="bold")) +
-  labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
-       y="F1 '",
-       linetype="CNV TYPE",
-       color="FACTOR") +
-  guides(color=guide_legend(title.position="top", nrow=1),
-         linetype=guide_legend(title.position="top"))) %>%
+    annotate("rect", xmin=3, xmax=5, ymin=-Inf, ymax=Inf, fill="steelblue3", alpha=0.1) +
+    geom_vline(xintercept=4, color="steelblue3", linewidth=1.5) +
+    geom_smooth(linewidth=1, method="loess", se=FALSE) +
+    theme_bw() +
+    facet_wrap(. ~ CNV_SizeF, nrow=4) +
+    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
+    theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
+          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+          strip.background=element_rect(fill="#ffffff"),
+          legend.position="top",
+          legend.justification="left",
+          legend.title=element_text(size=12, face="bold")) +
+    labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
+         y="F1 '",
+         linetype="CNV TYPE",
+         color="METHOD") +
+    guides(color=guide_legend(title.position="top", nrow=1),
+           linetype=guide_legend(title.position="top"))) %>%
   ggsave(filename="FIGURES/Plot72.png",
          device="png",
-         width=7,
+         width=8,
          height=11,
          units="in",
          dpi=350,
@@ -173,32 +173,32 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
 
 # PLOT THE FMI OUTCOMES  (PLOT 73)
 (ggplot(ANALYSIS_SSC_QC, aes(x=log10(D_MAX), y=FMI_p, color=Factor, linetype=CNV_Type)) +
-  annotate("rect", xmin=3, xmax=5, ymin=-Inf, ymax=Inf, fill="steelblue3", alpha=0.1) +
-  geom_vline(xintercept=4, color="steelblue3", linewidth=1.5) +
-  geom_smooth(linewidth=1, method="loess", se=FALSE) +
-  theme_bw() +
-  facet_wrap(. ~ CNV_SizeF, nrow=4) +
-  scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
-  scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
-  theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
-        axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
-        axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
-        axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
-        strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
-        strip.background=element_rect(fill="#ffffff"),
-        legend.position="top",
-        legend.justification="left",
-        legend.title=element_text(size=12, face="bold")) +
-  labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
-       y="FMI '",
-       linetype="CNV TYPE",
-       color="FACTOR") +
-  guides(color=guide_legend(title.position="top", nrow=1),
-         linetype=guide_legend(title.position="top"))) %>%
+    annotate("rect", xmin=3, xmax=5, ymin=-Inf, ymax=Inf, fill="steelblue3", alpha=0.1) +
+    geom_vline(xintercept=4, color="steelblue3", linewidth=1.5) +
+    geom_smooth(linewidth=1, method="loess", se=FALSE) +
+    theme_bw() +
+    facet_wrap(. ~ CNV_SizeF, nrow=4) +
+    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
+    theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
+          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+          strip.background=element_rect(fill="#ffffff"),
+          legend.position="top",
+          legend.justification="left",
+          legend.title=element_text(size=12, face="bold")) +
+    labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
+         y="FMI '",
+         linetype="CNV TYPE",
+         color="METHOD") +
+    guides(color=guide_legend(title.position="top", nrow=1),
+           linetype=guide_legend(title.position="top"))) %>%
   ggsave(filename="FIGURES/Plot73.png",
          device="png",
-         width=7,
+         width=8,
          height=11,
          units="in",
          dpi=350,
@@ -206,63 +206,63 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
 
 # PLOT THE JI OUTCOMES  (PLOT 74)
 (ggplot(ANALYSIS_SSC_QC, aes(x=log10(D_MAX), y=JI_p, color=Factor, linetype=CNV_Type)) +
-  annotate("rect", xmin=3, xmax=5, ymin=-Inf, ymax=Inf, fill="steelblue3", alpha=0.1) +
-  geom_vline(xintercept=4, color="steelblue3", linewidth=1.5) +
-  geom_smooth(linewidth=1, method="loess", se=FALSE) +
-  theme_bw() +
-  facet_wrap(. ~ CNV_SizeF, nrow=4) +
-  scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
-  scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
-  theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
-        axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
-        axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
-        axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
-        strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
-        strip.background=element_rect(fill="#ffffff"),
-        legend.position="top",
-        legend.justification="left",
-        legend.title=element_text(size=12, face="bold")) +
-  labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
-       y="JI '",
-       linetype="CNV TYPE",
-       color="FACTOR") +
-  guides(color=guide_legend(title.position="top", nrow=1),
-         linetype=guide_legend(title.position="top"))) %>%
+    annotate("rect", xmin=3, xmax=5, ymin=-Inf, ymax=Inf, fill="steelblue3", alpha=0.1) +
+    geom_vline(xintercept=4, color="steelblue3", linewidth=1.5) +
+    geom_smooth(linewidth=1, method="loess", se=FALSE) +
+    theme_bw() +
+    facet_wrap(. ~ CNV_SizeF, nrow=4) +
+    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
+    theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
+          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+          strip.background=element_rect(fill="#ffffff"),
+          legend.position="top",
+          legend.justification="left",
+          legend.title=element_text(size=12, face="bold")) +
+    labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
+         y="JI '",
+         linetype="CNV TYPE",
+         color="METHOD") +
+    guides(color=guide_legend(title.position="top", nrow=1),
+           linetype=guide_legend(title.position="top"))) %>%
   ggsave(filename="FIGURES/Plot74.png",
          device="png",
-         width=7,
+         width=8,
          height=11,
          units="in",
          dpi=350,
          bg="white")
 
-# PLOT THE SENSITIVITY FACTOR OUTCOMES  (PLOT 75)
+# PLOT THE SENSITIVITY METHOD OUTCOMES  (PLOT 75)
 (ggplot(ANALYSIS_SSC_QC, aes(y=Sensitivity_p, color=Factor, fill=Factor)) +
-  geom_boxplot(alpha=0.2) +
-  theme_bw() +
-  facet_wrap(CNV_Type ~ CNV_SizeF, nrow=3) +
-  scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
-  scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
-  scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
-  theme(axis.text.x=element_blank(),
-        axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
-        axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
-        axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
-        strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
-        strip.background=element_rect(fill="#ffffff"),
-        legend.position="top",
-        legend.justification="left",
-        legend.title=element_text(size=12, face="bold"),
-        axis.ticks.x=element_blank()) +
-  labs(x=expression(bold("FACTOR")),
-       y="SENSITIVITY '",
-       fill="FACTOR",
-       color="FACTOR") +
-  guides(color=guide_legend(title.position="top", nrow=1),
-         fill=guide_legend(title.position="top"))) %>%
+    geom_boxplot(alpha=0.2) +
+    theme_bw() +
+    facet_wrap(CNV_Type ~ CNV_SizeF, nrow=3) +
+    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4"),
+                      breaks=c("BAF", "LRR mean", "LRR sd", "Distance")) +
+    scale_y_continuous(breaks=scales::pretty_breaks(n = 3)) +
+    theme(axis.text.x=element_blank(),
+          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+          strip.background=element_rect(fill="#ffffff"),
+          legend.position="top",
+          legend.justification="left",
+          legend.title=element_text(size=12, face="bold"),
+          axis.ticks.x=element_blank()) +
+    labs(x=expression(bold("METHOD")),
+         y="SENSITIVITY '",
+         fill="METHOD",
+         color="METHOD") +
+    guides(color=guide_legend(title.position="top", nrow=1),
+           fill=guide_legend(title.position="top"))) %>%
   ggsave(filename="FIGURES/Plot75.png",
          device="png",
          width=11,
@@ -271,7 +271,7 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
          dpi=350,
          bg="white")
 
-# PLOT THE PPV FACTOR OUTCOMES  (PLOT 76)
+# PLOT THE PPV METHOD OUTCOMES  (PLOT 76)
 (ggplot(ANALYSIS_SSC_QC, aes(y=PPV_p, color=Factor, fill=Factor)) +
     geom_boxplot(alpha=0.2) +
     theme_bw() +
@@ -291,10 +291,10 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
           legend.justification="left",
           legend.title=element_text(size=12, face="bold"),
           axis.ticks.x=element_blank()) +
-    labs(x=expression(bold("FACTOR")),
+    labs(x=expression(bold("METHOD")),
          y="PPV '",
-         fill="FACTOR",
-         color="FACTOR") +
+         fill="METHOD",
+         color="METHOD") +
     guides(color=guide_legend(title.position="top", nrow=1),
            fill=guide_legend(title.position="top"))) %>%
   ggsave(filename="FIGURES/Plot76.png",
@@ -305,7 +305,7 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
          dpi=350,
          bg="white")
 
-# PLOT THE F1 FACTOR OUTCOMES  (PLOT 77)
+# PLOT THE F1 METHOD OUTCOMES  (PLOT 77)
 (ggplot(ANALYSIS_SSC_QC, aes(y=F1_p, color=Factor, fill=Factor)) +
     geom_boxplot(alpha=0.2) +
     theme_bw() +
@@ -325,10 +325,10 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
           legend.justification="left",
           legend.title=element_text(size=12, face="bold"),
           axis.ticks.x=element_blank()) +
-    labs(x=expression(bold("FACTOR")),
+    labs(x=expression(bold("METHOD")),
          y="F1 '",
-         fill="FACTOR",
-         color="FACTOR") +
+         fill="METHOD",
+         color="METHOD") +
     guides(color=guide_legend(title.position="top", nrow=1),
            fill=guide_legend(title.position="top"))) %>%
   ggsave(filename="FIGURES/Plot77.png",
@@ -339,7 +339,7 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
          dpi=350,
          bg="white")
 
-# PLOT THE FMI FACTOR OUTCOMES  (PLOT 78)
+# PLOT THE FMI METHOD OUTCOMES  (PLOT 78)
 (ggplot(ANALYSIS_SSC_QC, aes(y=FMI_p, color=Factor, fill=Factor)) +
     geom_boxplot(alpha=0.2) +
     theme_bw() +
@@ -359,10 +359,10 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
           legend.justification="left",
           legend.title=element_text(size=12, face="bold"),
           axis.ticks.x=element_blank()) +
-    labs(x=expression(bold("FACTOR")),
+    labs(x=expression(bold("METHOD")),
          y="FMI '",
-         fill="FACTOR",
-         color="FACTOR") +
+         fill="METHOD",
+         color="METHOD") +
     guides(color=guide_legend(title.position="top", nrow=1),
            fill=guide_legend(title.position="top"))) %>%
   ggsave(filename="FIGURES/Plot78.png",
@@ -373,7 +373,7 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
          dpi=350,
          bg="white")
 
-# PLOT THE JI FACTOR OUTCOMES  (PLOT 79)
+# PLOT THE JI METHOD OUTCOMES  (PLOT 79)
 (ggplot(ANALYSIS_SSC_QC, aes(y=JI_p, color=Factor, fill=Factor)) +
     geom_boxplot(alpha=0.2) +
     theme_bw() +
@@ -393,10 +393,10 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
           legend.justification="left",
           legend.title=element_text(size=12, face="bold"),
           axis.ticks.x=element_blank()) +
-    labs(x=expression(bold("FACTOR")),
+    labs(x=expression(bold("METHOD")),
          y="JI '",
-         fill="FACTOR",
-         color="FACTOR") +
+         fill="METHOD",
+         color="METHOD") +
     guides(color=guide_legend(title.position="top", nrow=1),
            fill=guide_legend(title.position="top"))) %>%
   ggsave(filename="FIGURES/Plot79.png",
@@ -408,13 +408,13 @@ ANALYSIS_SSC_QC$CNV_SizeF <- factor(ANALYSIS_SSC_QC$CNV_Size,
          bg="white")
 
 # RUN A T-TEST ON THESE DATA
-TEST_FACTOR <- data.frame(NULL)
+TEST_METHOD <- data.frame(NULL)
 
 for(i in unique(ANALYSIS_SSC_QC$CNV_Type)){
   for(j in unique(ANALYSIS_SSC_QC$CNV_Size)){
     for(m in c("Sensitivity_p", "PPV_p", "F1_p", "FMI_p", "JI_p")){
       for(k in unique(ANALYSIS_SSC_QC$Factor)){
-      
+        
         ROW <- data.frame(NULL)
         ROW[1, "CNV_Type"] <- i
         ROW[1, "CNV_Size"] <- j
@@ -423,25 +423,25 @@ for(i in unique(ANALYSIS_SSC_QC$CNV_Type)){
         
         for(l in unique(ANALYSIS_SSC_QC$Factor)){
           
-            A <- ANALYSIS_SSC_QC %>%
-              filter(CNV_Type==i, CNV_Size==j, Factor==k) %>%
-              pull(.data[[m]]) %>% unlist()
-            
-            B <- ANALYSIS_SSC_QC %>%
-              filter(CNV_Type==i, CNV_Size==j, Factor==l)%>%
-              pull(.data[[m]]) %>% unlist()
-  
-            ROW[1, l] <- t.test(A, B)$p.value
+          A <- ANALYSIS_SSC_QC %>%
+            filter(CNV_Type==i, CNV_Size==j, Factor==k) %>%
+            pull(.data[[m]]) %>% unlist()
+          
+          B <- ANALYSIS_SSC_QC %>%
+            filter(CNV_Type==i, CNV_Size==j, Factor==l)%>%
+            pull(.data[[m]]) %>% unlist()
+          
+          ROW[1, l] <- t.test(A, B)$p.value
         }
         
-        TEST_FACTOR <- rbind(TEST_FACTOR, ROW)
+        TEST_METHOD <- rbind(TEST_METHOD, ROW)
         
       }
     }
   }
 }
 
-TEST_FACTOR <- TEST_FACTOR %>%
+TEST_METHOD <- TEST_METHOD %>%
   mutate(BAF=ifelse(Factor %in% c("BAF"), NA, BAF),
          `LRR mean`=ifelse(Factor %in% c("BAF", "LRR mean"), NA, `LRR mean`),
          `LRR sd`=ifelse(Factor %in% c("BAF", "LRR mean", "LRR sd"), NA, `LRR sd`),
