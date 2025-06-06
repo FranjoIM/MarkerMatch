@@ -24,29 +24,29 @@ for(j in SETS_OMNI){
     filter(!is.na(.[[2]])) %>%
     pull(Name)
   
-    LRRSD <- OMNI_MAN %>%
-      filter(Name %in% FNAME) %>%
-      pull(LRR_sd)
-    
-    a <- str_split(j, pattern="_")[[1]][1]
-    b <- str_split(j, pattern="_")[[1]][2]
-    
-    ROW <- data.frame(Factor=a,
-                      D_MAX=b,
-                      LRRSD=LRRSD)
-    
-    LRRSDS_OMNI <- rbind(LRRSDS_OMNI, ROW)
+  LRRSD <- OMNI_MAN %>%
+    filter(Name %in% FNAME) %>%
+    pull(LRR_sd)
+  
+  a <- str_split(j, pattern="_")[[1]][1]
+  b <- str_split(j, pattern="_")[[1]][2]
+  
+  ROW <- data.frame(Factor=a,
+                    D_MAX=b,
+                    LRRSD=LRRSD)
+  
+  LRRSDS_OMNI <- rbind(LRRSDS_OMNI, ROW)
 }
 
 LRRSDS_OMNI$D_MAXF <- factor(LRRSDS_OMNI$D_MAX, 
-                            levels=c("0", "10", "50", "100", "500", "1000", "5000", "10000", 
-                                     "50000", "100000", "500000", "1000000", "5000000"),
-                            labels=c("0", "10", "50", "100", "500", "1,000", "5,000", "10,000", 
-                                     "50,000", "100,000", "500,000", "1,000,000", "5,000,000"))
+                             levels=c("0", "10", "50", "100", "500", "1000", "5000", "10000", 
+                                      "50000", "100000", "500000", "1000000", "5000000"),
+                             labels=c("0", "10", "50", "100", "500", "1,000", "5,000", "10,000", 
+                                      "50,000", "100,000", "500,000", "1,000,000", "5,000,000"))
 
 LRRSDS_OMNI <- LRRSDS_OMNI %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -56,10 +56,10 @@ LRRSDS_OMNI <- LRRSDS_OMNI %>%
   drop_na(LRRSD)
 
 LRRSDS_OMNI$FactorF <- factor(LRRSDS_OMNI$FactorN,
-                         levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                  "LRR sd", "Distance"),
-                         labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                  "LRR sd", "Distance"))
+                              levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                       "LRR sd", "Distance"),
+                              labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                       "LRR sd", "Distance"))
 
 H1_OMNI <- LRRSDS_OMNI %>%
   filter(Factor=="PerfectMatch") %>%
@@ -75,12 +75,12 @@ Plot6_A <- LRRSDS_OMNI %>%
   filter(LRRSD>0) %>%
   ggplot(aes(x=FactorF, color=FactorF, fill=FactorF, y=log10(LRRSD))) +
   geom_boxplot(position=position_dodge2(preserve="single"), alpha=0.2) +
-  geom_hline(aes(yintercept=log10(H1_OMNI), color="Perfect Match"), size=1) +
-  geom_hline(aes(yintercept=log10(H2_OMNI), color="Full Set"), size=1) +
+  geom_hline(aes(yintercept=log10(H1_OMNI), color="Exact Match"), linewidth=1) +
+  geom_hline(aes(yintercept=log10(H2_OMNI), color="Full Set"), linewidth=1) +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
        y=expression(bold("LOG"["10"] ~ "[ LRR-sd ]")),
        subtitle="OMNI matched on GSA",
@@ -120,27 +120,27 @@ for(j in SETS_OEE){
     filter(!is.na(.[[2]])) %>%
     pull(Name)
   
-    LRRSD <- OEE_MAN %>%
-      filter(Name %in% FNAME) %>%
-      pull(LRR_sd)
-    
-    a <- str_split(j, pattern="_")[[1]][1]
-    b <- str_split(j, pattern="_")[[1]][2]
-    
-    ROW <- data.frame(Factor=a,
-                      D_MAX=b,
-                      LRRSD=LRRSD)
-    
-    LRRSDS_OEE <- rbind(LRRSDS_OEE, ROW)
+  LRRSD <- OEE_MAN %>%
+    filter(Name %in% FNAME) %>%
+    pull(LRR_sd)
+  
+  a <- str_split(j, pattern="_")[[1]][1]
+  b <- str_split(j, pattern="_")[[1]][2]
+  
+  ROW <- data.frame(Factor=a,
+                    D_MAX=b,
+                    LRRSD=LRRSD)
+  
+  LRRSDS_OEE <- rbind(LRRSDS_OEE, ROW)
 }
 
 LRRSDS_OEE$D_MAXF <- factor(LRRSDS_OEE$D_MAX, 
-                       levels=c("0", "10000"),
-                       labels=c("0", "10,000"))
+                            levels=c("0", "10000"),
+                            labels=c("0", "10,000"))
 
 LRRSDS_OEE <- LRRSDS_OEE %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -150,10 +150,10 @@ LRRSDS_OEE <- LRRSDS_OEE %>%
   drop_na(LRRSD)
 
 LRRSDS_OEE$FactorF <- factor(LRRSDS_OEE$FactorN,
-                         levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                  "LRR sd", "Distance"),
-                         labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                  "LRR sd", "Distance"))
+                             levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                      "LRR sd", "Distance"),
+                             labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                      "LRR sd", "Distance"))
 
 H1_OEE <- LRRSDS_OEE %>%
   filter(Factor=="PerfectMatch") %>%
@@ -169,12 +169,12 @@ Plot6_B <- LRRSDS_OEE %>%
   filter(LRRSD>0) %>%
   ggplot(aes(x=FactorF, color=FactorF, fill=FactorF, y=log10(LRRSD))) +
   geom_boxplot(position=position_dodge2(preserve="single"), alpha=0.2) +
-  geom_hline(aes(yintercept=log10(H1_OEE), color="Perfect Match"), size=1) +
-  geom_hline(aes(yintercept=log10(H2_OEE), color="Full Set"), size=1) +
+  geom_hline(aes(yintercept=log10(H1_OEE), color="Exact Match"), linewidth=1) +
+  geom_hline(aes(yintercept=log10(H2_OEE), color="Full Set"), linewidth=1) +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
        y=expression(bold("LOG"["10"] ~ "[ LRR-sd ]")),
        subtitle="OEE matched on GSA",
@@ -214,27 +214,27 @@ for(j in SETS_GSA){
     filter(!is.na(.[[2]])) %>%
     pull(Name)
   
-    LRRSD <- GSA_MAN %>%
-      filter(Name %in% FNAME) %>%
-      pull(LRR_sd)
-    
-    a <- str_split(j, pattern="_")[[1]][1]
-    b <- str_split(j, pattern="_")[[1]][2]
-    
-    ROW <- data.frame(Factor=a,
-                      D_MAX=b,
-                      LRRSD=LRRSD)
-    
-    LRRSDS_GSA <- rbind(LRRSDS_GSA, ROW)
+  LRRSD <- GSA_MAN %>%
+    filter(Name %in% FNAME) %>%
+    pull(LRR_sd)
+  
+  a <- str_split(j, pattern="_")[[1]][1]
+  b <- str_split(j, pattern="_")[[1]][2]
+  
+  ROW <- data.frame(Factor=a,
+                    D_MAX=b,
+                    LRRSD=LRRSD)
+  
+  LRRSDS_GSA <- rbind(LRRSDS_GSA, ROW)
 }
 
 LRRSDS_GSA$D_MAXF <- factor(LRRSDS_GSA$D_MAX, 
-                       levels=c("0", "10000"),
-                       labels=c("0", "10,000"))
+                            levels=c("0", "10000"),
+                            labels=c("0", "10,000"))
 
 LRRSDS_GSA <- LRRSDS_GSA %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -244,10 +244,10 @@ LRRSDS_GSA <- LRRSDS_GSA %>%
   drop_na(LRRSD)
 
 LRRSDS_GSA$FactorF <- factor(LRRSDS_GSA$FactorN,
-                         levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                  "LRR sd", "Distance"),
-                         labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-                                  "LRR sd", "Distance"))
+                             levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                      "LRR sd", "Distance"),
+                             labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                      "LRR sd", "Distance"))
 
 H1_GSA <- LRRSDS_GSA %>%
   filter(Factor=="PerfectMatch") %>%
@@ -263,12 +263,12 @@ Plot6_C <- LRRSDS_GSA %>%
   filter(LRRSD>0) %>%
   ggplot(aes(x=FactorF, color=FactorF, fill=FactorF, y=log10(LRRSD))) +
   geom_boxplot(position=position_dodge2(preserve="single"), alpha=0.2) +
-  geom_hline(aes(yintercept=log10(H1_GSA), color="Perfect Match"), size=1) +
-  geom_hline(aes(yintercept=log10(H2_GSA), color="Full Set"), size=1) +
+  geom_hline(aes(yintercept=log10(H1_GSA), color="Exact Match"), linewidth=1) +
+  geom_hline(aes(yintercept=log10(H2_GSA), color="Full Set"), linewidth=1) +
   scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   scale_fill_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                    breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
   labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
        y=expression(bold("LOG"["10"] ~ "[ LRR-sd ]")),
        subtitle="GSA matched on OEE",
@@ -303,18 +303,18 @@ save(LRRSDS_OMNI, LRRSDS_OEE, LRRSDS_GSA, file="Table7.RData")
 
 # SAVE THE PANNELED PLOT
 ggarrange(ggarrange(Plot6_A + theme(legend.position="none", plot.subtitle=element_blank()),
-            align="hv", labels=c("A"), nrow=1, ncol=1, legend="top", common.legend=T),
+                    align="hv", labels=c("A"), nrow=1, ncol=1, legend="top", common.legend=T),
           ggarrange(Plot6_B + theme(legend.position="none", plot.subtitle=element_blank()),
-            Plot6_C + theme(legend.position="none", plot.subtitle=element_blank()),
-            align="hv", labels=c("B", "C"), nrow=1, ncol=2),
+                    Plot6_C + theme(legend.position="none", plot.subtitle=element_blank()),
+                    align="hv", labels=c("B", "C"), nrow=1, ncol=2),
           align="hv", nrow=2, ncol=1, legend="top", common.legend=T, heights=c(1, 1)) %>%
-ggsave(filename="FIGURES/Plot6.png",
-       device="png",
-       width=10,
-       height=10,
-       units="in",
-       dpi=350,
-       bg="white")
+  ggsave(filename="FIGURES/Plot6.png",
+         device="png",
+         width=10,
+         height=10,
+         units="in",
+         dpi=350,
+         bg="white")
 
 # TABULATE LRRSDS ACROSS TABLES AND CONDITIONS
 LRRSDS_ALL <- bind_rows(
@@ -337,4 +337,4 @@ LRRSDS_ALL %>%
             StDev = sd(LRRSD),
             IQR = IQR(LRRSD),
             .groups="keep") %>%
-  write_tsv("TABLES/Table7.tsv", col_names=TRUE)
+  write_tsv("TABLES/TableS1E.tsv", col_names=TRUE)
