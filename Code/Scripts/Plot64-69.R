@@ -3,8 +3,6 @@ setwd("...")
 library(tidyverse)
 library(ggpubr)
 library(betareg)
-library(easystats)
-library(marginaleffects)
 
 # LOAD DATA
 load("Validation_Final_103024.RData")
