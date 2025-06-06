@@ -109,7 +109,7 @@ CALLSET_SUMMARIZER %>%
   rename(FactorS=Factor) %>%
   mutate(Method=case_when(
     FactorS=="FullSet" ~ "Full Set",
-    FactorS=="PerfectMatch" ~ "Perfect Match",
+    FactorS=="PerfectMatch" ~ "Exact Match",
     FactorS=="LRRmean" ~ "LRR mean",
     FactorS=="LRRsd" ~ "LRR sd",
     FactorS=="Pos" ~ "Distance",
@@ -123,7 +123,7 @@ SAMPLE_SUMMARIZER <- data.frame(NULL)
 for(h in 1:nrow(DataFileNames)){
   i <- DataFileNames$Factor[h]
   j <- DataFileNames$D_MAXLab[h] 
-  k <- DataFileNames$Ref[h] 
+  k <- DataFileNames$Mat[h] 
   
   for(o in c("Raw", "QCd")){
     
@@ -169,9 +169,9 @@ for(h in 1:nrow(DataFileNames)){
 SAMPLE_SUMMARIZER %>%
   rename(FactorS=Factor) %>%
   mutate(QC=ifelse(QC=="Raw", "Low-stringency QC", "Medium-stringency QC")) %>%
-  mutate(Factor=case_when(
+  mutate(Method=case_when(
     FactorS=="FullSet" ~ "Full Set",
-    FactorS=="PerfectMatch" ~ "Perfect Match",
+    FactorS=="PerfectMatch" ~ "Exact Match",
     FactorS=="LRRmean" ~ "LRR mean",
     FactorS=="LRRsd" ~ "LRR sd",
     FactorS=="Pos" ~ "Distance",
@@ -329,7 +329,7 @@ ANALYSIS_STEP2 <- ANALYSIS_STEP2 %>%
   mutate(D_MAX=as.numeric(D_MAX)) %>%
   mutate(D_MAX_LOG=log10(D_MAX)) %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -369,8 +369,8 @@ MetricPlot <- function(a, b, c, d){
     filter(!Factor %in% c("PerfectMatch", "FullSet")) %>%
     filter(CNV_Type==a & CNV_Size==b) %>%
     ggplot() +
-    geom_hline(aes(yintercept=H1, color="Perfect Match", linetype="Low-stringency QC"), linewidth=1) +
-    geom_hline(aes(yintercept=H2, color="Perfect Match", linetype="Medium-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H1, color="Exact Match", linetype="Low-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H2, color="Exact Match", linetype="Medium-stringency QC"), linewidth=1) +
     geom_hline(aes(yintercept=H3, color="Full Set", linetype="Low-stringency QC"), linewidth=1) +
     geom_hline(aes(yintercept=H4, color="Full Set", linetype="Medium-stringency QC"), linewidth=1) +
     geom_point(aes(x=D_MAX_LOG, y=.data[[c]], color=FactorN, shape="Low-stringency QC"), 
@@ -384,11 +384,11 @@ MetricPlot <- function(a, b, c, d){
     scale_linetype_manual(values=c("dashed", "solid"),
                           breaks=c("Low-stringency QC", "Medium-stringency QC")) +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
     labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
          y=toupper(c),
          linetype="CNV CALLSET QC",
-         color="FACTOR",
+         color="METHOD",
          shape=" ",
          subtitle=TITLE) +
     scale_x_continuous(breaks=4, n.breaks=1, labels=4, limits=c(3.98, 4.02)) +
@@ -871,6 +871,5 @@ ANALYSIS_STEP2 %>%
   relocate(D_MAX, .after=Mat) %>%
   relocate(FactorN, .after=Mat) %>%
   relocate(QC, .after=D_MAX) %>%
-  rename(Factor=FactorN) %>%
+  rename(Method=FactorN) %>%
   write_tsv("TABLES/TableS1N.tsv", col_names=TRUE)
-  
