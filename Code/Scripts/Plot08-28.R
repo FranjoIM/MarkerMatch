@@ -109,7 +109,7 @@ CALLSET_SUMMARIZER %>%
   mutate(QC=ifelse(Matching_Type=="Raw", "Low-stringency QC", "Medium-stringency QC"), .before = Matching_Type) %>%
   mutate(Method=case_when(
     FactorS=="FullSet" ~ "Full Set",
-    FactorS=="PerfectMatch" ~ "Perfect Match",
+    FactorS=="PerfectMatch" ~ "Exact Match",
     FactorS=="LRRmean" ~ "LRR mean",
     FactorS=="LRRsd" ~ "LRR sd",
     FactorS=="Pos" ~ "Distance",
@@ -134,7 +134,7 @@ for(h in 1:nrow(DataFileNames)){
     ROW[1, "Factor"] <- i
     ROW[1, "D_MAX"] <- j
     ROW[1, "QC"] <- o
-
+    
     ROW[1, "N_SAMPLE"] <- nrow(DF_SAM)
     
     ROW[1, "LRR_MEAN_MEAN"] <- mean(DF_SAM$LRR_mean)
@@ -166,11 +166,11 @@ for(h in 1:nrow(DataFileNames)){
 
 SAMPLE_SUMMARIZER %>%
   rename(FactorS=Factor,
-        Matching_Type=QC) %>%
+         Matching_Type=QC) %>%
   mutate(QC=ifelse(Matching_Type=="Raw", "Low-stringency QC", "Medium-stringency QC")) %>%
   mutate(Factor=case_when(
     FactorS=="FullSet" ~ "Full Set",
-    FactorS=="PerfectMatch" ~ "Perfect Match",
+    FactorS=="PerfectMatch" ~ "Exact Match",
     FactorS=="LRRmean" ~ "LRR mean",
     FactorS=="LRRsd" ~ "LRR sd",
     FactorS=="Pos" ~ "Distance",
@@ -189,19 +189,19 @@ for(h in 1:nrow(DataFileNames)){
   for(o in c("Raw", "QCd")){
     REF <- DATA[["Raw"]][["SSC"]][["FullSet"]][["0"]][["CNV"]]
     MAT <- DATA[[o]][["SSC"]][[i]][[j]][["CNV"]]
-
+    
     # Keep only same for the analysis
     KEEP_IDs <- intersect(unique(REF$ID), unique(MAT$ID))
     REF <- REF %>%
       filter(ID %in% KEEP_IDs)
     MAT <- MAT %>%
       filter(ID %in% KEEP_IDs)
-
+    
     # Remove telomeric, centromeric, and immunoglobulin regions from the QCd callset
     if (o=="QCd") {
       MAT <- MAT %>%
         filter(Tel==0 & Cen==0 & Imu==0)}
-
+    
     # Join the CNVs into ID, CHR, STATE, and CN matched DF
     # Classify CNVs by size and by FP/TP/FN/TN status
     COM <- full_join(REF, MAT, 
@@ -329,25 +329,25 @@ ANALYSIS_SSC <- ANALYSIS_SSC %>%
          JI=round(TP/(TP+FN+FP), digits=3)) %>%
   mutate(D_MAX=as.numeric(D_MAX)) %>%
   mutate(D_MAX_LOG=log10(D_MAX)) %>%
-    mutate(FactorN=case_when(
-      Factor=="PerfectMatch" ~ "Perfect Match",
-      Factor=="FullSet" ~ "Full Set",
-      Factor=="BAF" ~ "BAF",
-      Factor=="LRRmean" ~ "LRR mean",
-      Factor=="LRRsd" ~ "LRR sd",
-      Factor=="Pos" ~ "Distance",
-      TRUE ~ NA_character_)) %>%
+  mutate(FactorN=case_when(
+    Factor=="PerfectMatch" ~ "Exact Match",
+    Factor=="FullSet" ~ "Full Set",
+    Factor=="BAF" ~ "BAF",
+    Factor=="LRRmean" ~ "LRR mean",
+    Factor=="LRRsd" ~ "LRR sd",
+    Factor=="Pos" ~ "Distance",
+    TRUE ~ NA_character_)) %>%
   mutate(QC=ifelse(Matching_Type=="Raw", "Low-stringency QC", "Medium-stringency QC"))
 
 ANALYSIS_SSC$FactorF <- factor(ANALYSIS_SSC$FactorN,
-  levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-           "LRR sd", "Distance"),
-  labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-           "LRR sd", "Distance"))
+                               levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                        "LRR sd", "Distance"),
+                               labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                        "LRR sd", "Distance"))
 
 ANALYSIS_SSC$QCF <- factor(ANALYSIS_SSC$QC,
-  levels=c("Medium-stringency QC", "Low-stringency QC"),
-  labels=c("Medium-stringency QC", "Low-stringency QC"))
+                           levels=c("Medium-stringency QC", "Low-stringency QC"),
+                           labels=c("Medium-stringency QC", "Low-stringency QC"))
 
 # DEFINE PLOTTING FUNCTION
 MetricPlot <- function(a, b, c){
@@ -375,22 +375,22 @@ MetricPlot <- function(a, b, c){
     b == "Very Large" ~ "1Mb < CNV < 5Mb",
     b == "Ultra Large" ~ "5Mb < CNV",
     TRUE ~ NA_character_)
-
+  
   PLOT <- ANALYSIS_SSC %>%
     filter(!Factor %in% c("PerfectMatch", "FullSet")) %>%
     filter(CNV_Type==a & CNV_Size==b) %>%
     ggplot(aes(x=D_MAX_LOG, y=.data[[c]], linetype=QCF, color=FactorF)) +
-    geom_hline(aes(yintercept=H1, color="Perfect Match", linetype="Low-stringency QC"), linewidth=1) +
-    geom_hline(aes(yintercept=H2, color="Perfect Match", linetype="Medium-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H1, color="Exact Match", linetype="Low-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H2, color="Exact Match", linetype="Medium-stringency QC"), linewidth=1) +
     geom_hline(aes(yintercept=H3, color="Full Set", linetype="Low-stringency QC"), linewidth=1) +
     geom_hline(aes(yintercept=H4, color="Full Set", linetype="Medium-stringency QC"), linewidth=1) +
     geom_line(linewidth=1) +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
     labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
          y=toupper(c),
          linetype="CNV CALLSET QC",
-         color="FACTOR",
+         color="METHOD",
          subtitle=TITLE) +
     ylim(0, 1) +
     theme_bw() + 
@@ -418,7 +418,7 @@ C <- set_names(C)
 
 # PLOT METRICS
 PLOTS <- map(A, function(x) map(B, function(y) map(C, function(z) MetricPlot(a=x, b=y, c=z))))
-                                            
+
 # SENSITIVITY, ALL (PLOT 8)
 ggarrange(PLOTS$All$All$Sensitivity + rremove("xlab"), 
           PLOTS$All$Small$Sensitivity + rremove("xlab") + rremove("ylab"),
@@ -429,13 +429,13 @@ ggarrange(PLOTS$All$All$Sensitivity + rremove("xlab"),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot8.png",
-       device="png",
-       width=11,
-       height=7,
-       units="in",
-       dpi=350,
-       bg="white")
-                                                   
+         device="png",
+         width=11,
+         height=7,
+         units="in",
+         dpi=350,
+         bg="white")
+
 # SENSITIVITY, DELETIONS (PLOT 9)
 ggarrange(PLOTS$Deletions$All$Sensitivity + rremove("xlab"), 
           PLOTS$Deletions$Small$Sensitivity + rremove("xlab") + rremove("ylab"),
@@ -446,12 +446,12 @@ ggarrange(PLOTS$Deletions$All$Sensitivity + rremove("xlab"),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot9.png",
-       device="png",
-       width=11,
-       height=7,
-       units="in",
-       dpi=350,
-       bg="white")
+         device="png",
+         width=11,
+         height=7,
+         units="in",
+         dpi=350,
+         bg="white")
 
 # SENSITIVITY, DUPLICATIONS (PLOT 10)
 ggarrange(PLOTS$Duplications$All$Sensitivity + rremove("xlab"), 
@@ -463,13 +463,13 @@ ggarrange(PLOTS$Duplications$All$Sensitivity + rremove("xlab"),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot10.png",
-       device="png",
-       width=11,
-       height=7,
-       units="in",
-       dpi=350,
-       bg="white")
-                                                   
+         device="png",
+         width=11,
+         height=7,
+         units="in",
+         dpi=350,
+         bg="white")
+
 # PPV, ALL (PLOT 11)
 ggarrange(PLOTS$All$All$PPV + rremove("xlab") + ylim(0.75, 1), 
           PLOTS$All$Small$PPV + rremove("xlab") + rremove("ylab") + ylim(0.75, 1),
@@ -480,12 +480,12 @@ ggarrange(PLOTS$All$All$PPV + rremove("xlab") + ylim(0.75, 1),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top")  %>%
   ggsave(filename="FIGURES/Plot11.png",
-       device="png",
-       width=11,
-       height=7,
-       units="in",
-       dpi=350,
-       bg="white")
+         device="png",
+         width=11,
+         height=7,
+         units="in",
+         dpi=350,
+         bg="white")
 
 # PPV, DELETIONS (PLOT 12)
 ggarrange(PLOTS$Deletions$All$PPV + rremove("xlab") + ylim(0.75, 1), 
@@ -497,12 +497,12 @@ ggarrange(PLOTS$Deletions$All$PPV + rremove("xlab") + ylim(0.75, 1),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot12.png",
-       device="png",
-       width=11,
-       height=7,
-       units="in",
-       dpi=350,
-       bg="white")
+         device="png",
+         width=11,
+         height=7,
+         units="in",
+         dpi=350,
+         bg="white")
 
 # PPV, DUPLICATIONS (PLOT 13)
 ggarrange(PLOTS$Duplications$All$PPV + rremove("xlab") + ylim(0.7, 1), 
@@ -514,12 +514,12 @@ ggarrange(PLOTS$Duplications$All$PPV + rremove("xlab") + ylim(0.7, 1),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot13.png",
-       device="png",
-       width=11,
-       height=7,
-       units="in",
-       dpi=350,
-       bg="white")
+         device="png",
+         width=11,
+         height=7,
+         units="in",
+         dpi=350,
+         bg="white")
 
 # FNR, ALL (PLOT 14)
 ggarrange(PLOTS$All$All$FNR + rremove("xlab"), 
@@ -531,12 +531,12 @@ ggarrange(PLOTS$All$All$FNR + rremove("xlab"),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot14.png",
-       device="png",
-       width=11,
-       height=7,
-       units="in",
-       dpi=350,
-       bg="white")
+         device="png",
+         width=11,
+         height=7,
+         units="in",
+         dpi=350,
+         bg="white")
 
 # FNR, DELETIONS (PLOT 15)
 ggarrange(PLOTS$Deletions$All$FNR + rremove("xlab"), 
@@ -548,13 +548,13 @@ ggarrange(PLOTS$Deletions$All$FNR + rremove("xlab"),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot15.png",
-       device="png",
-       width=11,
-       height=7,
-       units="in",
-       dpi=350,
-       bg="white")                                               
-                                                   
+         device="png",
+         width=11,
+         height=7,
+         units="in",
+         dpi=350,
+         bg="white")                                               
+
 # FNR, DUPLICATIONS (PLOT 16)
 ggarrange(PLOTS$Duplications$All$FNR + rremove("xlab"), 
           PLOTS$Duplications$Small$FNR + rremove("xlab") + rremove("ylab"),
@@ -565,12 +565,12 @@ ggarrange(PLOTS$Duplications$All$FNR + rremove("xlab"),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot16.png",
-       device="png",
-       width=11,
-       height=7,
-       units="in",
-       dpi=350,
-       bg="white")    
+         device="png",
+         width=11,
+         height=7,
+         units="in",
+         dpi=350,
+         bg="white")    
 
 # FDR, ALL (PLOT 17)
 ggarrange(PLOTS$All$All$FDR + rremove("xlab") + ylim(0, 0.25), 
@@ -582,12 +582,12 @@ ggarrange(PLOTS$All$All$FDR + rremove("xlab") + ylim(0, 0.25),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot17.png",
-       device="png",
-       width=11,
-       height=7,
-       units="in",
-       dpi=350,
-       bg="white") 
+         device="png",
+         width=11,
+         height=7,
+         units="in",
+         dpi=350,
+         bg="white") 
 
 # FDR, DELETIONS (PLOT 18)
 ggarrange(PLOTS$Deletions$All$FDR + rremove("xlab") + ylim(0, 0.25), 
@@ -599,12 +599,12 @@ ggarrange(PLOTS$Deletions$All$FDR + rremove("xlab") + ylim(0, 0.25),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot18.png",
-       device="png",
-       width=11,
-       height=7,
-       units="in",
-       dpi=350,
-       bg="white") 
+         device="png",
+         width=11,
+         height=7,
+         units="in",
+         dpi=350,
+         bg="white") 
 
 # FDR, DUPLICATIONS (PLOT 19)
 ggarrange(PLOTS$Duplications$All$FDR + rremove("xlab") + ylim(0, 0.3), 
@@ -616,12 +616,12 @@ ggarrange(PLOTS$Duplications$All$FDR + rremove("xlab") + ylim(0, 0.3),
           align="hv", labels=c("A", "B", "C", "D", "E", "F"), common.legend=T,
           legend="top") %>%
   ggsave(filename="FIGURES/Plot19.png",
-       device="png",
-       width=11,
-       height=7,
-       units="in",
-       dpi=350,
-       bg="white") 
+         device="png",
+         width=11,
+         height=7,
+         units="in",
+         dpi=350,
+         bg="white") 
 
 # F1, ALL (PLOT 20)
 ggarrange(PLOTS$All$All$F1 + rremove("xlab"), 
