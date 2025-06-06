@@ -347,6 +347,7 @@ CUM_ANALYSIS$FactorF <- factor(CUM_ANALYSIS$Factor,
 
 (CUM_ANALYSIS %>%
     filter(QC=="Medium-stringency QC") %>%
+    mutate(Mat=ifelse(Mat=="SSC", "OMNI", Mat)) %>%
     ggplot(aes(x=`PPV Cutoff`, color=FactorF)) +
     geom_line(aes(y=Under_PPV, linetype="Fail"), linewidth=1) +
     geom_line(aes(y=Over_PPV, linetype="Pass"), linewidth=1) +
@@ -381,6 +382,7 @@ CUM_ANALYSIS$FactorF <- factor(CUM_ANALYSIS$Factor,
 
 (CUM_ANALYSIS %>%
     filter(QC=="Medium-stringency QC") %>%
+    mutate(Mat=ifelse(Mat=="SSC", "OMNI", Mat)) %>%
     ggplot(aes(x=`PPV Cutoff`, color=FactorF)) +
     geom_line(aes(y=Under_F1, linetype="Fail"), linewidth=1) +
     geom_line(aes(y=Over_F1, linetype="Pass"), linewidth=1) +
