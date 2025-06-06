@@ -159,7 +159,7 @@ ANALYSIS_STEP2_REGIONAL <- ANALYSIS_STEP2_REGIONAL %>%
   mutate(D_MAX=as.numeric(D_MAX)) %>%
   mutate(D_MAX_LOG=log10(D_MAX)) %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -168,14 +168,14 @@ ANALYSIS_STEP2_REGIONAL <- ANALYSIS_STEP2_REGIONAL %>%
     TRUE ~ NA_character_))
 
 ANALYSIS_STEP2_REGIONAL$FactorF <- factor(ANALYSIS_STEP2_REGIONAL$FactorN,
-    levels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-             "LRR sd", "Distance"),
-    labels=c("Full Set", "Perfect Match", "BAF", "LRR mean", 
-             "LRR sd", "Distance"))
+                                          levels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                                   "LRR sd", "Distance"),
+                                          labels=c("Full Set", "Exact Match", "BAF", "LRR mean", 
+                                                   "LRR sd", "Distance"))
 
 ANALYSIS_STEP2_REGIONAL$QCF <- factor(ANALYSIS_STEP2_REGIONAL$QC,
-    levels=c("Medium-stringency QC", "Low-stringency QC"),
-    labels=c("Medium-stringency QC", "Low-stringency QC"))
+                                      levels=c("Medium-stringency QC", "Low-stringency QC"),
+                                      labels=c("Medium-stringency QC", "Low-stringency QC"))
 
 # DEFINE PLOTTING FUNCTION
 MetricPlot <- function(a, b, c){
@@ -206,8 +206,8 @@ MetricPlot <- function(a, b, c){
     filter(!Factor %in% c("PerfectMatch", "FullSet")) %>%
     filter(CNV_Region==a) %>%
     ggplot() +
-    geom_hline(aes(yintercept=H1, color="Perfect Match", linetype="Low-stringency QC"), linewidth=1) +
-    geom_hline(aes(yintercept=H2, color="Perfect Match", linetype="Medium-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H1, color="Exact Match", linetype="Low-stringency QC"), linewidth=1) +
+    geom_hline(aes(yintercept=H2, color="Exact Match", linetype="Medium-stringency QC"), linewidth=1) +
     geom_hline(aes(yintercept=H3, color="Full Set", linetype="Low-stringency QC"), linewidth=1) +
     geom_hline(aes(yintercept=H4, color="Full Set", linetype="Medium-stringency QC"), linewidth=1) +
     geom_point(aes(x=D_MAX_LOG, y=.data[[b]], color=FactorF, shape="Low-stringency QC"), 
@@ -221,11 +221,11 @@ MetricPlot <- function(a, b, c){
     scale_linetype_manual(values=c("dashed", "solid"),
                           breaks=c("Low-stringency QC", "Medium-stringency QC")) +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
     labs(x=expression(bold("LOG"["10"] ~ "[" ~"D"["MAX"] ~ "]")),
          y=toupper(b),
          linetype="CNV CALLSET QC",
-         color="FACTOR",
+         color="METHOD",
          shape=" ",
          subtitle=TITLE) +
     scale_x_continuous(breaks=4, n.breaks=1, labels=4, limits=c(3.98, 4.02)) +
@@ -397,5 +397,5 @@ ANALYSIS_STEP2_REGIONAL %>%
   relocate(D_MAX, .after=Mat) %>%
   relocate(FactorN, .after=Mat) %>%
   relocate(QC, .after=D_MAX) %>%
-  rename(Factor=FactorN) %>%
+  rename(Method=FactorN) %>%
   write_tsv("TABLES/TableS1O.tsv", col_names=TRUE)
