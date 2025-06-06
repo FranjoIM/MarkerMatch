@@ -157,7 +157,7 @@ ANALYSIS_STEP2_CUTOFFS <- ANALYSIS_STEP2_CUTOFFS %>%
   mutate(D_MAX_LOG=log10(D_MAX)) %>%
   mutate(QC=ifelse(QC=="Raw", "Low-stringency QC", "Medium-stringency QC")) %>%
   mutate(FactorN=case_when(
-    Factor=="PerfectMatch" ~ "Perfect Match",
+    Factor=="PerfectMatch" ~ "Exact Match",
     Factor=="FullSet" ~ "Full Set",
     Factor=="BAF" ~ "BAF",
     Factor=="LRRmean" ~ "LRR mean",
@@ -166,8 +166,8 @@ ANALYSIS_STEP2_CUTOFFS <- ANALYSIS_STEP2_CUTOFFS %>%
     TRUE ~ NA_character_))
 
 ANALYSIS_STEP2_CUTOFFS$FactorF <- factor(ANALYSIS_STEP2_CUTOFFS$FactorN,
-    labels=c("Full Set", "Perfect Match", "LRR mean", "LRR sd", "BAF", "Distance"),
-    levels=c("Full Set", "Perfect Match", "LRR mean", "LRR sd", "BAF", "Distance"))
+                                         labels=c("Full Set", "Exact Match", "LRR mean", "LRR sd", "BAF", "Distance"),
+                                         levels=c("Full Set", "Exact Match", "LRR mean", "LRR sd", "BAF", "Distance"))
 
 # TRANSFORM PRIMES TO RANGE (0,1) from [0,1]
 SV_Trans <- function(x){
@@ -183,9 +183,9 @@ ANALYSIS_S2VS_QC <- ANALYSIS_STEP2_CUTOFFS %>%
 
 # MODEL METRICS ON LEN AND N_SNP CUTOFFS
 MOD_SEN_GSA <- betareg(Sensitivity ~ 
-                 LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                 data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
-                 link="logit")
+                         LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
+                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Exact Match") & Mat=="GSA"),
+                       link="logit")
 
 summary(MOD_SEN_GSA)
 
@@ -195,7 +195,7 @@ as.data.frame(model_parameters(MOD_SEN_GSA, component="conditional", exponentiat
 
 MOD_SEN_OEE <- betareg(Sensitivity ~ 
                          LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
+                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Exact Match") & Mat=="OEE"),
                        link="logit")
 
 summary(MOD_SEN_OEE)
@@ -206,7 +206,7 @@ as.data.frame(model_parameters(MOD_SEN_OEE, component="conditional", exponentiat
 
 MOD_PPV_GSA <- betareg(PPV ~ 
                          LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
+                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Exact Match") & Mat=="GSA"),
                        link="logit")
 
 summary(MOD_PPV_GSA)
@@ -217,7 +217,7 @@ as.data.frame(model_parameters(MOD_PPV_GSA, component="conditional", exponentiat
 
 MOD_PPV_OEE <- betareg(PPV ~ 
                          LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
+                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Exact Match") & Mat=="OEE"),
                        link="logit")
 
 summary(MOD_PPV_OEE)
@@ -227,9 +227,9 @@ as.data.frame(model_parameters(MOD_PPV_OEE, component="conditional", exponentiat
   print(row.names=FALSE)
 
 MOD_F1_GSA <- betareg(F1 ~ 
-                         LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
-                       link="logit")
+                        LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
+                      data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Exact Match") & Mat=="GSA"),
+                      link="logit")
 
 summary(MOD_F1_GSA)
 
@@ -238,9 +238,9 @@ as.data.frame(model_parameters(MOD_F1_GSA, component="conditional", exponentiate
   print(row.names=FALSE)
 
 MOD_F1_OEE <- betareg(F1 ~ 
-                         LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
-                       link="logit")
+                        LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
+                      data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Exact Match") & Mat=="OEE"),
+                      link="logit")
 
 summary(MOD_F1_OEE)
 
@@ -249,9 +249,9 @@ as.data.frame(model_parameters(MOD_F1_OEE, component="conditional", exponentiate
   print(row.names=FALSE)
 
 MOD_FMI_GSA <- betareg(FMI ~ 
-                        LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                      data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
-                      link="logit")
+                         LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
+                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Exact Match") & Mat=="GSA"),
+                       link="logit")
 
 summary(MOD_FMI_GSA)
 
@@ -260,9 +260,9 @@ as.data.frame(model_parameters(MOD_FMI_GSA, component="conditional", exponentiat
   print(row.names=FALSE)
 
 MOD_FMI_OEE <- betareg(FMI ~ 
-                        LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                      data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
-                      link="logit")
+                         LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
+                       data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Exact Match") & Mat=="OEE"),
+                       link="logit")
 
 summary(MOD_FMI_OEE)
 
@@ -272,7 +272,7 @@ as.data.frame(model_parameters(MOD_FMI_OEE, component="conditional", exponentiat
 
 MOD_JI_GSA <- betareg(JI ~ 
                         LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                      data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="GSA"),
+                      data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Exact Match") & Mat=="GSA"),
                       link="logit")
 
 summary(MOD_JI_GSA)
@@ -283,7 +283,7 @@ as.data.frame(model_parameters(MOD_JI_GSA, component="conditional", exponentiate
 
 MOD_JI_OEE <- betareg(JI ~ 
                         LEN_Cutoff * N_SNP_Cutoff + FactorF | LEN_Cutoff + N_SNP_Cutoff + FactorF,
-                      data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Perfect Match") & Mat=="OEE"),
+                      data=filter(ANALYSIS_S2VS_QC, !FactorN %in% c("Full Set", "Exact Match") & Mat=="OEE"),
                       link="logit")
 
 summary(MOD_JI_OEE)
@@ -300,53 +300,13 @@ as.data.frame(model_parameters(MOD_JI_OEE, component="conditional", exponentiate
     labs(x="CNV LENGTH CUTOFF (KB)",
          y="PPV",
          linetype="ARRAY",
-         color="FACTOR",
+         color="METHOD",
          caption="Cutoff: marker coverage") +
     scale_linetype_manual(values=c("dashed", "solid"),
                           breaks=c("OEE", "GSA")) +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set"),
-                       labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
-    scale_x_continuous(label=scales::comma, n.breaks=5) +
-    scale_y_continuous(n.breaks=6) +
-    theme_bw() + 
-    theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
-          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
-          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
-          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
-          plot.subtitle=element_text(size=15, hjust=0, vjust=0, face="bold.italic"),
-          legend.position="top",
-          legend.justification="left",
-          legend.title=element_text(size=12, face="bold"),
-          plot.caption=element_text(size=12, face="bold.italic"),
-          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
-          strip.background=element_rect(fill="#ffffff"),) +
-    guides(color=guide_legend(title.position="top", nrow=1, order=1),
-           linetype=guide_legend(title.position="top", order=2)) +
-  facet_wrap(. ~ N_SNP_Cutoff, nrow=2)) %>%
-  ggsave(filename="FIGURES/Plot64.png",
-         device="png",
-         width=11,
-         height=7,
-         units="in",
-         dpi=350,
-         bg="white")
-  
-(ANALYSIS_S2VS_QC %>%
-    filter(N_SNP_Cutoff!=50) %>%
-    mutate(N_SNP_Cutoff=paste0("Cutoff = ", N_SNP_Cutoff)) %>%
-    ggplot(aes(x=LEN_Cutoff*10, y=F1, color=FactorF, linetype=Mat)) +
-    geom_line(linewidth=1) +
-    labs(x="CNV LENGTH CUTOFF (KB)",
-         y="F1",
-         linetype="ARRAY",
-         color="FACTOR",
-         caption="Cutoff: marker coverage") +
-    scale_linetype_manual(values=c("dashed", "solid"),
-                          breaks=c("OEE", "GSA")) +
-    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set"),
-                       labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set"),
+                       labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
     scale_x_continuous(label=scales::comma, n.breaks=5) +
     scale_y_continuous(n.breaks=6) +
     theme_bw() + 
@@ -364,7 +324,47 @@ as.data.frame(model_parameters(MOD_JI_OEE, component="conditional", exponentiate
     guides(color=guide_legend(title.position="top", nrow=1, order=1),
            linetype=guide_legend(title.position="top", order=2)) +
     facet_wrap(. ~ N_SNP_Cutoff, nrow=2)) %>%
-    ggsave(filename="FIGURES/Plot65.png",
+  ggsave(filename="FIGURES/Plot64.png",
+         device="png",
+         width=11,
+         height=7,
+         units="in",
+         dpi=350,
+         bg="white")
+
+(ANALYSIS_S2VS_QC %>%
+    filter(N_SNP_Cutoff!=50) %>%
+    mutate(N_SNP_Cutoff=paste0("Cutoff = ", N_SNP_Cutoff)) %>%
+    ggplot(aes(x=LEN_Cutoff*10, y=F1, color=FactorF, linetype=Mat)) +
+    geom_line(linewidth=1) +
+    labs(x="CNV LENGTH CUTOFF (KB)",
+         y="F1",
+         linetype="ARRAY",
+         color="METHOD",
+         caption="Cutoff: marker coverage") +
+    scale_linetype_manual(values=c("dashed", "solid"),
+                          breaks=c("OEE", "GSA")) +
+    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set"),
+                       labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
+    scale_x_continuous(label=scales::comma, n.breaks=5) +
+    scale_y_continuous(n.breaks=6) +
+    theme_bw() + 
+    theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, size=12),
+          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+          plot.subtitle=element_text(size=15, hjust=0, vjust=0, face="bold.italic"),
+          legend.position="top",
+          legend.justification="left",
+          legend.title=element_text(size=12, face="bold"),
+          plot.caption=element_text(size=12, face="bold.italic"),
+          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+          strip.background=element_rect(fill="#ffffff"),) +
+    guides(color=guide_legend(title.position="top", nrow=1, order=1),
+           linetype=guide_legend(title.position="top", order=2)) +
+    facet_wrap(. ~ N_SNP_Cutoff, nrow=2)) %>%
+  ggsave(filename="FIGURES/Plot65.png",
          device="png",
          width=11,
          height=7,
@@ -380,13 +380,13 @@ as.data.frame(model_parameters(MOD_JI_OEE, component="conditional", exponentiate
     labs(x="MARKER COVERAGE CUTOFF",
          y="PPV",
          linetype="ARRAY",
-         color="FACTOR",
+         color="METHOD",
          caption="Cutoff: CNV length") +
     scale_linetype_manual(values=c("dashed", "solid"),
                           breaks=c("OEE", "GSA")) +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set"),
-                       labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set"),
+                       labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
     scale_x_continuous(label=scales::comma, n.breaks=5) +
     scale_y_continuous(n.breaks=6) +
     theme_bw() + 
@@ -404,7 +404,7 @@ as.data.frame(model_parameters(MOD_JI_OEE, component="conditional", exponentiate
     guides(color=guide_legend(title.position="top", nrow=1, order=1),
            linetype=guide_legend(title.position="top", order=2)) +
     facet_wrap(. ~ factor(LEN_Cutoff, levels=c("Cutoff = 20,000bp", "Cutoff = 40,000bp", "Cutoff = 60,000bp", "Cutoff = 80,000bp", "Cutoff = 100,000bp", "Cutoff = 200,000bp", "Cutoff = 300,000bp", "Cutoff = 400,000bp")), nrow=2)) %>%
-    ggsave(filename="FIGURES/Plot66.png",
+  ggsave(filename="FIGURES/Plot66.png",
          device="png",
          width=11,
          height=7,
@@ -420,13 +420,13 @@ as.data.frame(model_parameters(MOD_JI_OEE, component="conditional", exponentiate
     labs(x="MARKER COVERAGE CUTOFF",
          y="F1",
          linetype="ARRAY",
-         color="FACTOR",
+         color="METHOD",
          caption="Cutoff: CNV length") +
     scale_linetype_manual(values=c("dashed", "solid"),
                           breaks=c("OEE", "GSA")) +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set"),
-                       labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set"),
+                       labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
     scale_x_continuous(label=scales::comma, n.breaks=5) +
     scale_y_continuous(n.breaks=6) +
     theme_bw() + 
@@ -453,40 +453,40 @@ as.data.frame(model_parameters(MOD_JI_OEE, component="conditional", exponentiate
          bg="white")
 
 ANALYSIS_S2VS_QC$FactorF <- factor(ANALYSIS_S2VS_QC$FactorN,
-                                  labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Full Set", "Perfect Match"),
-                                  levels=c("BAF", "LRR mean", "LRR sd", "Distance", "Full Set", "Perfect Match"))
+                                   labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Full Set", "Exact Match"),
+                                   levels=c("BAF", "LRR mean", "LRR sd", "Distance", "Full Set", "Exact Match"))
 
 (ANALYSIS_S2VS_QC %>%
-  filter(N_SNP_Cutoff %in% c(10, 20, 30, 40) & LEN_Cutoff %in% c(2, 4, 8, 16, 32)) %>%
-  mutate(N_SNP_Cutoff=paste0(N_SNP_Cutoff, " SNPs"),
-         LEN_Cutoff=paste0(LEN_Cutoff, "0,000bp")) %>%
-  ggplot(aes(y=PPV, x=FactorF, color=FactorF, shape=Mat)) +
-  scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                     breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set"),
-                     labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
-  scale_shape_manual(values=c(2, 6), breaks=c("GSA", "OEE")) +
-  geom_point(size=3) +
-  scale_y_continuous(n.breaks=4, limits=c(0, 1)) +
-  labs(x="FACTOR",
-       y="PPV",
-       shape="ARRAY",
-       color="FACTOR") +
-  theme_bw() + 
-  theme(axis.text.x=element_blank(),
-        axis.ticks.x=element_blank(), 
-        axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
-        axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
-        axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
-        plot.subtitle=element_text(size=15, hjust=0, vjust=0, face="bold.italic"),
-        legend.position="top",
-        legend.justification="left",
-        legend.title=element_text(size=12, face="bold"),
-        plot.caption=element_text(size=12, face="bold.italic"),
-        strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
-        strip.background=element_rect(fill="#ffffff")) +
-  guides(color=guide_legend(title.position="top", nrow=1, order=1),
-         shape=guide_legend(title.position="top", order=2)) +
-  facet_grid(factor(LEN_Cutoff, levels=c("20,000bp", "40,000bp", "80,000bp", "160,000bp", "320,000bp")) ~ N_SNP_Cutoff)) %>%
+    filter(N_SNP_Cutoff %in% c(10, 20, 30, 40) & LEN_Cutoff %in% c(2, 4, 8, 16, 32)) %>%
+    mutate(N_SNP_Cutoff=paste0(N_SNP_Cutoff, " SNPs"),
+           LEN_Cutoff=paste0(LEN_Cutoff, "0,000bp")) %>%
+    ggplot(aes(y=PPV, x=FactorF, color=FactorF, shape=Mat)) +
+    scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set"),
+                       labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
+    scale_shape_manual(values=c(2, 6), breaks=c("GSA", "OEE")) +
+    geom_point(size=3) +
+    scale_y_continuous(n.breaks=4, limits=c(0, 1)) +
+    labs(x="METHOD",
+         y="PPV",
+         shape="ARRAY",
+         color="METHOD") +
+    theme_bw() + 
+    theme(axis.text.x=element_blank(),
+          axis.ticks.x=element_blank(), 
+          axis.text.y=element_text(angle=90, vjust=0.5, hjust=0.5, size=12),
+          axis.title.x=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=10, r=0, b=0, l=0, unit="pt")),
+          axis.title.y=element_text(size=15, hjust=0, vjust=0, face="bold", margin=margin(t=0, r=10, b=0, l=0, unit="pt")),
+          plot.subtitle=element_text(size=15, hjust=0, vjust=0, face="bold.italic"),
+          legend.position="top",
+          legend.justification="left",
+          legend.title=element_text(size=12, face="bold"),
+          plot.caption=element_text(size=12, face="bold.italic"),
+          strip.text=element_text(size=15, hjust=0, vjust=0.5, face="bold.italic"),
+          strip.background=element_rect(fill="#ffffff")) +
+    guides(color=guide_legend(title.position="top", nrow=1, order=1),
+           shape=guide_legend(title.position="top", order=2)) +
+    facet_grid(factor(LEN_Cutoff, levels=c("20,000bp", "40,000bp", "80,000bp", "160,000bp", "320,000bp")) ~ N_SNP_Cutoff)) %>%
   ggsave(filename="FIGURES/Plot68.png",
          device="png",
          width=9,
@@ -501,15 +501,15 @@ ANALYSIS_S2VS_QC$FactorF <- factor(ANALYSIS_S2VS_QC$FactorN,
            LEN_Cutoff=paste0(LEN_Cutoff, "0,000bp")) %>%
     ggplot(aes(y=F1, x=FactorF, color=FactorF, shape=Mat)) +
     scale_color_manual(values=c("goldenrod1", "slateblue2", "seagreen4", "lightsalmon4", "red3", "steelblue3"),
-                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set"),
-                       labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Perfect Match", "Full Set")) +
+                       breaks=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set"),
+                       labels=c("BAF", "LRR mean", "LRR sd", "Distance", "Exact Match", "Full Set")) +
     scale_shape_manual(values=c(2, 6), breaks=c("GSA", "OEE")) +
     geom_point(size=3) +
     scale_y_continuous(n.breaks=4, limits=c(0, 1)) +
-    labs(x="FACTOR",
+    labs(x="METHOD",
          y="F1",
          shape="ARRAY",
-         color="FACTOR") +
+         color="METHOD") +
     theme_bw() + 
     theme(axis.text.x=element_blank(),
           axis.ticks.x=element_blank(), 
