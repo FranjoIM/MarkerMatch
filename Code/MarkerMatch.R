@@ -1,4 +1,4 @@
-MarkerMatch <- function(Reference=Reference, Matching=Matching, Mathod=Mathod, D_MAX=D_MAX, OutPath=OutPath){
+MarkerMatch <- function(Reference=Reference, Matching=Matching, Method=Method, D_MAX=D_MAX, OutPath=OutPath){
   require(tidyverse)
   
   # Define errors for function
@@ -11,8 +11,8 @@ MarkerMatch <- function(Reference=Reference, Matching=Matching, Mathod=Mathod, D
     stop("Matching is missing one of the following required columns: Name, Chr, Position, BAF, LRR_mean, LRR_sd.")
   }
   
-  if(!Mathod %in% c("Distance","BAF_delta","LRR_mean_delta","LRR_sd_delta")){
-    stop("Mathod must be one of the following: Distance, BAF_delta, LRR_mean_delta, or LRR_sd_delta.")
+  if(!Method %in% c("Distance","BAF_delta","LRR_mean_delta","LRR_sd_delta")){
+    stop("Method must be one of the following: Distance, BAF_delta, LRR_mean_delta, or LRR_sd_delta.")
   }
   
   if(!is.numeric(D_MAX)){
@@ -79,7 +79,7 @@ MarkerMatch <- function(Reference=Reference, Matching=Matching, Mathod=Mathod, D
                  BAF_delta=abs(BAF.Ref-BAF.Mat),
                  Position=ifelse(Position.Ref==Position.Mat, "Same", "Different"),
                  Name=ifelse(Name.Ref==Name.Mat, "Same", "Different"))%>% 
-          arrange_at({{Mathod}}) %>%
+          arrange_at({{Method}}) %>%
           filter(row_number()==1)
         
         # Merge Match with master DF
