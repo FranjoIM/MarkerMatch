@@ -88,6 +88,8 @@ MarkerMatch <- function(Reference=Reference, Matching=Matching, Method=Method, D
         # Purge matched SNPs from Ref and Mat data
         Mat <- Mat %>%
           filter(!Name %in% Match$Name.Mat)
+        Ref <- Ref %>%
+          filter(!Name %in% Match$Name.Ref)
       }
     }
     message("Completed chromosome ", Chromosomes[chr], ".\n")
