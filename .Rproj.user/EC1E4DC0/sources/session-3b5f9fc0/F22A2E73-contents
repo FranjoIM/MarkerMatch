@@ -1,0 +1,24 @@
+Package: MarkerMatch
+Type: Package
+Title: Probe-Matching Algorithm for Joint Analysis of Copy-Number Variants from Different Genotyping Arrays
+Version: 1.0.0
+Authors@R: c(
+    person(
+      "Franjo", "Ivankovic",
+      email = "franjo@ivankovic.us",
+      role = c("aut", "cre", "cph"),
+      comment = c(ORCID = "0000-0002-6776-8626",
+        URL = "https://franjo.us")
+    )
+  )
+Description: MarkerMatch, a proximity-based algorithm that matches probes across different genotyping 
+  microarrays to maximize the number of probes considered in the CNV calling algorithm, thereby increasing 
+  the resolution and sensitivity while preserving precision.
+URL: https://github.com/FranjoIM/MarkerMatch
+BugReports: https://github.com/FranjoIM/MarkerMatch/issues
+Depends: R (>= 4.5.0)
+Imports: rlang, dplyr, readr, stringr, magrittr, tidyr, matrixStats
+Encoding: UTF-8
+LazyData: false
+RoxygenNote: 7.3.3
+License: MIT + file LICENSE
